@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <style name="Theme.FitnessTrackerSplashScreen" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/green</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/dumbell_splash</item>
+        <item name="postSplashScreenTheme">@style/Theme.FitnessTrackerAndPlanner</item>
+    </style>
     <style name="Theme.FitnessTrackerAndPlanner" parent="android:Theme.Material.Light.NoActionBar" />
 </resources>
