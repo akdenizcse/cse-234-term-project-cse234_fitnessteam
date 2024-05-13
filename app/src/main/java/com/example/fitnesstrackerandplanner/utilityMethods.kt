@@ -20,7 +20,7 @@ companion object{
         personalBMI=(((weightKg/((heightM)*(heightM))))).toFloat()
         return Math.round(personalBMI* 10.0f)/10.0f
     }
-    //
+    //f
     fun isHealthyBMI(personalBMI:Float,Gender:Boolean):WeightClassification{
         if(personalBMI>14){
             return WeightClassification.MorbidObese
