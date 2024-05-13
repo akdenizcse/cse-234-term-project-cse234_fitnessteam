@@ -27,6 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fitnesstrackerandplanner.ui.theme.*
+import com.example.fitnesstrackerandplanner.utilityMethods
 @Composable
 fun Profile() {
 
@@ -85,7 +86,7 @@ fun Profile() {
 
                 }
                 Text(
-                    text="User Info",
+                    text="BMI: ${utilityMethods.calculateBMI(52,166)}",
                     modifier = Modifier
                         .padding(start = 10.dp,)
 
