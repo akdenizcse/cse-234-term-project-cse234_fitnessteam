@@ -13,13 +13,14 @@ enum class WeightClassification(){
 
 }
 class utilityMethods {
-
+companion object{
     fun calculateBMI(weightKg:Short,heightCm:Short):Float{
         var personalBMI:Float
-        personalBMI=(((weightKg/((heightCm)*(heightCm))).toFloat()))
-        return personalBMI
+        val heightM:Float=heightCm*0.01f
+        personalBMI=(((weightKg/((heightM)*(heightM))))).toFloat()
+        return Math.round(personalBMI* 10.0f)/10.0f
     }
-    //
+    //f
     fun isHealthyBMI(personalBMI:Float,Gender:Boolean):WeightClassification{
         if(personalBMI>14){
             return WeightClassification.MorbidObese
@@ -43,8 +44,10 @@ class utilityMethods {
 
 
 
-fun main(){
-    val testInst=utilityMethods()
-    print(testInst.isHealthyBMI(22.5f,true))
 }
 
+fun main(){
+   // print(utilityMethods.isHealthyBMI(22.5f, true))
+    print(utilityMethods.calculateBMI(52,166))
+
+}
