@@ -13,4 +13,5 @@ sealed class Screens(val screen:String) {
     data object StartAnExercise:Screens("startanexercise")
     data object LoginPage:Screens("loginpage")
 
+
 }
