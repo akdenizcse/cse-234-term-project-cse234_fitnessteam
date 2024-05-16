@@ -1,25 +1,34 @@
 package com.example.fitnesstrackerandplanner
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.NavHost
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.fitnesstrackerandplanner.ui.theme.PurpleGrey40
 
 @Composable
-fun StartAnExercise() {
+fun StartAnExercise(modifier:Modifier=Modifier,navController:NavController) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(color= PurpleGrey40)
+            .background(color = PurpleGrey40)
 
     )
     {
@@ -32,24 +41,64 @@ fun StartAnExercise() {
                 .align(Alignment.TopEnd)
                 )
 */
-        Column(
+        Column(verticalArrangement = Arrangement.spacedBy(15.dp),
             modifier = Modifier
                 .fillMaxSize()
                 .align(Alignment.Center),
-            horizontalAlignment =  Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            horizontalAlignment =  Alignment.Start,
         ){
             Text(
-                text ="Start an Exercise Page",
+                text ="Exercise 1",
                 fontSize = 30.sp,
-                color = Color.Magenta
+                color = Color.Magenta,
+                modifier=Modifier.clickable{ navController.navigate(Screens.ExercisePage1.screen)},
+                textAlign = TextAlign.Start
+
+            )
+            Text(
+                text ="Exercise 2",
+                fontSize = 30.sp,
+                color = Color.Magenta,
+                modifier=Modifier.clickable{ navController.navigate(Screens.ExercisePage2.screen) },
+                textAlign = TextAlign.Start
+
+            )
+            Text(
+                text ="Exercise 3",
+                fontSize = 30.sp,
+                color = Color.Magenta,
+                modifier=Modifier.clickable{ navController.navigate(Screens.ExercisePage3.screen) },
+                textAlign = TextAlign.Start
+
+
+            )
+            Text(
+                text ="Exercise 4",
+                fontSize = 30.sp,
+                color = Color.Magenta,
+                modifier=Modifier.clickable{ navController.navigate(Screens.ExercisePage4.screen) },
+                textAlign = TextAlign.Start
+
+
             )
 
+
+
+
+
+
         }
+
+
+
+
     }
+
 }
-@Preview
 @Composable
-fun StartAnExercisePreview() {
-    StartAnExercise()
+fun initiateStartAnExercise(navController: NavController){
+
+    StartAnExercise(Modifier,navController)
+
+
 }
