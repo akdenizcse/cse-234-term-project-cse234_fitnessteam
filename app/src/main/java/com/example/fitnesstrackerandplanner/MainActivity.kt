@@ -74,7 +74,9 @@ fun BottomAppBar(){
                                   popUpTo(0)
                               }
                               },
-                    modifier=Modifier.weight(1f).fillMaxSize()
+                    modifier= Modifier
+                        .weight(1f)
+                        .fillMaxSize()
 
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally,
@@ -103,7 +105,9 @@ fun BottomAppBar(){
                             popUpTo(0)
                         }
                     },
-                    modifier=Modifier.weight(1f).fillMaxSize()
+                    modifier= Modifier
+                        .weight(1f)
+                        .fillMaxSize()
 
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -149,7 +153,9 @@ fun BottomAppBar(){
                             popUpTo(0)
                         }
                     },
-                    modifier=Modifier.weight(1f).fillMaxSize()
+                    modifier= Modifier
+                        .weight(1f)
+                        .fillMaxSize()
 
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -174,7 +180,9 @@ fun BottomAppBar(){
                             popUpTo(0)
                         }
                     },
-                    modifier=Modifier.weight(1f).fillMaxSize()
+                    modifier= Modifier
+                        .weight(1f)
+                        .fillMaxSize()
 
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -204,7 +212,12 @@ fun BottomAppBar(){
             composable(Screens.Home.screen){Home()}
             composable(Screens.Goals.screen){Goals()}
             composable(Screens.Profile.screen){ Profile() }
-            composable(Screens.StartAnExercise.screen){ StartAnExercise()}
+            composable(Screens.StartAnExercise.screen){ initiateStartAnExercise(navController=navigationController) }
+            composable(Screens.ExercisePage1.screen){ ExercisePage1() }
+            composable(Screens.ExercisePage2.screen){ ExercisePage2() }
+            composable(Screens.ExercisePage3.screen){ ExercisePage3()  }
+            composable(Screens.ExercisePage4.screen){  ExercisePage4()  }
+
         }
 
     }

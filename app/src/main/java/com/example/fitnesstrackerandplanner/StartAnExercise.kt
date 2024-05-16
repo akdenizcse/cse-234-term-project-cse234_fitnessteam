@@ -24,8 +24,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.fitnesstrackerandplanner.ui.theme.PurpleGrey40
 
 @Composable
-fun StartAnExercise() {
-    val navController=rememberNavController()
+fun StartAnExercise(modifier:Modifier=Modifier,navController:NavController) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -52,7 +51,7 @@ fun StartAnExercise() {
                 text ="Exercise 1",
                 fontSize = 30.sp,
                 color = Color.Magenta,
-                modifier=Modifier.clickable{ navController.navigate("Exercise1Page")},
+                modifier=Modifier.clickable{ navController.navigate(Screens.ExercisePage1.screen)},
                 textAlign = TextAlign.Start
 
             )
@@ -60,7 +59,7 @@ fun StartAnExercise() {
                 text ="Exercise 2",
                 fontSize = 30.sp,
                 color = Color.Magenta,
-                modifier=Modifier.clickable{ navController.navigate("Exercise1Page") },
+                modifier=Modifier.clickable{ navController.navigate(Screens.ExercisePage2.screen) },
                 textAlign = TextAlign.Start
 
             )
@@ -68,7 +67,7 @@ fun StartAnExercise() {
                 text ="Exercise 3",
                 fontSize = 30.sp,
                 color = Color.Magenta,
-                modifier=Modifier.clickable{ navController.navigate("Exercise1Page") },
+                modifier=Modifier.clickable{ navController.navigate(Screens.ExercisePage3.screen) },
                 textAlign = TextAlign.Start
 
 
@@ -77,19 +76,14 @@ fun StartAnExercise() {
                 text ="Exercise 4",
                 fontSize = 30.sp,
                 color = Color.Magenta,
-                modifier=Modifier.clickable{  navController.navigate("Exercise1Page")},
+                modifier=Modifier.clickable{ navController.navigate(Screens.ExercisePage4.screen) },
                 textAlign = TextAlign.Start
 
 
-            )//TODO:Include navHost logic
-            /*NavHost(navController = navController, startDestination = Screens.StartAnExercise.screen) {
+            )
 
-                  //  composable(Screens.Activites.screen){ Exercise1() }
-                  //  composable(Screens.Activites.screen){ Exercise2() }
-                  //  composable(Screens.Activites.screen){ Exercise3() }
-                  //  composable(Screens.Activites.screen){ Exercise4() }
 
-            }*/
+
 
 
 
@@ -99,9 +93,12 @@ fun StartAnExercise() {
 
 
     }
+
 }
-@Preview
 @Composable
-fun StartAnExercisePreview() {
-    StartAnExercise()
+fun initiateStartAnExercise(navController: NavController){
+
+    StartAnExercise(Modifier,navController)
+
+
 }
