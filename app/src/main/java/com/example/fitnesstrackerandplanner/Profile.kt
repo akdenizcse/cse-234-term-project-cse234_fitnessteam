@@ -129,4 +129,5 @@ fun Profile() {
 @Composable
 fun ProfilePreview() {
     Profile()
+
 }
