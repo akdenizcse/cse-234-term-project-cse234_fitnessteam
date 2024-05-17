@@ -48,6 +48,7 @@ fun StartAnExercise(modifier:Modifier=Modifier,navController:NavController) {
                 .align(Alignment.Center),
             horizontalAlignment =  Alignment.Start,
 
+
         ){
             item {
                 Text(

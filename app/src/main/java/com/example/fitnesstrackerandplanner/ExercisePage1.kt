@@ -24,6 +24,61 @@ fun ExercisePage1(){
     }
 }
 
+@Composable
+fun ExercisePage2(){
+    Box(
+        modifier= Modifier
+            .fillMaxSize()
+            .background(color = Color.White)
+    ){
+        Text(text="ExercisePage2",modifier=Modifier.align(Alignment.Center),fontSize=45.sp)
+    }
+}
+@Composable
+fun ExercisePage3(){
+    Box(
+        modifier= Modifier
+            .fillMaxSize()
+            .background(color = Color.White)
+    ){
+        Text(text="ExercisePage3",modifier=Modifier.align(Alignment.Center),fontSize=45.sp)
+    }
+}
+@Composable
+fun ExercisePage4(){
+    Box(
+        modifier= Modifier
+            .fillMaxSize()
+            .background(color = Color.White)
+    ){
+        Text(text="ExercisePage4",modifier=Modifier.align(Alignment.Center),fontSize=45.sp)
+    }
+}
+
+@Preview
+@Composable
+fun ExercisePage4Preview(){
+    FitnessTrackerAndPlannerTheme {
+        ExercisePage4()
+    }
+}
+
+@Preview
+@Composable
+fun ExercisePage3Preview(){
+    FitnessTrackerAndPlannerTheme {
+        ExercisePage3()
+    }
+}
+
+@Preview
+@Composable
+fun ExercisePage2Preview(){
+    FitnessTrackerAndPlannerTheme {
+        ExercisePage2()
+    }
+}
+
 @Preview
 @Composable
 fun ExercisePage1Preview(){
