@@ -36,6 +36,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.fitnesstrackerandplanner.ui.theme.LimeGreen
 import com.example.fitnesstrackerandplanner.ui.theme.Pink40
 import com.example.fitnesstrackerandplanner.ui.theme.PurpleGrey40
 
@@ -65,7 +66,7 @@ fun BottomAppBar(){
 
         bottomBar = {
             NavigationBar( // BottomAppBar()
-                containerColor = Pink80,
+                containerColor = LimeGreen,
                 ){
                 IconButton(
                     onClick = {

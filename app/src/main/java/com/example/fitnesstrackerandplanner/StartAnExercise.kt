@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -41,48 +42,61 @@ fun StartAnExercise(modifier:Modifier=Modifier,navController:NavController) {
                 .align(Alignment.TopEnd)
                 )
 */
-        Column(verticalArrangement = Arrangement.spacedBy(15.dp),
+        LazyColumn(verticalArrangement = Arrangement.spacedBy(15.dp),
             modifier = Modifier
                 .fillMaxSize()
                 .align(Alignment.Center),
             horizontalAlignment =  Alignment.Start,
+
         ){
-            Text(
-                text ="Exercise 1",
-                fontSize = 30.sp,
-                color = Color.Magenta,
-                modifier=Modifier.clickable{ navController.navigate(Screens.ExercisePage1.screen)},
-                textAlign = TextAlign.Start
+            item {
+                Text(
+                    text = "Exercise 1",
+                    fontSize = 30.sp,
+                    color = Color.Magenta,
+                    modifier = Modifier.clickable { navController.navigate(Screens.ExercisePage1.screen) },
+                    textAlign = TextAlign.Start
 
-            )
-            Text(
-                text ="Exercise 2",
-                fontSize = 30.sp,
-                color = Color.Magenta,
-                modifier=Modifier.clickable{ navController.navigate(Screens.ExercisePage2.screen) },
-                textAlign = TextAlign.Start
-
-            )
-            Text(
-                text ="Exercise 3",
-                fontSize = 30.sp,
-                color = Color.Magenta,
-                modifier=Modifier.clickable{ navController.navigate(Screens.ExercisePage3.screen) },
-                textAlign = TextAlign.Start
+                )
+            }
 
 
-            )
-            Text(
-                text ="Exercise 4",
-                fontSize = 30.sp,
-                color = Color.Magenta,
-                modifier=Modifier.clickable{ navController.navigate(Screens.ExercisePage4.screen) },
-                textAlign = TextAlign.Start
+            item {
+                Text(
+                    text = "Exercise 2",
+                    fontSize = 30.sp,
+                    color = Color.Magenta,
+                    modifier = Modifier.clickable { navController.navigate(Screens.ExercisePage2.screen) },
+                    textAlign = TextAlign.Start
+                )
+            }
 
-
-            )
-
-
+            item {
+                Text(
+                    text = "Exercise 3",
+                    fontSize = 30.sp,
+                    color = Color.Magenta,
+                    modifier = Modifier.clickable { navController.navigate(Screens.ExercisePage3.screen) },
+                    textAlign = TextAlign.Start
+                )
+            }
+            item {
+                Text(
+                    text = "Exercise 4",
+                    fontSize = 30.sp,
+                    color = Color.Magenta,
+                    modifier = Modifier.clickable { navController.navigate(Screens.ExercisePage4.screen) },
+                    textAlign = TextAlign.Start
+                )
+            }
+            item{
+                Text(
+                    text = "Exercise 5",
+                    fontSize = 30.sp,
+                    color = Color.Magenta,
+                    modifier = Modifier.clickable { navController.navigate(Screens.ExercisePage4.screen) },
+                    textAlign = TextAlign.Start
+                )
 
 
 
@@ -92,8 +106,9 @@ fun StartAnExercise(modifier:Modifier=Modifier,navController:NavController) {
 
 
 
-    }
+        }
 
+    }
 }
 @Composable
 fun initiateStartAnExercise(navController: NavController){
