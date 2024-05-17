@@ -16,6 +16,14 @@ import com.example.fitnesstrackerandplanner.ui.theme.PurpleGrey40
 
 @Composable
 fun Goals() {
+    //TODO:Saate göre karşılama olacak
+    //TODO: Bugün yapacağı aktiviteleri checkbox ile seçecek
+    //TODO:Seçtikten sonra GO ekranında koyduğu egzersizler gözükecek
+    //TODO:Aşağıda start tuşu ile başlayacak
+    //TODO:Başladıktan sonra ise kalori yakma vs database'e kaydedilecek
+    //TODO:Sonra bizim tanımladığımız bir puan ile günlük aktivite skoru verilecek
+
+
     Box(
         modifier = Modifier
             .fillMaxSize()
