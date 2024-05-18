@@ -66,7 +66,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun BottomAppBar(db: SQLiteDatabase?,navigationController:NavHostController){
     val context= LocalContext.current
-    var currentRoute by remember{ mutableStateOf("")}
+    var currentRoute by remember{ mutableStateOf(Screens.LoginPage.screen)}
 
     val selected=remember{
         mutableStateOf(Icons.Default.Home)
