@@ -1,5 +1,6 @@
 package com.example.fitnesstrackerandplanner
 
+import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -33,6 +34,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -44,11 +46,16 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
+        val dbHelper by lazy{ DatabaseHelper(this)}
+        val db = dbHelper.writableDatabase
+
         setContent {
+            val navigationController= rememberNavController()
+
             FitnessTrackerAndPlannerTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    BottomAppBar()
+                    BottomAppBar(db,navigationController)
                 }
             }
         }
@@ -56,8 +63,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun BottomAppBar(){
-    val navigationController= rememberNavController()
+fun BottomAppBar(db: SQLiteDatabase?,navigationController:NavHostController){
     val context= LocalContext.current
     val selected=remember{
         mutableStateOf(Icons.Default.Home)
@@ -150,7 +156,7 @@ fun BottomAppBar(){
                 IconButton(
                     onClick = {
                         selected.value=Icons.Default.Favorite
-                        navigationController.navigate(Screens.Activites.screen){
+                        navigationController.navigate(Screens.Activities.screen){
                             popUpTo(0)
                         }
                     },
@@ -207,28 +213,21 @@ fun BottomAppBar(){
 
     ) {paddingValues ->
         NavHost(navController=navigationController,
-            startDestination=Screens.Home.screen,
+            startDestination=Screens.LoginPage.screen,
             modifier=Modifier.padding(paddingValues)){
-            composable(Screens.Activites.screen){ Activities() }
-            composable(Screens.Home.screen){Home()}
-            composable(Screens.Goals.screen){Goals()}
-            composable(Screens.Profile.screen){ Profile() }
-            composable(Screens.StartAnExercise.screen){ initiateStartAnExercise(navController=navigationController) }
-            composable(Screens.ExercisePage1.screen){ ExercisePage1() }
-            composable(Screens.ExercisePage2.screen){ ExercisePage2() }
-            composable(Screens.ExercisePage3.screen){ ExercisePage3()  }
-            composable(Screens.ExercisePage4.screen){  ExercisePage4()  }
-
+            composable(Screens.LoginPage.screen){LoginPage(db=db,navigationController=navigationController)}
+            composable(Screens.Activities.screen) { Activities(db) }
+            composable(Screens.Home.screen) { Home(db) }
+            composable(Screens.Goals.screen) { Goals(db) }
+            composable(Screens.Profile.screen) { Profile(db) }
+            composable(Screens.StartAnExercise.screen) { initiateStartAnExercise(db, navController = navigationController) }
+            composable(Screens.ExercisePage1.screen) { ExercisePage1(db) }
+            composable(Screens.ExercisePage2.screen) { ExercisePage2(db) }
+            composable(Screens.ExercisePage3.screen) { ExercisePage3(db) }
+            composable(Screens.ExercisePage4.screen) { ExercisePage4(db) }
+            composable(Screens.SignInPage.screen){ SignIn(db = db, navigationController = navigationController)}
         }
 
-    }
-}
-
-@Preview
-@Composable
-fun BottomBarPreview(){
-    FitnessTrackerAndPlannerTheme {
-        BottomAppBar()
     }
 }
 

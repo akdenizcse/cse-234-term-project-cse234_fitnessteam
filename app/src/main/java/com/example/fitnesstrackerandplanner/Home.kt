@@ -1,5 +1,6 @@
 package com.example.fitnesstrackerandplanner
 
+import android.database.sqlite.SQLiteDatabase
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -20,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fitnesstrackerandplanner.ui.theme.*
 @Composable
-fun Home() {
+fun Home(db: SQLiteDatabase?) {
     var bluetooth_logo = painterResource(id = R.drawable.bluetooth_wave_svgrepo_com)
     Box(
         modifier = Modifier
@@ -58,5 +59,5 @@ fun Home() {
 @Preview
 @Composable
 fun HomePreview() {
-    Home()
+    Home(null)
 }

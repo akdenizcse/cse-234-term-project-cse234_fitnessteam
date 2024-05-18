@@ -1,7 +1,6 @@
 package com.example.fitnesstrackerandplanner
 
 
-
 enum class WeightClassification(){
     Underweight,
     Normal,
