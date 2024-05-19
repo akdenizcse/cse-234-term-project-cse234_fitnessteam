@@ -47,7 +47,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         installSplashScreen()
         val dbHelper by lazy{ DatabaseHelper(this)}
-        val db = dbHelper.writableDatabase
+        val db by lazy { dbHelper.writableDatabase}
 
         setContent {
             val navigationController= rememberNavController()
@@ -56,7 +56,7 @@ class MainActivity : ComponentActivity() {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
 
-                    BottomAppBar(db,navigationController)
+                    BottomAppBar(db,navigationController,dbHelper)
                 }
             }
         }
@@ -64,7 +64,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun BottomAppBar(db: SQLiteDatabase?,navigationController:NavHostController){
+fun BottomAppBar(db: SQLiteDatabase,navigationController:NavHostController,dbHelper: DatabaseHelper){
     val context= LocalContext.current
     var currentRoute by remember{ mutableStateOf(Screens.LoginPage.screen)}
     val selected=remember{
@@ -239,7 +239,7 @@ fun BottomAppBar(db: SQLiteDatabase?,navigationController:NavHostController){
             composable(Screens.ExercisePage2.screen) { ExercisePage2(db);currentRoute=Screens.ExercisePage2.screen  }
             composable(Screens.ExercisePage3.screen) { ExercisePage3(db);currentRoute=Screens.ExercisePage3.screen  }
             composable(Screens.ExercisePage4.screen) { ExercisePage4(db) ;currentRoute=Screens.ExercisePage4.screen }
-            composable(Screens.SignInPage.screen){ SignIn(db = db, navigationController = navigationController);currentRoute=Screens.SignInPage.screen }
+            composable(Screens.SignInPage.screen){ SignUp(db = db, navigationController = navigationController,dbHelper);currentRoute=Screens.SignInPage.screen }
         }
 
     }
