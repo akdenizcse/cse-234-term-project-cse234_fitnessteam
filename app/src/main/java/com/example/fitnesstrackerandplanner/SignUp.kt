@@ -40,6 +40,7 @@ fun SignUp(db:SQLiteDatabase,navigationController:NavHostController,dbHelper: Da
     var user_name by remember { mutableStateOf("") }
     var password by remember{ mutableStateOf("") }
     val thisContext = LocalContext.current
+    val sharedPrefManager by lazy{SharedPrefManager(thisContext)}
 
     Surface(color = PurpleGrey40, modifier = Modifier.fillMaxSize()){
         Column(modifier= Modifier, horizontalAlignment = Alignment.CenterHorizontally,
@@ -86,6 +87,7 @@ fun SignUp(db:SQLiteDatabase,navigationController:NavHostController,dbHelper: Da
                 onClick = {
                    val result=dbHelper.addUser(db=db, context = thisContext,firstName=first_name,lastName=last_name,email=email,userName=user_name,password=password)
                     if(result==0) {
+                        sharedPrefManager.saveCurrentUser(user_name)
                         navigationController.navigate(Screens.Home.screen)
                     }
                     else{
