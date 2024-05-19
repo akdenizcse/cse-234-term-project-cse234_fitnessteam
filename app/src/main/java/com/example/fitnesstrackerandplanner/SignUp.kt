@@ -88,11 +88,14 @@ fun SignUp(db:SQLiteDatabase,navigationController:NavHostController,dbHelper: Da
                     if(result==0) {
                         navigationController.navigate(Screens.Home.screen)
                     }
+                    else{
+
+                    }
                 },colors= ButtonDefaults.buttonColors(Beige),
                 modifier= Modifier
                     .padding(15.dp))
             {
-                Text("SIGN IN",
+                Text("SIGN UP",
                     fontWeight = FontWeight.ExtraBold,
                     fontSize = 25.sp,
                     modifier = Modifier

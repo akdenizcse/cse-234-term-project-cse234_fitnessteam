@@ -232,7 +232,7 @@ fun BottomAppBar(db: SQLiteDatabase,navigationController:NavHostController,dbHel
             composable(Screens.LoginPage.screen){LoginPage(db=db,navigationController=navigationController);currentRoute=Screens.LoginPage.screen}
             composable(Screens.Activities.screen) { Activities(db);currentRoute=Screens.Activities.screen }
             composable(Screens.Home.screen) { Home(db);currentRoute=Screens.Home.screen  }
-            composable(Screens.Goals.screen) { Goals(db);currentRoute=Screens.Goals.screen  }
+            composable(Screens.Goals.screen) { Goals(db,dbHelper);currentRoute=Screens.Goals.screen  }
             composable(Screens.Profile.screen) { Profile(db) ;currentRoute=Screens.Profile.screen }
             composable(Screens.StartAnExercise.screen) { initiateStartAnExercise(db, navController = navigationController) ;currentRoute=Screens.StartAnExercise.screen }
             composable(Screens.ExercisePage1.screen) { ExercisePage1(db);currentRoute=Screens.ExercisePage1.screen  }

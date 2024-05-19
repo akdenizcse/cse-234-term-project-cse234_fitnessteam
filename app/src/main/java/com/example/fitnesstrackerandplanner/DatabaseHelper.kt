@@ -14,7 +14,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
 
     companion object {
         private const val DATABASE_NAME = "FitnessApp.db"
-        private const val DATABASE_VERSION = 2 //MUST BE UPDATED AFTER EVERY CHANGE
+        private const val DATABASE_VERSION = 3 //MUST BE UPDATED AFTER EVERY CHANGE
 
         // User Table
         const val TABLE_USER = "user"
@@ -100,20 +100,20 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         }
     }
 
-     /*   fun getUser(db: SQLiteDatabase, search: String): String? {
-            val searchStr = "%$search%"
-            val cursor = db.rawQuery(
-                "SELECT ${DatabaseHelper.COLUMN_USER_NAME} FROM ${DatabaseHelper.TABLE_USER} WHERE ${DatabaseHelper.COLUMN_USER_FIRST_NAME} LIKE ? OR ${DatabaseHelper.COLUMN_USER_LAST_NAME} LIKE ?",
-                arrayOf(searchStr, searchStr)
-            )
-            var userName: String? = null
-            if (cursor.moveToFirst()) {
-                userName = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_USER_NAME))
-            }
-            cursor.close()
-            return userName
+    fun checkUser(db: SQLiteDatabase?, userName: String, password: String): Boolean {
+        val cursor = db?.query(
+            DatabaseHelper.TABLE_USER, // The table to query
+            arrayOf(DatabaseHelper.COLUMN_USER_NAME, DatabaseHelper.COLUMN_USER_PASSWORD), // The columns to return
+            "${DatabaseHelper.COLUMN_USER_NAME} = ? AND ${DatabaseHelper.COLUMN_USER_PASSWORD} = ?", // The columns for the WHERE clause
+            arrayOf(userName, password), // The values for the WHERE clause
+            null, // don't group the rows
+            null, // don't filter by row groups
+            null // don't sort the rows
+        )
 
-        }*/
-
-
+        val isValidUser = cursor?.moveToFirst() == true
+        cursor?.close()
+        return isValidUser
+    }
 }
+

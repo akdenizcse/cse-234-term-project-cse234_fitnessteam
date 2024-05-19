@@ -32,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontWeight
@@ -46,7 +47,7 @@ import com.example.fitnesstrackerandplanner.ui.theme.PurpleGrey40
 import com.example.fitnesstrackerandplanner.ui.theme.SurfaceGreen
 
 @Composable
-fun Goals(db: SQLiteDatabase?) {
+fun Goals(db: SQLiteDatabase?,dbHelper:DatabaseHelper) {
     //TODO:Saate göre karşılama olacak
     //TODO: Bugün yapacağı aktiviteleri checkbox ile seçecek
     //TODO:Seçtikten sonra GO ekranında koyduğu egzersizler gözükecek
@@ -54,10 +55,12 @@ fun Goals(db: SQLiteDatabase?) {
     //TODO:Başladıktan sonra ise kalori yakma vs database'e kaydedilecek
     //TODO:Sonra bizim tanımladığımız bir puan ile günlük aktivite skoru verilecek
 
-
     val hour by lazy{ Calendar.getInstance().get(Calendar.HOUR_OF_DAY) }
+    val context= LocalContext.current
+    val sharedPrefManager by lazy{SharedPrefManager(context)}
+    val userName=sharedPrefManager.getCurrentUser()
     val isDayTime:Boolean= hour in 6..18
-    val greeting:String=if(isDayTime)"Good Morning!" else "Good Evening!"
+    val greeting:String=if(isDayTime)"Good Morning, $userName!" else "Good Evening, $userName!"
     val icon= if(isDayTime) painterResource(id = R.drawable.icons8_sunny_48)
             else painterResource(id = R.drawable.icons8_moon_48)
 
@@ -93,16 +96,6 @@ fun listItem(name:String){
                     Text(text=name, fontWeight =FontWeight.ExtraBold  )
 
                 }
-                Button(onClick = { /*TODO*/ },
-                    colors= ButtonDefaults.buttonColors(Color.DarkGray),
-                    modifier=Modifier
-                        .size(width=75.dp,height=35.dp)
-                        .absoluteOffset(x=15.dp,y= (-20).dp)
-                )
-                {
-                    Text(text="INFO", fontSize = 10.sp)
-
-                }
 
         }
 
@@ -125,7 +118,7 @@ fun RecyclerView(names:List<String> =List(10){"$it"},greetingMessage:String,icon
                 Row {
                     Text(
                         text = "$greetingMessage",
-                        fontSize = 35.sp,
+                        fontSize = 25.sp,
                         modifier=Modifier.weight(3f),
                         color=Color.White,
                         fontWeight = FontWeight.ExtraBold

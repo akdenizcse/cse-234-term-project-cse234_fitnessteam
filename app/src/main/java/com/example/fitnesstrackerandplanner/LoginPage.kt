@@ -1,6 +1,7 @@
 package com.example.fitnesstrackerandplanner
 
 import android.database.sqlite.SQLiteDatabase
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -50,6 +51,8 @@ fun LoginPage(navigationController: NavHostController, db: SQLiteDatabase?){
     var password by remember{mutableStateOf("")}
     var loginError by remember { mutableStateOf(false) }
     val currentContext= LocalContext.current
+    val dbHelper by lazy{DatabaseHelper(currentContext)}
+    val sharedPrefManager by lazy{SharedPrefManager(currentContext)}
     Surface(color = PurpleGrey40, modifier = Modifier.fillMaxSize()){
         Column(modifier=Modifier, horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center) {
@@ -84,14 +87,14 @@ fun LoginPage(navigationController: NavHostController, db: SQLiteDatabase?){
 
             OutlinedButton(
                 onClick ={
-                    if(db!=null){
-                   // if(isValidLogin(db,user_name,password)) {
+                      val result= dbHelper.checkUser(db,user_name,password)
+                       if(result) { sharedPrefManager.saveCurrentUser(user_name)
                         navigationController.navigate(Screens.Home.screen)
-                    //}
-                    //else{
-                      //  loginError = true
-                    //}
-                }
+                    }
+                    else{
+                    Toast.makeText(currentContext,"Couldn't find account",Toast.LENGTH_SHORT).show()
+                    Log.e("UserCreation","Could not find user")
+                    }
                          }
                 ,colors=ButtonDefaults.buttonColors(Beige),
                 modifier=Modifier
@@ -120,26 +123,4 @@ fun LoginPage(navigationController: NavHostController, db: SQLiteDatabase?){
 
 
 }
-fun isValidLogin(db: SQLiteDatabase?, username: String, password: String): Boolean {
-    if (db == null) return false
-
-    val projection = arrayOf(DatabaseHelper.COLUMN_USER_NAME)
-    val selection = "${DatabaseHelper.COLUMN_USER_NAME} = ? AND ${DatabaseHelper.COLUMN_USER_PASSWORD} = ?"
-    val selectionArgs = arrayOf(username, password)
-
-    val cursor = db.query(
-        DatabaseHelper.TABLE_USER,
-        projection,
-        selection,
-        selectionArgs,
-        null,
-        null,
-        null
-    )
-
-    val isValid = cursor.count > 0
-    cursor.close()
-    return isValid
-}
-
 
