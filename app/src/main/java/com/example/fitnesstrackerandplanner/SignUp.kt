@@ -4,8 +4,6 @@ import android.content.ContentValues
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,7 +22,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -36,14 +33,15 @@ import com.example.fitnesstrackerandplanner.ui.theme.PurpleGrey40
 import java.util.Calendar
 
 @Composable
-fun SignIn(db:SQLiteDatabase?,navigationController:NavHostController){
-    var user_name by remember { mutableStateOf("") }
-    var password by remember{ mutableStateOf("") }
+fun SignUp(db:SQLiteDatabase,navigationController:NavHostController,dbHelper: DatabaseHelper){
     var first_name by remember { mutableStateOf("") }
     var last_name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
+    var user_name by remember { mutableStateOf("") }
+    var password by remember{ mutableStateOf("") }
     val thisContext = LocalContext.current
-    val time by lazy{ Calendar.getInstance().time}
+    val sharedPrefManager by lazy{SharedPrefManager(thisContext)}
+
     Surface(color = PurpleGrey40, modifier = Modifier.fillMaxSize()){
         Column(modifier= Modifier, horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center) {
@@ -87,27 +85,19 @@ fun SignIn(db:SQLiteDatabase?,navigationController:NavHostController){
             )
             OutlinedButton(
                 onClick = {
-                    // Insert user into the database
-                    db?.let { database ->
-                        val contentValues = ContentValues().apply {
-                            put(DatabaseHelper.COLUMN_USER_NAME, user_name)
-                            put(DatabaseHelper.COLUMN_USER_EMAIL, email)
-                            // Add other user details as needed
-                        }
-                        val newRowId = database.insert(DatabaseHelper.TABLE_USER, null, contentValues)
-                        if (newRowId != -1L) {
-                            Log.d("UserCreation", "@$time--User created successfully: $user_name")
-                            Toast.makeText(thisContext, "User added successfully!", Toast.LENGTH_SHORT).show()
-                        } else {
-                            Toast.makeText(thisContext, "Failed to add user!", Toast.LENGTH_SHORT).show()
-                        }
+                   val result=dbHelper.addUser(db=db, context = thisContext,firstName=first_name,lastName=last_name,email=email,userName=user_name,password=password)
+                    if(result==0) {
+                        sharedPrefManager.saveCurrentUser(user_name)
+                        navigationController.navigate(Screens.Home.screen)
                     }
-                    navigationController.navigate(Screens.Home.screen)
+                    else{
+
+                    }
                 },colors= ButtonDefaults.buttonColors(Beige),
                 modifier= Modifier
                     .padding(15.dp))
             {
-                Text("SIGN IN",
+                Text("SIGN UP",
                     fontWeight = FontWeight.ExtraBold,
                     fontSize = 25.sp,
                     modifier = Modifier
