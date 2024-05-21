@@ -32,7 +32,7 @@ import androidx.navigation.NavHostController
 import com.example.fitnesstrackerandplanner.ui.theme.Beige
 import com.example.fitnesstrackerandplanner.ui.theme.PurpleGrey40
 import java.util.Calendar
-
+//dont let to user to sign up with same email adddress and redirect to login page
 @Composable
 fun SignUp(db:SQLiteDatabase,navigationController:NavHostController,dbHelper: DatabaseHelper){
     var first_name by remember { mutableStateOf("") }

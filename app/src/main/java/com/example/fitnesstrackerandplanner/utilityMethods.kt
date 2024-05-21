@@ -1,5 +1,13 @@
 package com.example.fitnesstrackerandplanner
 
+import java.time.Duration
+
+//TODO: Implement methods that are might be used in anywhere in the app.
+//fun calculateBMI(weight:Double,height:Double){}
+// fun caloriesBurned(){}
+// and such ...
+
+
 
 enum class WeightClassification(){
     Underweight,
@@ -7,10 +15,8 @@ enum class WeightClassification(){
     Overweight,
     Obese,
     MorbidObese()
-
-
-
 }
+
 class utilityMethods {
 companion object{
     fun calculateBMI(weightKg:Short,heightCm:Short):Float{
@@ -32,14 +38,13 @@ companion object{
 
         }
         return (50+ 2.3f*((heightCm/2.54f)-60))
+    }
+    fun calculateHowManyCaloriesBurned(metValue:Double,weightKg:Double,durationMin: Double):Double{
+        val caloriesBurnedPerMin=metValue*weightKg*0.0175
+        return caloriesBurnedPerMin*durationMin
+    }
 
     }
-    }
-
-//TODO: Implement methods that are might be used in anywhere in the app.
-    //fun calculateBMI(weight:Double,height:Double){}
-   // fun caloriesBurned(){}
-    // and such ...
 
 
 

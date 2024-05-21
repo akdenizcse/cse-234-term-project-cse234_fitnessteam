@@ -73,6 +73,7 @@ fun LoginPage(navigationController: NavHostController, db: SQLiteDatabase?){
                 modifier = Modifier,
                 maxLines = 1,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+
                 visualTransformation= PasswordVisualTransformation()
 
             )
