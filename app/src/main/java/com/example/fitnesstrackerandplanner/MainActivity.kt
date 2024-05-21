@@ -158,7 +158,7 @@ fun BottomAppBar(db: SQLiteDatabase,navigationController:NavHostController,dbHel
                                 navigationController.navigate(Screens.StartAnExercise.screen) {
                                     popUpTo(0)
                                 }
-                            }
+                            } //testttt
                         ) {
                             Icon(
                                 Icons.Default.Add,
