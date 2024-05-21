@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -81,7 +82,9 @@ fun SignUp(db:SQLiteDatabase,navigationController:NavHostController,dbHelper: Da
                 label={ Text("Password") },
                 modifier = Modifier,
                 maxLines = 1,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                visualTransformation= PasswordVisualTransformation()
+
             )
             OutlinedButton(
                 onClick = {
