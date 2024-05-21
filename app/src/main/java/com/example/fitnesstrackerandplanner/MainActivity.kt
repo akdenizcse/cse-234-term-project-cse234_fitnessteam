@@ -190,7 +190,6 @@ fun BottomAppBar(db: SQLiteDatabase,navigationController:NavHostController,dbHel
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxSize()
-
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Icon(
