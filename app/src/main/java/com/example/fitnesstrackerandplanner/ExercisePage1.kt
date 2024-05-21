@@ -1,5 +1,6 @@
 package com.example.fitnesstrackerandplanner
 
+import android.database.sqlite.SQLiteDatabase
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,7 +15,7 @@ import androidx.compose.ui.unit.sp
 import com.example.fitnesstrackerandplanner.ui.theme.FitnessTrackerAndPlannerTheme
 
 @Composable
-fun ExercisePage1(){
+fun ExercisePage1(db:SQLiteDatabase?){
     Box(
        modifier= Modifier
            .fillMaxSize()
@@ -25,7 +26,7 @@ fun ExercisePage1(){
 }
 
 @Composable
-fun ExercisePage2(){
+fun ExercisePage2(db:SQLiteDatabase?){
     Box(
         modifier= Modifier
             .fillMaxSize()
@@ -35,7 +36,7 @@ fun ExercisePage2(){
     }
 }
 @Composable
-fun ExercisePage3(){
+fun ExercisePage3(db:SQLiteDatabase?){
     Box(
         modifier= Modifier
             .fillMaxSize()
@@ -45,7 +46,7 @@ fun ExercisePage3(){
     }
 }
 @Composable
-fun ExercisePage4(){
+fun ExercisePage4(db:SQLiteDatabase?){
     Box(
         modifier= Modifier
             .fillMaxSize()
@@ -59,7 +60,7 @@ fun ExercisePage4(){
 @Composable
 fun ExercisePage4Preview(){
     FitnessTrackerAndPlannerTheme {
-        ExercisePage4()
+        ExercisePage4(null)
     }
 }
 
@@ -67,7 +68,7 @@ fun ExercisePage4Preview(){
 @Composable
 fun ExercisePage3Preview(){
     FitnessTrackerAndPlannerTheme {
-        ExercisePage3()
+        ExercisePage3(null)
     }
 }
 
@@ -75,7 +76,7 @@ fun ExercisePage3Preview(){
 @Composable
 fun ExercisePage2Preview(){
     FitnessTrackerAndPlannerTheme {
-        ExercisePage2()
+        ExercisePage2(null)
     }
 }
 
@@ -83,6 +84,6 @@ fun ExercisePage2Preview(){
 @Composable
 fun ExercisePage1Preview(){
     FitnessTrackerAndPlannerTheme {
-        ExercisePage1()
+        ExercisePage1(null)
     }
 }

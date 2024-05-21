@@ -1,7 +1,7 @@
 package com.example.fitnesstrackerandplanner
-
 import android.media.Image
 import androidx.compose.foundation.Image
+import android.database.sqlite.SQLiteDatabase
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -34,7 +34,7 @@ import com.example.fitnesstrackerandplanner.utilityMethods
 import androidx.compose.material.icons.Icons
 
 @Composable
-fun Profile() {
+fun Profile(db: SQLiteDatabase?) {
 
     Box(
         modifier = Modifier
@@ -128,6 +128,6 @@ fun Profile() {
 @Preview
 @Composable
 fun ProfilePreview() {
-    Profile()
+    Profile(null)
 
 }

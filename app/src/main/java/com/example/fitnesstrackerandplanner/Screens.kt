@@ -7,10 +7,11 @@ package com.example.fitnesstrackerandplanner
 sealed class Screens(val screen:String) {
 
     data object Home:Screens("home")
-    data object Activites:Screens("activities")
+    data object Activities:Screens("activities")
     data object Goals:Screens("goals")
     data object Profile:Screens("profile")
     data object StartAnExercise:Screens("startanexercise")
+    data object SignInPage:Screens("signin")
     data object LoginPage:Screens("loginpage")
     data object ExercisePage1:Screens("exercisepage1")
     data object ExercisePage2:Screens("exercisepage2")

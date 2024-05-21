@@ -1,5 +1,6 @@
 package com.example.fitnesstrackerandplanner
 
+import android.database.sqlite.SQLiteDatabase
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -25,7 +26,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.fitnesstrackerandplanner.ui.theme.PurpleGrey40
 
 @Composable
-fun StartAnExercise(modifier:Modifier=Modifier,navController:NavController) {
+fun StartAnExercise(db:SQLiteDatabase?,modifier:Modifier=Modifier,navController:NavController) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -112,9 +113,9 @@ fun StartAnExercise(modifier:Modifier=Modifier,navController:NavController) {
     }
 }
 @Composable
-fun initiateStartAnExercise(navController: NavController){
+fun initiateStartAnExercise(db: SQLiteDatabase?, navController: NavController){
 
-    StartAnExercise(Modifier,navController)
+    StartAnExercise(db,Modifier,navController)
 
 
 }

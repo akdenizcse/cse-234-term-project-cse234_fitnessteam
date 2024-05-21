@@ -1,5 +1,6 @@
 package com.example.fitnesstrackerandplanner
 
+import android.database.sqlite.SQLiteDatabase
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,7 +16,7 @@ import androidx.compose.ui.unit.sp
 import com.example.fitnesstrackerandplanner.ui.theme.PurpleGrey40
 
 @Composable
-fun Activities() {
+fun Activities(db:SQLiteDatabase?) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -50,5 +51,5 @@ fun Activities() {
 @Preview
 @Composable
 fun ActivitiesPreview() {
-    Activities()
+    Activities(null)
 }

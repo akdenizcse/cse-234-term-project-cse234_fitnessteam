@@ -1,5 +1,6 @@
 package com.example.fitnesstrackerandplanner
 
+import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -33,6 +34,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -44,11 +46,17 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
+        val dbHelper by lazy{ DatabaseHelper(this)}
+        val db by lazy { dbHelper.writableDatabase}
+
         setContent {
+            val navigationController= rememberNavController()
+
             FitnessTrackerAndPlannerTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    BottomAppBar()
+
+                    BottomAppBar(db,navigationController,dbHelper)
                 }
             }
         }
@@ -56,179 +64,184 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun BottomAppBar(){
-    val navigationController= rememberNavController()
+fun BottomAppBar(db: SQLiteDatabase,navigationController:NavHostController,dbHelper: DatabaseHelper){
     val context= LocalContext.current
+    var currentRoute by remember{ mutableStateOf(Screens.LoginPage.screen)}
     val selected=remember{
         mutableStateOf(Icons.Default.Home)
     }
     Scaffold(
 
         bottomBar = {
-            NavigationBar( // BottomAppBar()
-                containerColor = LimeGreen,
-                ){
-                IconButton(
-                    onClick = {
-                              selected.value=Icons.Default.Home
-                              navigationController.navigate(Screens.Home.screen){
-                                  popUpTo(0)
-                              }
-                              },
-                    modifier= Modifier
-                        .weight(1f)
-                        .fillMaxSize()
-
+            if(currentRoute!=Screens.SignInPage.screen && currentRoute!=Screens.LoginPage.screen) {
+                NavigationBar(
+                    // BottomAppBar()
+                    containerColor = LimeGreen,
                 ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.Center) {
+                    IconButton(
+                        onClick = {
+                            selected.value = Icons.Default.Home
+                            navigationController.navigate(Screens.Home.screen) {
+                                popUpTo(0)
+                            }
+                        },
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxSize()
 
-                        Icon(
-                            imageVector = Icons.Default.Home,
-                            contentDescription = null,
-                            modifier = Modifier.size(26.dp),
-                            tint = if (selected.value == Icons.Default.Home) Color.White else Color.DarkGray
-                        )
-                        Text(text="Home",
-                            modifier=Modifier.fillMaxWidth(),
-                            textAlign= TextAlign.Center)
-                    }
-
-                }
-
-
-
-                IconButton(
-                    onClick = {
-                        selected.value=Icons.Default.Star
-                        navigationController.navigate(Screens.Goals.screen){
-                            popUpTo(0)
-                        }
-                    },
-                    modifier= Modifier
-                        .weight(1f)
-                        .fillMaxSize()
-
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-
-                    Icon(imageVector = Icons.Default.Star,contentDescription = null,modifier=Modifier.size(26.dp)
-                        ,tint=  if (selected.value==Icons.Default.Star) Color.White else Color.DarkGray
-                    )
-                        Text("Goals")
-
-                }
-                    }
-
-
-                val fabShape = RoundedCornerShape(50)
-                Box(modifier= Modifier
-                    .weight(1f)
-                    .padding(6.dp),
-                    contentAlignment = Alignment.TopEnd
-
-                ){
-                    FloatingActionButton(
-                        contentColor = PurpleGrey40,
-                        containerColor = Color.White,
-                        elevation= FloatingActionButtonDefaults.elevation(35.dp),
-                        shape=fabShape,
-                        onClick = { Toast.makeText(context,"GO!",Toast.LENGTH_SHORT).show()
-                        navigationController.navigate(Screens.StartAnExercise.screen){
-                            popUpTo(0)
-                        }
-                        }
                     ) {
-                        Icon(Icons.Default.Add,
-                            contentDescription=null,
-                            tint= if (selected.value==Icons.Default.Add) Pink40 else PurpleGrey40)
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.Center
+                        ) {
 
-                    }
-
-                }
-                IconButton(
-                    onClick = {
-                        selected.value=Icons.Default.Favorite
-                        navigationController.navigate(Screens.Activites.screen){
-                            popUpTo(0)
+                            Icon(
+                                imageVector = Icons.Default.Home,
+                                contentDescription = null,
+                                modifier = Modifier.size(26.dp),
+                                tint = if (selected.value == Icons.Default.Home) Color.White else Color.DarkGray
+                            )
+                            Text(
+                                text = "Home",
+                                modifier = Modifier.fillMaxWidth(),
+                                textAlign = TextAlign.Center
+                            )
                         }
-                    },
-                    modifier= Modifier
-                        .weight(1f)
-                        .fillMaxSize()
 
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(
-                            imageVector = Icons.Default.Favorite,
-                            contentDescription = null,
-                            modifier = Modifier.size(26.dp),
-                            tint = if (selected.value == Icons.Default.Favorite) Color.White else Color.DarkGray
-                        )
-                        Text(text="Activities",fontSize=15.sp)
                     }
 
-                }
 
 
+                    IconButton(
+                        onClick = {
+                            selected.value = Icons.Default.Star
+                            navigationController.navigate(Screens.Goals.screen) {
+                                popUpTo(0)
+                            }
+                        },
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxSize()
 
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
-                IconButton(
-                    onClick = {
-                        selected.value=Icons.Default.AccountCircle
-                        navigationController.navigate(Screens.Profile.screen){
-                            popUpTo(0)
+                            Icon(
+                                imageVector = Icons.Default.Star,
+                                contentDescription = null,
+                                modifier = Modifier.size(26.dp),
+                                tint = if (selected.value == Icons.Default.Star) Color.White else Color.DarkGray
+                            )
+                            Text("Goals")
+
                         }
-                    },
-                    modifier= Modifier
-                        .weight(1f)
-                        .fillMaxSize()
+                    }
 
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(
-                            imageVector = Icons.Default.AccountCircle,
-                            contentDescription = null,
-                            modifier = Modifier.size(26.dp),
-                            tint = if (selected.value == Icons.Default.AccountCircle) Color.White else Color.DarkGray
-                        )
-                        Text(text="Profile")
+
+                    val fabShape = RoundedCornerShape(50)
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(6.dp),
+                        contentAlignment = Alignment.TopEnd
+
+                    ) {
+                        FloatingActionButton(
+                            contentColor = PurpleGrey40,
+                            containerColor = Color.White,
+                            elevation = FloatingActionButtonDefaults.elevation(35.dp),
+                            shape = fabShape,
+                            onClick = {
+                                Toast.makeText(context, "GO!", Toast.LENGTH_SHORT).show()
+                                navigationController.navigate(Screens.StartAnExercise.screen) {
+                                    popUpTo(0)
+                                }
+                            }
+                        ) {
+                            Icon(
+                                Icons.Default.Add,
+                                contentDescription = null,
+                                tint = if (selected.value == Icons.Default.Add) Pink40 else PurpleGrey40
+                            )
+
+                        }
+
+                    }
+                    IconButton(
+                        onClick = {
+                            selected.value = Icons.Default.Favorite
+                            navigationController.navigate(Screens.Activities.screen) {
+                                popUpTo(0)
+                            }
+                        },
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxSize()
+
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Icon(
+                                imageVector = Icons.Default.Favorite,
+                                contentDescription = null,
+                                modifier = Modifier.size(26.dp),
+                                tint = if (selected.value == Icons.Default.Favorite) Color.White else Color.DarkGray
+                            )
+                            Text(text = "Activities", fontSize = 15.sp)
+                        }
 
                     }
 
+
+
+
+                    IconButton(
+                        onClick = {
+                            selected.value = Icons.Default.AccountCircle
+                            navigationController.navigate(Screens.Profile.screen) {
+                                popUpTo(0)
+                            }
+                        },
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxSize()
+
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Icon(
+                                imageVector = Icons.Default.AccountCircle,
+                                contentDescription = null,
+                                modifier = Modifier.size(26.dp),
+                                tint = if (selected.value == Icons.Default.AccountCircle) Color.White else Color.DarkGray
+                            )
+                            Text(text = "Profile")
+
+                        }
+
+                    }
+
+
                 }
-
-
-
-
             }
         }
 
     ) {paddingValues ->
         NavHost(navController=navigationController,
-            startDestination=Screens.Home.screen,
+            startDestination=Screens.LoginPage.screen,
             modifier=Modifier.padding(paddingValues)){
-            composable(Screens.Activites.screen){ Activities() }
-            composable(Screens.Home.screen){Home()}
-            composable(Screens.Goals.screen){Goals()}
-            composable(Screens.Profile.screen){ Profile() }
-            composable(Screens.StartAnExercise.screen){ initiateStartAnExercise(navController=navigationController) }
-            composable(Screens.ExercisePage1.screen){ ExercisePage1() }
-            composable(Screens.ExercisePage2.screen){ ExercisePage2() }
-            composable(Screens.ExercisePage3.screen){ ExercisePage3()  }
-            composable(Screens.ExercisePage4.screen){  ExercisePage4()  }
-
+            composable(Screens.LoginPage.screen){LoginPage(db=db,navigationController=navigationController);currentRoute=Screens.LoginPage.screen}
+            composable(Screens.Activities.screen) { Activities(db);currentRoute=Screens.Activities.screen }
+            composable(Screens.Home.screen) { Home(db);currentRoute=Screens.Home.screen  }
+            composable(Screens.Goals.screen) { Goals(db,dbHelper);currentRoute=Screens.Goals.screen  }
+            composable(Screens.Profile.screen) { Profile(db) ;currentRoute=Screens.Profile.screen }
+            composable(Screens.StartAnExercise.screen) { initiateStartAnExercise(db, navController = navigationController) ;currentRoute=Screens.StartAnExercise.screen }
+            composable(Screens.ExercisePage1.screen) { ExercisePage1(db);currentRoute=Screens.ExercisePage1.screen  }
+            composable(Screens.ExercisePage2.screen) { ExercisePage2(db);currentRoute=Screens.ExercisePage2.screen  }
+            composable(Screens.ExercisePage3.screen) { ExercisePage3(db);currentRoute=Screens.ExercisePage3.screen  }
+            composable(Screens.ExercisePage4.screen) { ExercisePage4(db) ;currentRoute=Screens.ExercisePage4.screen }
+            composable(Screens.SignInPage.screen){ SignUp(db = db, navigationController = navigationController,dbHelper);currentRoute=Screens.SignInPage.screen }
         }
 
-    }
-}
-
-@Preview
-@Composable
-fun BottomBarPreview(){
-    FitnessTrackerAndPlannerTheme {
-        BottomAppBar()
     }
 }
 
