@@ -1,6 +1,7 @@
 package com.example.fitnesstrackerandplanner
 
 import android.database.sqlite.SQLiteDatabase
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -41,10 +42,20 @@ import androidx.navigation.compose.rememberNavController
 import com.example.fitnesstrackerandplanner.ui.theme.LimeGreen
 import com.example.fitnesstrackerandplanner.ui.theme.Pink40
 import com.example.fitnesstrackerandplanner.ui.theme.PurpleGrey40
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.health.connect.client.HealthConnectClient
+import androidx.health.connect.client.records.ExerciseSessionRecord
+import androidx.health.connect.client.time.TimeRangeFilter
+import java.time.Instant
+import java.time.temporal.ChronoUnit
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+       // setContentView(R.layout.content_main)
         installSplashScreen()
         val dbHelper by lazy{ DatabaseHelper(this)}
         val db by lazy { dbHelper.writableDatabase}
@@ -179,7 +190,6 @@ fun BottomAppBar(db: SQLiteDatabase,navigationController:NavHostController,dbHel
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxSize()
-
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Icon(
