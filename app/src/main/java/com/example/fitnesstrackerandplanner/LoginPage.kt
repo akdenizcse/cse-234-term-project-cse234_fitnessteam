@@ -72,7 +72,8 @@ fun LoginPage(navigationController: NavHostController, db: SQLiteDatabase?){
                 label={Text("Password")},
                 modifier = Modifier,
                 maxLines = 1,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password,),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+
                 visualTransformation= PasswordVisualTransformation()
 
             )
