@@ -43,9 +43,6 @@ import com.example.fitnesstrackerandplanner.ui.theme.LimeGreen
 import com.example.fitnesstrackerandplanner.ui.theme.Pink40
 import com.example.fitnesstrackerandplanner.ui.theme.PurpleGrey40
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.health.connect.client.HealthConnectClient
-import androidx.health.connect.client.records.ExerciseSessionRecord
-import androidx.health.connect.client.time.TimeRangeFilter
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import kotlinx.coroutines.CoroutineScope
