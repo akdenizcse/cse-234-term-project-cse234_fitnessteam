@@ -43,6 +43,7 @@ import androidx.navigation.compose.NavHost
 import com.example.fitnesstrackerandplanner.ui.theme.Beige
 import com.example.fitnesstrackerandplanner.ui.theme.FitnessTrackerAndPlannerTheme
 import com.example.fitnesstrackerandplanner.ui.theme.PurpleGrey40
+import com.example.fitnesstrackerandplanner.ui.theme.SurfaceGreen
 
 
 @Composable
@@ -54,7 +55,7 @@ fun LoginPage(navigationController: NavHostController, db: SQLiteDatabase?){
     val currentContext= LocalContext.current
     val dbHelper by lazy{DatabaseHelper(currentContext)}
     val sharedPrefManager by lazy{SharedPrefManager(currentContext)}
-    Surface(color = PurpleGrey40, modifier = Modifier.fillMaxSize()){
+    Surface(color = SurfaceGreen, modifier = Modifier.fillMaxSize()){
         Column(modifier=Modifier, horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center) {
             Image(

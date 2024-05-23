@@ -57,6 +57,7 @@ class MainActivity : ComponentActivity(){
         val dbHelper by lazy{ DatabaseHelper(this)}
         val db by lazy { dbHelper.writableDatabase}
 
+
         setContent {
             val navigationController= rememberNavController()
 

@@ -64,7 +64,7 @@ fun Goals(db: SQLiteDatabase?,dbHelper:DatabaseHelper) {
     val icon= if(isDayTime) painterResource(id = R.drawable.icons8_sunny_48)
             else painterResource(id = R.drawable.icons8_moon_48)
 
-    Surface(color= Color.DarkGray, modifier = Modifier.fillMaxSize()
+    Surface(color=SurfaceGreen, modifier = Modifier.fillMaxSize()
     ) {
         val exerciseTypes:List<String> = mutableListOf("Abs","Arm","Legs","Shoulders","Belly","Chest","Back","Neck")
         RecyclerView(exerciseTypes,greetingMessage = greeting,icon)

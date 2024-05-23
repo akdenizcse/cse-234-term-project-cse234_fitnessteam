@@ -22,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -31,6 +32,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.fitnesstrackerandplanner.ui.theme.Beige
 import com.example.fitnesstrackerandplanner.ui.theme.PurpleGrey40
+import com.example.fitnesstrackerandplanner.ui.theme.SurfaceGreen
 import java.util.Calendar
 //dont let to user to sign up with same email adddress and redirect to login page
 @Composable
@@ -39,11 +41,14 @@ fun SignUp(db:SQLiteDatabase,navigationController:NavHostController,dbHelper: Da
     var last_name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var user_name by remember { mutableStateOf("") }
-    var password by remember{ mutableStateOf("") }
+    var password1 by remember{ mutableStateOf("") }
+    var password2 by remember{ mutableStateOf("") }
+    var isBlankField by remember {mutableStateOf(false)}
+    var passwordsDoNotMatch by remember { mutableStateOf(false) }
     val thisContext = LocalContext.current
     val sharedPrefManager by lazy{SharedPrefManager(thisContext)}
-
-    Surface(color = PurpleGrey40, modifier = Modifier.fillMaxSize()){
+    var blank_field by remember{mutableStateOf("")}
+    Surface(color = SurfaceGreen, modifier = Modifier.fillMaxSize()){
         Column(modifier= Modifier, horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center) {
             OutlinedTextField(value =first_name , colors = TextFieldDefaults.colors(Beige),
@@ -77,8 +82,8 @@ fun SignUp(db:SQLiteDatabase,navigationController:NavHostController,dbHelper: Da
                 maxLines=1,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
             )
-            OutlinedTextField(value =password , colors = TextFieldDefaults.colors(Beige),
-                onValueChange ={password=it},
+            OutlinedTextField(value =password1 , colors = TextFieldDefaults.colors(Beige),
+                onValueChange ={password1=it},
                 label={ Text("Password") },
                 modifier = Modifier,
                 maxLines = 1,
@@ -86,16 +91,64 @@ fun SignUp(db:SQLiteDatabase,navigationController:NavHostController,dbHelper: Da
                 visualTransformation= PasswordVisualTransformation()
 
             )
+            OutlinedTextField(value =password2 , colors = TextFieldDefaults.colors(Beige),
+                onValueChange ={password2=it},
+                label={ Text("Password") },
+                modifier = Modifier,
+                maxLines = 1,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                visualTransformation= PasswordVisualTransformation()
+
+            )
+
+            if(isBlankField)
+                Text(text = "Can not leave the $blank_field field blank", color = Color.Red)
+            else if (passwordsDoNotMatch) {
+                 Text(text = "Passwords do not match", color = Color.Red)
+             }
+
+            val fields = mutableMapOf<String, String>()
+            fields["first name"] = first_name
+            fields["last name"] = last_name
+            fields["email"] = email
+            fields["username"] = user_name
+            fields["password"] = password1
+            fields["password"] = password2
             OutlinedButton(
                 onClick = {
-                   val result=dbHelper.addUser(db=db, context = thisContext,firstName=first_name,lastName=last_name,email=email,userName=user_name,password=password)
-                    if(result==0) {
-                        sharedPrefManager.saveCurrentUser(user_name)
-                        navigationController.navigate(Screens.Home.screen)
+                    if(!(password1.length==0 || password2.length==0||
+                        user_name.length==0||first_name.length==0||last_name.length==0)){
+                    if (password1==password2) {
+                        val result = dbHelper.addUser(
+                            db = db,
+                            context = thisContext,
+                            firstName = first_name,
+                            lastName = last_name,
+                            email = email,
+                            userName = user_name,
+                            password = password1
+
+                        )
+                        if (result == 0) {
+                            sharedPrefManager.saveCurrentUser(user_name)
+                            navigationController.navigate(Screens.Home.screen)
+                        } else {
+
+                        }
                     }
                     else{
-
+                        passwordsDoNotMatch=true
                     }
+                    }
+                    else{
+                        isBlankField=true
+                        for(s in fields){
+                            if(s.toPair().second.isEmpty())
+                                blank_field=s.toPair().first
+                        }
+                    }
+
+
                 },colors= ButtonDefaults.buttonColors(Beige),
                 modifier= Modifier
                     .padding(15.dp))
@@ -105,6 +158,7 @@ fun SignUp(db:SQLiteDatabase,navigationController:NavHostController,dbHelper: Da
                     fontSize = 25.sp,
                     modifier = Modifier
                 )
+
             }
 
 

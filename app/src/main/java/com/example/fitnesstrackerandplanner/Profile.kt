@@ -39,7 +39,7 @@ fun Profile(db: SQLiteDatabase?) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(PurpleGrey40)
+            .background(SurfaceGreen)
         ) {
 
         Column (modifier=Modifier.fillMaxSize(),
