@@ -41,9 +41,18 @@ import androidx.navigation.NavHost
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.example.fitnesstrackerandplanner.ui.theme.Beige
+import com.example.fitnesstrackerandplanner.ui.theme.ButtonGreenLayer
+import com.example.fitnesstrackerandplanner.ui.theme.DarkPeriwinkle
+import com.example.fitnesstrackerandplanner.ui.theme.DarkPurple
 import com.example.fitnesstrackerandplanner.ui.theme.FitnessTrackerAndPlannerTheme
+import com.example.fitnesstrackerandplanner.ui.theme.FocusedTextFieldGreen
+import com.example.fitnesstrackerandplanner.ui.theme.PastelPink
+import com.example.fitnesstrackerandplanner.ui.theme.Pink40
+import com.example.fitnesstrackerandplanner.ui.theme.Pink80
 import com.example.fitnesstrackerandplanner.ui.theme.PurpleGrey40
+import com.example.fitnesstrackerandplanner.ui.theme.RecyclerLayering
 import com.example.fitnesstrackerandplanner.ui.theme.SurfaceGreen
+import com.example.fitnesstrackerandplanner.ui.theme.UnfocusedTextFieldGreen
 
 
 @Composable
@@ -61,14 +70,18 @@ fun LoginPage(navigationController: NavHostController, db: SQLiteDatabase?){
             Image(
                 painter=img,contentDescription=null,modifier=Modifier.align(Alignment.CenterHorizontally)
             )
-            OutlinedTextField(value =user_name , colors = TextFieldDefaults.colors(Beige),
+            OutlinedTextField(value =user_name , colors = TextFieldDefaults.colors(
+                unfocusedContainerColor = UnfocusedTextFieldGreen,
+                focusedContainerColor = FocusedTextFieldGreen),
                 onValueChange ={user_name=it},
                 label={Text("Username")},
                 modifier = Modifier,
                 maxLines=1,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
             )
-            OutlinedTextField(value =password , colors = TextFieldDefaults.colors(Beige),
+            OutlinedTextField(value =password , colors = TextFieldDefaults.colors(
+                unfocusedContainerColor = UnfocusedTextFieldGreen,
+                focusedContainerColor = FocusedTextFieldGreen),
                 onValueChange ={password=it},
                 label={Text("Password")},
                 modifier = Modifier,
@@ -100,7 +113,7 @@ fun LoginPage(navigationController: NavHostController, db: SQLiteDatabase?){
                     Log.e("UserCreation","Could not find user")
                     }
                          }
-                ,colors=ButtonDefaults.buttonColors(Beige),
+                ,colors=ButtonDefaults.buttonColors(ButtonGreenLayer),
                 modifier=Modifier
                     .padding(15.dp))
             {
@@ -110,11 +123,10 @@ fun LoginPage(navigationController: NavHostController, db: SQLiteDatabase?){
                     modifier = Modifier)
             }
             Text(text="Not a member? Sign up!",
-                color= Color.Cyan,
+                color= DarkPeriwinkle,
                 fontWeight = FontWeight.Bold,
                 modifier=Modifier.clickable {
                     navigationController.navigate(Screens.SignInPage.screen){
-                        popUpTo(0)
                     }
                 }
                 )
