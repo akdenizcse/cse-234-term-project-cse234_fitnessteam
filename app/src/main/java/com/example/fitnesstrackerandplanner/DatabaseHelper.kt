@@ -99,6 +99,9 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
 
         }
     }
+    fun getDatabaseVer():Int{
+        return DATABASE_VERSION
+    }
 
     fun checkUser(db: SQLiteDatabase?, userName: String, password: String): Boolean {
         val cursor = db?.query(

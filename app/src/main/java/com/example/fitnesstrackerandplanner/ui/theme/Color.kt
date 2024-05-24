@@ -26,3 +26,4 @@ val ButtonPurple=Color(0Xff663966)
 val UnfocusedTextFieldGreen=Color(0Xff4b9140)
 val FocusedTextFieldGreen=Color(0xFF185906)
 val ButtonGreenLayer=Color(0XFFd5e251)
+val DarkRecyclerPurple=Color(0XFFdf7fdd) //TODO: Find a matching dark purple
