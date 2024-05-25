@@ -13,13 +13,14 @@ import androidx.compose.ui.input.pointer.PointerIcon.Companion.Text
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.example.fitnesstrackerandplanner.ui.theme.FitnessTrackerAndPlannerTheme
+import com.example.fitnesstrackerandplanner.ui.theme.SurfaceGreen
 
 @Composable
 fun ExercisePage1(db:SQLiteDatabase?){
     Box(
        modifier= Modifier
            .fillMaxSize()
-           .background(color = Color.White)
+           .background(color = SurfaceGreen)
     ){
         Text(text="ExercisePage1",modifier=Modifier.align(Alignment.Center),fontSize=45.sp)
     }
@@ -30,7 +31,7 @@ fun ExercisePage2(db:SQLiteDatabase?){
     Box(
         modifier= Modifier
             .fillMaxSize()
-            .background(color = Color.White)
+            .background(color = SurfaceGreen)
     ){
         Text(text="ExercisePage2",modifier=Modifier.align(Alignment.Center),fontSize=45.sp)
     }
@@ -40,7 +41,7 @@ fun ExercisePage3(db:SQLiteDatabase?){
     Box(
         modifier= Modifier
             .fillMaxSize()
-            .background(color = Color.White)
+            .background(color = SurfaceGreen)
     ){
         Text(text="ExercisePage3",modifier=Modifier.align(Alignment.Center),fontSize=45.sp)
     }
@@ -50,7 +51,7 @@ fun ExercisePage4(db:SQLiteDatabase?){
     Box(
         modifier= Modifier
             .fillMaxSize()
-            .background(color = Color.White)
+            .background(color = SurfaceGreen)
     ){
         Text(text="ExercisePage4",modifier=Modifier.align(Alignment.Center),fontSize=45.sp)
     }

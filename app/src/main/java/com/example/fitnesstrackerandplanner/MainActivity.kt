@@ -1,7 +1,6 @@
 package com.example.fitnesstrackerandplanner
 
 import android.database.sqlite.SQLiteDatabase
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -11,10 +10,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import com.example.fitnesstrackerandplanner.ui.theme.FitnessTrackerAndPlannerTheme
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
@@ -26,11 +23,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
-import com.example.fitnesstrackerandplanner.ui.theme.Pink80
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -42,12 +35,6 @@ import androidx.navigation.compose.rememberNavController
 import com.example.fitnesstrackerandplanner.ui.theme.LimeGreen
 import com.example.fitnesstrackerandplanner.ui.theme.Pink40
 import com.example.fitnesstrackerandplanner.ui.theme.PurpleGrey40
-import androidx.activity.result.contract.ActivityResultContracts
-import java.time.Instant
-import java.time.temporal.ChronoUnit
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,6 +43,7 @@ class MainActivity : ComponentActivity(){
         installSplashScreen()
         val dbHelper by lazy{ DatabaseHelper(this)}
         val db by lazy { dbHelper.writableDatabase}
+
 
         setContent {
             val navigationController= rememberNavController()
@@ -241,7 +229,7 @@ fun BottomAppBar(db: SQLiteDatabase,navigationController:NavHostController,dbHel
             composable(Screens.Activities.screen) { Activities(db);currentRoute=Screens.Activities.screen }
             composable(Screens.Home.screen) { Home(db);currentRoute=Screens.Home.screen  }
             composable(Screens.Goals.screen) { Goals(db,dbHelper);currentRoute=Screens.Goals.screen  }
-            composable(Screens.Profile.screen) { Profile(db) ;currentRoute=Screens.Profile.screen }
+            composable(Screens.Profile.screen) { Profile(db,dbHelper) ;currentRoute=Screens.Profile.screen }
             composable(Screens.StartAnExercise.screen) { initiateStartAnExercise(db, navController = navigationController) ;currentRoute=Screens.StartAnExercise.screen }
             composable(Screens.ExercisePage1.screen) { ExercisePage1(db);currentRoute=Screens.ExercisePage1.screen  }
             composable(Screens.ExercisePage2.screen) { ExercisePage2(db);currentRoute=Screens.ExercisePage2.screen  }

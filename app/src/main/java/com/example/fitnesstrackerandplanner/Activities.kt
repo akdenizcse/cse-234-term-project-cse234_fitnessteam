@@ -14,13 +14,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.example.fitnesstrackerandplanner.ui.theme.PurpleGrey40
+import com.example.fitnesstrackerandplanner.ui.theme.SurfaceGreen
 
 @Composable
 fun Activities(db:SQLiteDatabase?) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(color= PurpleGrey40)
+            .background(color= SurfaceGreen)
 
     )
     {
