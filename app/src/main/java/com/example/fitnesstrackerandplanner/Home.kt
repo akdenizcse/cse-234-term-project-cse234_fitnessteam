@@ -42,7 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fitnesstrackerandplanner.ui.theme.*
 //TODO:Add a diet "ADD" Button onClick action.
-@Composable
+@Composable//test
 fun Home(db: SQLiteDatabase?) {
     val hour by lazy{ Calendar.getInstance().get(Calendar.HOUR_OF_DAY) }
     val context= LocalContext.current
