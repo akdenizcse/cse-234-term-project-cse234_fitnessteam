@@ -24,45 +24,48 @@ enum class WeightClassification(){
 }
 
 class utilityMethods {
-companion object{
-    fun calculateBMI(weightKg:Short,heightCm:Short):Float{
-        var personalBMI:Float
-        val heightM:Float=heightCm*0.01f
-        personalBMI=(((weightKg/((heightM)*(heightM))))).toFloat()
-        return Math.round(personalBMI* 10.0f)/10.0f
-    }
-    //f
-    fun isHealthyBMI(personalBMI:Float,Gender:Boolean):WeightClassification{
-        if(personalBMI>14){
-            return WeightClassification.MorbidObese
+    companion object {
+        fun calculateBMI(weightKg: Short, heightCm: Short): Float {
+            var personalBMI: Float
+            val heightM: Float = heightCm * 0.01f
+            personalBMI = (((weightKg / ((heightM) * (heightM))))).toFloat()
+            return Math.round(personalBMI * 10.0f) / 10.0f
         }
-        return WeightClassification.Overweight
-    }
-    fun calculateIdealWeight(heightCm:Short,isFemale:Boolean):Float{
-        if(isFemale){
-          return (45.5f+ 2.3f*((heightCm/2.54f)-60))
 
+        //f
+        fun isHealthyBMI(personalBMI: Float, Gender: Boolean): WeightClassification {
+            if (personalBMI > 14) {
+                return WeightClassification.MorbidObese
+            }
+            return WeightClassification.Overweight
         }
-        return (50+ 2.3f*((heightCm/2.54f)-60))
+
+        fun calculateIdealWeight(heightCm: Short, isFemale: Boolean): Float {
+            if (isFemale) {
+                return (45.5f + 2.3f * ((heightCm / 2.54f) - 60))
+
+            }
+            return (50 + 2.3f * ((heightCm / 2.54f) - 60))
+        }
+
+        fun calculateHowManyCaloriesBurned(
+            activity: String,
+            weightKg: Double,
+            durationMin: Double
+        ): Double {
+            val metValues = mapOf(
+                "walking" to 3.8,
+                "running" to 9.8,
+                "cycling" to 7.5,
+                "yoga session" to 3.3,
+                //"weight training" to 3.5,
+                "lifting weights" to 6.0
+            )
+            val metValue = metValues[activity] ?: error("MET value for activity not found")
+            val caloriesBurnedPerMin = metValue * weightKg * 0.0175
+            return caloriesBurnedPerMin * durationMin
+        }
     }
-    fun calculateHowManyCaloriesBurned(activity:String,weightKg:Double,durationMin: Double):Double{
-        val metValues = mapOf(
-            "walking" to 3.8,
-            "running" to 9.8,
-            "cycling" to 7.5,
-            "yoga session" to 3.3,
-            //"weight training" to 3.5,
-            "lifting weights" to 6.0
-        )
-        val metValue = metValues[activity] ?: error("MET value for activity not found")
-        val caloriesBurnedPerMin=metValue*weightKg*0.0175
-        return caloriesBurnedPerMin*durationMin
-    }
-
-    }
-
-
-
 }
 
 fun main(){
