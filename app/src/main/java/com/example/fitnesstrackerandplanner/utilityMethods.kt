@@ -15,33 +15,6 @@ import java.time.Duration
 // fun caloriesBurned(){}
 // and such ...
 
-
-@Composable
-fun ProgressBar(progress: Float,modifier: Modifier=Modifier,color:Color,trackColor:Color,strokeCap: StrokeCap) {
-    LinearProgressIndicator(progress = progress,modifier=modifier,color=color,trackColor=trackColor,strokeCap=strokeCap)
-}
-@Composable
-fun CircularProgressBar(progress: Float,
-                        modifier: Modifier=Modifier,
-                        color: Color=Color.Magenta,
-                        strokeCap: StrokeCap,
-                        trackColor: Color=Color.White
-) {
-    CircularProgressIndicator(
-        progress=progress,
-        modifier=modifier,
-        color=color,
-        strokeCap = strokeCap,
-        trackColor=trackColor
-
-    )
-}
-@Preview
-@Composable
-fun PreviewProgressBar() {
-    ProgressBar(progress = 0.5f,color=Color.Green,modifier=Modifier, strokeCap = StrokeCap.Round, trackColor = Color.LightGray)
-}
-
 enum class WeightClassification(){
     Underweight,
     Normal,
@@ -72,7 +45,16 @@ companion object{
         }
         return (50+ 2.3f*((heightCm/2.54f)-60))
     }
-    fun calculateHowManyCaloriesBurned(metValue:Double,weightKg:Double,durationMin: Double):Double{
+    fun calculateHowManyCaloriesBurned(activity:String,weightKg:Double,durationMin: Double):Double{
+        val metValues = mapOf(
+            "walking" to 3.8,
+            "running" to 9.8,
+            "cycling" to 7.5,
+            "yoga session" to 3.3,
+            //"weight training" to 3.5,
+            "lifting weights" to 6.0
+        )
+        val metValue = metValues[activity] ?: error("MET value for activity not found")
         val caloriesBurnedPerMin=metValue*weightKg*0.0175
         return caloriesBurnedPerMin*durationMin
     }
