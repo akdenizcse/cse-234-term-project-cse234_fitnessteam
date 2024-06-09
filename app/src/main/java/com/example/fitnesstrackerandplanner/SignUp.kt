@@ -1,5 +1,6 @@
 package com.example.fitnesstrackerandplanner
 
+import FirebaseHelper
 import android.content.ContentValues
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
@@ -7,12 +8,19 @@ import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -28,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
@@ -42,179 +51,171 @@ import com.example.fitnesstrackerandplanner.ui.theme.UnfocusedTextFieldGreen
 import java.util.Calendar
 //dont let to user to sign up with same email adddress and redirect to login page
 @Composable
-fun SignUp(db:SQLiteDatabase,navigationController:NavHostController,dbHelper: DatabaseHelper){
+fun SignUp(navigationController: NavHostController) {
     var first_name by remember { mutableStateOf("") }
     var last_name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var user_name by remember { mutableStateOf("") }
-    var password1 by remember{ mutableStateOf("") }
-    var password2 by remember{ mutableStateOf("") }
-    var isBlankField by remember {mutableStateOf(false)}
+    var password1 by remember { mutableStateOf("") }
+    var password2 by remember { mutableStateOf("") }
+    var isBlankField by remember { mutableStateOf(false) }
     var passwordsDoNotMatch by remember { mutableStateOf(false) }
-    val thisContext = LocalContext.current
-    val sharedPrefManager by lazy{SharedPrefManager(thisContext)}
-    var blank_field by remember{mutableStateOf("")}
-    Surface(color = SurfaceGreen, modifier = Modifier.fillMaxSize()){
-        Column(verticalArrangement = Arrangement.spacedBy(15.dp), horizontalAlignment = Alignment.CenterHorizontally){
-            OutlinedButton(
-                onClick = { navigationController.popBackStack() },
-                colors = ButtonDefaults.buttonColors(ButtonGreenLayer),
-                modifier = Modifier
-                    .padding(15.dp)
-                    .size(100.dp, 50.dp)
-                    .align(Alignment.Start)
-            ) {
-                Text(
-                    "BACK",
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 15.sp,
-                    modifier = Modifier
-                )
-            }
-            Column(
-                modifier = Modifier.padding(top=75.dp), horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
+    var emailOrUsernameTaken by remember { mutableStateOf(false) }
+    var isSimplePassword by remember { mutableStateOf(false) }
 
+    val thisContext = LocalContext.current
+    val sharedPrefManager by lazy { SharedPrefManager(thisContext) }
+    val firebaseHelper by lazy { FirebaseHelper() }
+
+    Surface(color = SurfaceGreen, modifier = Modifier.fillMaxSize()) {
+        Column {
+            // Back Button Row
+            Spacer(modifier=Modifier.size(7.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                IconButton(onClick = {
+                    navigationController.popBackStack()
+                }) {
+                    Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null,
+                        modifier=Modifier.size(50.dp,80.dp))
+                }
+            }
+
+            Column(
+                modifier = Modifier.padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 OutlinedTextField(
                     value = first_name,
-                    colors = TextFieldDefaults.colors(
-                        unfocusedContainerColor = UnfocusedTextFieldGreen,
-                        focusedContainerColor = FocusedTextFieldGreen),
                     onValueChange = { first_name = it },
                     label = { Text("First Name") },
-                    modifier = Modifier,
+                    modifier = Modifier.fillMaxWidth(),
                     maxLines = 1,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Next
+                    )
                 )
                 OutlinedTextField(
                     value = last_name,
-                    colors = TextFieldDefaults.colors(
-                        unfocusedContainerColor = UnfocusedTextFieldGreen,
-                        focusedContainerColor = FocusedTextFieldGreen),
                     onValueChange = { last_name = it },
                     label = { Text("Last Name") },
-                    modifier = Modifier,
+                    modifier = Modifier.fillMaxWidth(),
                     maxLines = 1,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Next
+                    )
                 )
                 OutlinedTextField(
                     value = email,
-                    colors = TextFieldDefaults.colors(
-                        unfocusedContainerColor = UnfocusedTextFieldGreen,
-                        focusedContainerColor = FocusedTextFieldGreen),
                     onValueChange = { email = it },
-                    label = { Text("Mail address") },
-                    modifier = Modifier,
+                    label = { Text("Email") },
+                    modifier = Modifier.fillMaxWidth(),
                     maxLines = 1,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
                 )
-
-
-
                 OutlinedTextField(
                     value = user_name,
-                    colors = TextFieldDefaults.colors(
-                        unfocusedContainerColor = UnfocusedTextFieldGreen,
-                        focusedContainerColor = FocusedTextFieldGreen),
                     onValueChange = { user_name = it },
                     label = { Text("Username") },
-                    modifier = Modifier,
-                    maxLines = 1,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+                    modifier = Modifier.fillMaxWidth(),
+                    maxLines = 1
                 )
                 OutlinedTextField(
                     value = password1,
-                    colors = TextFieldDefaults.colors(
-                        unfocusedContainerColor = UnfocusedTextFieldGreen,
-                        focusedContainerColor = FocusedTextFieldGreen
-                    ),
                     onValueChange = { password1 = it },
                     label = { Text("Password") },
-                    modifier = Modifier,
+                    modifier = Modifier.fillMaxWidth(),
                     maxLines = 1,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     visualTransformation = PasswordVisualTransformation()
-
                 )
                 OutlinedTextField(
                     value = password2,
-                    colors = TextFieldDefaults.colors(
-                        unfocusedContainerColor = UnfocusedTextFieldGreen,
-                        focusedContainerColor = FocusedTextFieldGreen),
                     onValueChange = { password2 = it },
-                    label = { Text("Password(again)") },
-                    modifier = Modifier,
+                    label = { Text("Confirm Password") },
+                    modifier = Modifier.fillMaxWidth(),
                     maxLines = 1,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     visualTransformation = PasswordVisualTransformation()
-
                 )
+                if (isBlankField) {
+                    Text(text = "All fields are required!", color = Color.Red)
+                }
+                if (passwordsDoNotMatch) {
+                    Text(text = "Passwords do not match!", color = Color.Red)
+                }
+                if (isSimplePassword) {
+                    Text(text = "Password length must be greater than 6!", color = Color.Red)
 
-                if (isBlankField)
-                    Text(text = "Can not leave the $blank_field field blank", color = Color.Red)
-                else if (passwordsDoNotMatch) {
-                    Text(text = "Passwords do not match", color = Color.Red)
                 }
 
-                val fields = mutableMapOf<String, String>()
-                fields["first name"] = first_name
-                fields["last name"] = last_name
-                fields["email"] = email
-                fields["username"] = user_name
-                fields["password"] = password1
-                fields["password"] = password2
+                if (emailOrUsernameTaken) {
+                    Text(text = "Email or username taken!", color = Color.Red)
+
+                }
+
                 OutlinedButton(
                     onClick = {
-                        if (!(password1.length == 0 || password2.length == 0 ||
-                                    user_name.length == 0 || first_name.length == 0 || last_name.length == 0)
-                        ) {
-                            if (password1 == password2) {
-                                val result = dbHelper.addUser(
-                                    db = db,
-                                    context = thisContext,
-                                    firstName = first_name,
-                                    lastName = last_name,
-                                    email = email,
-                                    userName = user_name,
-                                    password = password1
-
-                                )
-                                if (result == 0) {
-                                    sharedPrefManager.saveCurrentUser(user_name)
-                                    navigationController.navigate(Screens.Home.screen)
-                                } else {
-
-                                }
-                            } else {
+                        isBlankField = false
+                        passwordsDoNotMatch = false
+                        emailOrUsernameTaken = false
+                        isSimplePassword = false
+                        fun fieldsAreValid(): Boolean {
+                            if (!password1.equals(password2)) {
                                 passwordsDoNotMatch = true
+                                return false
                             }
-                        } else {
-                            isBlankField = true
-                            for (s in fields) {
-                                if (s.toPair().second.isEmpty())
-                                    blank_field = s.toPair().first
+                            if (!(password1.length > 6)) {
+                                isSimplePassword = true
+                                return false
+                            } else {
+                                isBlankField = !(first_name.isNotBlank() &&
+                                        last_name.isNotBlank() &&
+                                        email.isNotBlank() &&
+                                        user_name.isNotBlank() &&
+                                        password1.isNotBlank() &&
+                                        password2.isNotBlank()
+                                        )
+                                return !isBlankField
                             }
                         }
+                        if (fieldsAreValid()) {
+                            firebaseHelper.addUser(
+                                thisContext,
+                                first_name, last_name, email, user_name, password1
+                            ) { isSuccessfull ->
+                                if (isSuccessfull) {
+                                    navigationController.navigate(Screens.PostSignUp.screen)
+                                    sharedPrefManager.saveCurrentUser(first_name)
+                                } else {
+                                    Toast.makeText(
+                                        thisContext,
+                                        "User can not be added",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                    emailOrUsernameTaken = true
+                                }
+                            }
+                        } else {
 
-
-                    }, colors = ButtonDefaults.buttonColors(ButtonGreenLayer),
-                    modifier = Modifier
-                        .padding(15.dp)
-                )
-                {
-                    Text(
-                        "SIGN UP",
-                        fontWeight = FontWeight.ExtraBold,
-                        fontSize = 25.sp,
-                        modifier = Modifier
-                    )
-
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(ButtonGreenLayer),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(text = "SIGN UP", fontWeight = FontWeight.Bold)
                 }
-
-
             }
         }
-
     }
 }
+
+
+
+
+

@@ -14,4 +14,5 @@ class SharedPrefManager(context: Context){
         return sharedPreferences.getString("currentUser",null)
     }
 
+
 }

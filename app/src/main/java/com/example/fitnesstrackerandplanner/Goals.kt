@@ -1,21 +1,25 @@
 package com.example.fitnesstrackerandplanner
-import android.database.sqlite.SQLiteDatabase
 import android.icu.util.Calendar
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.fitnesstrackerandplanner.ui.theme.CharcoalGray
 import com.example.fitnesstrackerandplanner.ui.theme.DarkRecyclerPurple
+import com.example.fitnesstrackerandplanner.ui.theme.DeepNavyBlue
 import com.example.fitnesstrackerandplanner.ui.theme.SurfaceGreen
 
 @Composable
-fun Goals(db: SQLiteDatabase?,dbHelper:DatabaseHelper) {
+fun Goals() {
     //TODO:Saate göre karşılama olacak
     //TODO: Bugün yapacağı aktiviteleri checkbox ile seçecek
     //TODO:Seçtikten sonra GO ekranında koyduğu egzersizler gözükecek
@@ -32,7 +36,7 @@ fun Goals(db: SQLiteDatabase?,dbHelper:DatabaseHelper) {
     val icon= if(isDayTime) painterResource(id = R.drawable.icons8_sunny_48)
             else painterResource(id = R.drawable.icons8_moon_48)
 
-    Surface(color=SurfaceGreen, modifier = Modifier.fillMaxSize()
+    Surface(color= DeepNavyBlue, modifier = Modifier.fillMaxSize()
     ) {
         val exerciseTypes:List<String> = mutableListOf("Abs","Arm","Legs","Shoulders","Belly","Chest","Back","Neck")
         RecyclerView(exerciseTypes,
@@ -40,7 +44,15 @@ fun Goals(db: SQLiteDatabase?,dbHelper:DatabaseHelper) {
             icon=icon,
             subTitle = "Exercise Type",
             shape= RoundedCornerShape(15.dp),
-            color= DarkRecyclerPurple)
+            color= CharcoalGray,
+            style= TextStyle(
+                brush= Brush.linearGradient(
+                    colors=listOf(Color.Magenta, Color.Cyan)
+                )
+            )
+
+
+            )
 
     }
 

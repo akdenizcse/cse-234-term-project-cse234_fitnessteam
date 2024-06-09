@@ -1,16 +1,14 @@
 package com.example.fitnesstrackerandplanner
-import android.database.sqlite.SQLiteDatabase
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import com.example.fitnesstrackerandplanner.ui.theme.*
 import androidx.compose.material3.Surface
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun Profile(db: SQLiteDatabase?, dbHelper: DatabaseHelper?) {
+fun Profile() {
 
     /*Box(
         modifier = Modifier
@@ -107,9 +105,9 @@ fun Profile(db: SQLiteDatabase?, dbHelper: DatabaseHelper?) {
         "Application Info",
         "Log Out")
 
-    Surface(modifier=Modifier.fillMaxSize(),color= SurfaceGreen){
+    Surface(modifier=Modifier.fillMaxSize(),color= DeepNavyBlue){
 
-            RecyclerView(names = options, greetingMessage ="Fitness and Health Tracker\nver${dbHelper?.getDatabaseVer()}", icon = null, subTitle = null,
+            RecyclerView(names = options, greetingMessage ="Fitness and Health Tracker\nver1", icon = null, subTitle = null,
                 shape= RoundedCornerShape(20.dp)
             )
 
@@ -117,9 +115,3 @@ fun Profile(db: SQLiteDatabase?, dbHelper: DatabaseHelper?) {
 
 }
 
-@Preview
-@Composable
-fun ProfilePreview() {
-    Profile(null,null)
-
-}

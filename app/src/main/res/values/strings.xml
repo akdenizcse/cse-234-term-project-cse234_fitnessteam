@@ -1,4 +1,7 @@
 <resources>
-    <string name="app_name">Fitness Tracker and Planner</string>
+    <string name="app_name">Fittie</string>
+    <string name="welcomeText">Welcome to Fittie!</string>
+    <string name="heightWeightSelectInfo">In order to fully utilize our system, please enter your body measurements.
+    This data will only be used for calculating and optimizing the optimal schedules for the user.</string>
 
 </resources>

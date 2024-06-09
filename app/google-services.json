@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "602306361021",
+    "project_id": "fitness-health-tracker-planner",
+    "storage_bucket": "fitness-health-tracker-planner.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:602306361021:android:fc5c4157fbe97eebb2e9d4",
+        "android_client_info": {
+          "package_name": "com.example.fitnesstrackerandplanner"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCQ6RvRtkJH7H4rEu40nMT629G8W120Euc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -16,18 +16,18 @@ import com.example.fitnesstrackerandplanner.ui.theme.FitnessTrackerAndPlannerThe
 import com.example.fitnesstrackerandplanner.ui.theme.SurfaceGreen
 
 @Composable
-fun ExercisePage1(db:SQLiteDatabase?){
+fun ExercisePage1(){
     Box(
        modifier= Modifier
            .fillMaxSize()
            .background(color = SurfaceGreen)
     ){
-        Text(text="ExercisePage1",modifier=Modifier.align(Alignment.Center),fontSize=45.sp)
+
     }
 }
 
 @Composable
-fun ExercisePage2(db:SQLiteDatabase?){
+fun ExercisePage2(){
     Box(
         modifier= Modifier
             .fillMaxSize()
@@ -37,7 +37,7 @@ fun ExercisePage2(db:SQLiteDatabase?){
     }
 }
 @Composable
-fun ExercisePage3(db:SQLiteDatabase?){
+fun ExercisePage3(){
     Box(
         modifier= Modifier
             .fillMaxSize()
@@ -47,7 +47,7 @@ fun ExercisePage3(db:SQLiteDatabase?){
     }
 }
 @Composable
-fun ExercisePage4(db:SQLiteDatabase?){
+fun ExercisePage4(){
     Box(
         modifier= Modifier
             .fillMaxSize()
@@ -61,7 +61,7 @@ fun ExercisePage4(db:SQLiteDatabase?){
 @Composable
 fun ExercisePage4Preview(){
     FitnessTrackerAndPlannerTheme {
-        ExercisePage4(null)
+        ExercisePage4()
     }
 }
 
@@ -69,7 +69,7 @@ fun ExercisePage4Preview(){
 @Composable
 fun ExercisePage3Preview(){
     FitnessTrackerAndPlannerTheme {
-        ExercisePage3(null)
+        ExercisePage3()
     }
 }
 
@@ -77,7 +77,7 @@ fun ExercisePage3Preview(){
 @Composable
 fun ExercisePage2Preview(){
     FitnessTrackerAndPlannerTheme {
-        ExercisePage2(null)
+        ExercisePage2()
     }
 }
 
@@ -85,6 +85,6 @@ fun ExercisePage2Preview(){
 @Composable
 fun ExercisePage1Preview(){
     FitnessTrackerAndPlannerTheme {
-        ExercisePage1(null)
+        ExercisePage1()
     }
 }
