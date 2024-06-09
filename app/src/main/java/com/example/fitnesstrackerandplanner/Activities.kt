@@ -13,15 +13,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import com.example.fitnesstrackerandplanner.ui.theme.DeepNavyBlue
 import com.example.fitnesstrackerandplanner.ui.theme.PurpleGrey40
 import com.example.fitnesstrackerandplanner.ui.theme.SurfaceGreen
 
 @Composable
-fun Activities(db:SQLiteDatabase?) {
+fun Activities() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(color= SurfaceGreen)
+            .background(color= DeepNavyBlue)
 
     )
     {
@@ -43,8 +44,9 @@ fun Activities(db:SQLiteDatabase?) {
             Text(
                 text ="Activities page",
                 fontSize = 30.sp,
-                color = Color.Magenta
+                color = Color.White
             )
+            
 
         }
     }
@@ -52,5 +54,5 @@ fun Activities(db:SQLiteDatabase?) {
 @Preview
 @Composable
 fun ActivitiesPreview() {
-    Activities(null)
+    Activities()
 }
