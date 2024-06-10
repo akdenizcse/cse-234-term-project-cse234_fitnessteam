@@ -18,11 +18,11 @@ class FirebaseHelper {
         email: String,
         userName: String,
         password: String,
-        callback:(Boolean)->Unit
+        callback: (Boolean) -> Unit
     ) {
 
 
-        checkForExistingUser(userName,email) { exists ->
+        checkForExistingUser(userName, email) { exists ->
             if (exists) {
                 callback(false)
             } else {
@@ -51,11 +51,47 @@ class FirebaseHelper {
         }
 
     }
+
+    fun setHeightWeight(
+        userName: String,
+        height: Short,
+        weight: Short,
+        callback: (Boolean) -> Unit
+    ) {
+        // Query the collection to find the document with the specified username
+        usersCollection.whereEqualTo("userName", userName).get()
+            .addOnSuccessListener { documents ->
+                if (documents.size() == 1) {
+                    val document = documents.documents[0]
+                    document.reference.update(
+                        mapOf(
+                            "height" to height,
+                            "weight" to weight
+                        )
+                    )
+                        .addOnSuccessListener {
+                            Log.d("FirebaseHelper", "Height and weight updated successfully")
+                            callback(true)
+                        }
+                        .addOnFailureListener { e ->
+                            Log.w("FirebaseHelper", "Error updating height and weight: ", e)
+                            callback(false)
+                        }
+                } else {
+                    Log.w("FirebaseHelper", "User not found or multiple users found")
+                    callback(false)
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.w("FirebaseHelper", "Error finding user: ", e)
+                callback(false)
+            }
+    }
+
     fun checkForExistingUser(userName: String, email: String, callback: (Boolean) -> Unit) {
         val usernameQuery = usersCollection.whereEqualTo("userName", userName).get()
         val emailQuery = usersCollection.whereEqualTo("email", email).get()
 
-        // Wait for both queries to complete
         Tasks.whenAllComplete(usernameQuery, emailQuery).addOnCompleteListener { tasks ->
             val usernameExists = usernameQuery.result?.isEmpty == false
             val emailExists = emailQuery.result?.isEmpty == false
@@ -67,13 +103,12 @@ class FirebaseHelper {
     }
 
 
-
     fun loginAuth(username: String, password: String, callback: (Boolean) -> Unit) {
         val usernameQuery = usersCollection.whereEqualTo("userName", username).get()
         val passwordQuery = usersCollection.whereEqualTo("password", password).get()
 
         // Using whenAllComplete() to wait for both queries to complete
-        Tasks.whenAllComplete(usernameQuery, passwordQuery).addOnCompleteListener{ tasks ->
+        Tasks.whenAllComplete(usernameQuery, passwordQuery).addOnCompleteListener { tasks ->
             val usernameExists = !usernameQuery.result.isEmpty
             val passwordExists = !passwordQuery.result.isEmpty
             callback(usernameExists && passwordExists)
@@ -83,11 +118,52 @@ class FirebaseHelper {
         }
     }
 
+    fun fetchHeight(userName: String, callback: (Int?) -> Unit) {
+        Log.d("FirebaseHelper", "Fetching height for user: $userName")
+        val usernameQuery = usersCollection.whereEqualTo("userName", userName).get()
+        usernameQuery.addOnSuccessListener { documents ->
+            if (!documents.isEmpty) {
+                val document = documents.documents[0]
+                val height = document.getLong("height")?.toInt()
+                Log.d("FirebaseHelper", "Fetched height for user $userName: $height")
+                callback(height)
+            } else {
+                Log.d("FirebaseHelper", "User $userName not found")
+                callback(null)
+            }
+        }.addOnFailureListener { e ->
+            Log.w("FirebaseHelper", "Error fetching height: ", e)
+            callback(null)
+        }
+    }
 
 
 
 
+
+
+    fun fetchWeight(userName: String, callback: (Int?) -> Unit) {
+        val usernameQuery = usersCollection.whereEqualTo("userName", userName).get()
+        usernameQuery.addOnSuccessListener { documents ->
+            if (!documents.isEmpty) {
+                val document = documents.documents[0]
+                val weight = document.getLong("weight")?.toInt()
+                callback(weight)
+            } else {
+                callback(null)
+            }
+        }.addOnFailureListener { e ->
+            Log.w("FirebaseHelper", "Error fetching weight: ", e)
+            callback(null)
+        }
+    }
 
 
 }
+
+
+
+
+
+
 

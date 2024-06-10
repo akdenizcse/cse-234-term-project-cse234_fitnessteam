@@ -1,4 +1,6 @@
 package com.example.fitnesstrackerandplanner
+import Exercise
+import SubExercise
 import android.icu.util.Calendar
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -30,16 +32,21 @@ fun Goals() {
     val hour by lazy{ Calendar.getInstance().get(Calendar.HOUR_OF_DAY) }
     val context= LocalContext.current
     val sharedPrefManager by lazy{SharedPrefManager(context)}
-    val userName=sharedPrefManager.getCurrentUser()
+    val userName=sharedPrefManager.getCurrentUsername()
     val isDayTime:Boolean= hour in 6..18
     val greeting:String=if(isDayTime)"Good Morning, $userName!" else "Good Evening, $userName!"
     val icon= if(isDayTime) painterResource(id = R.drawable.icons8_sunny_48)
             else painterResource(id = R.drawable.icons8_moon_48)
 
+
+
+    val exList= initializeExercises()
+
     Surface(color= DeepNavyBlue, modifier = Modifier.fillMaxSize()
     ) {
         val exerciseTypes:List<String> = mutableListOf("Abs","Arm","Legs","Shoulders","Belly","Chest","Back","Neck")
-        RecyclerView(exerciseTypes,
+
+        ExerciseRecyclerView(ex,
             greetingMessage = greeting,
             icon=icon,
             subTitle = "Exercise Type",

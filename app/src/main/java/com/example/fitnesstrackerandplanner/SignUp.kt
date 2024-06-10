@@ -44,10 +44,14 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.fitnesstrackerandplanner.ui.theme.Beige
 import com.example.fitnesstrackerandplanner.ui.theme.ButtonGreenLayer
+import com.example.fitnesstrackerandplanner.ui.theme.Cerulean
+import com.example.fitnesstrackerandplanner.ui.theme.DeepNavyBlue
 import com.example.fitnesstrackerandplanner.ui.theme.FocusedTextFieldGreen
 import com.example.fitnesstrackerandplanner.ui.theme.PurpleGrey40
 import com.example.fitnesstrackerandplanner.ui.theme.SurfaceGreen
 import com.example.fitnesstrackerandplanner.ui.theme.UnfocusedTextFieldGreen
+import com.example.fitnesstrackerandplanner.ui.theme.darkGray
+import com.example.fitnesstrackerandplanner.ui.theme.focusedDarkGray
 import java.util.Calendar
 //dont let to user to sign up with same email adddress and redirect to login page
 @Composable
@@ -67,10 +71,10 @@ fun SignUp(navigationController: NavHostController) {
     val sharedPrefManager by lazy { SharedPrefManager(thisContext) }
     val firebaseHelper by lazy { FirebaseHelper() }
 
-    Surface(color = SurfaceGreen, modifier = Modifier.fillMaxSize()) {
+    Surface(color = DeepNavyBlue, modifier = Modifier.fillMaxSize()) {
         Column {
             // Back Button Row
-            Spacer(modifier=Modifier.size(7.dp))
+            Spacer(modifier=Modifier.size(10.dp))
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
@@ -79,7 +83,7 @@ fun SignUp(navigationController: NavHostController) {
                     navigationController.popBackStack()
                 }) {
                     Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null,
-                        modifier=Modifier.size(50.dp,80.dp))
+                        modifier=Modifier.size(50.dp,80.dp), tint = Color.White)
                 }
             }
 
@@ -94,6 +98,10 @@ fun SignUp(navigationController: NavHostController) {
                     label = { Text("First Name") },
                     modifier = Modifier.fillMaxWidth(),
                     maxLines = 1,
+                    colors = TextFieldDefaults.colors(
+                        unfocusedContainerColor = darkGray,
+                        focusedContainerColor = focusedDarkGray
+                    ),
                     keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Text,
                         imeAction = ImeAction.Next
@@ -105,6 +113,10 @@ fun SignUp(navigationController: NavHostController) {
                     label = { Text("Last Name") },
                     modifier = Modifier.fillMaxWidth(),
                     maxLines = 1,
+                    colors = TextFieldDefaults.colors(
+                        unfocusedContainerColor = darkGray,
+                        focusedContainerColor = focusedDarkGray
+                    ),
                     keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Text,
                         imeAction = ImeAction.Next
@@ -116,6 +128,10 @@ fun SignUp(navigationController: NavHostController) {
                     label = { Text("Email") },
                     modifier = Modifier.fillMaxWidth(),
                     maxLines = 1,
+                    colors = TextFieldDefaults.colors(
+                        unfocusedContainerColor = darkGray,
+                        focusedContainerColor = focusedDarkGray
+                    ),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
                 )
                 OutlinedTextField(
@@ -123,6 +139,10 @@ fun SignUp(navigationController: NavHostController) {
                     onValueChange = { user_name = it },
                     label = { Text("Username") },
                     modifier = Modifier.fillMaxWidth(),
+                    colors = TextFieldDefaults.colors(
+                        unfocusedContainerColor = darkGray,
+                        focusedContainerColor = focusedDarkGray
+                    ),
                     maxLines = 1
                 )
                 OutlinedTextField(
@@ -131,6 +151,10 @@ fun SignUp(navigationController: NavHostController) {
                     label = { Text("Password") },
                     modifier = Modifier.fillMaxWidth(),
                     maxLines = 1,
+                    colors = TextFieldDefaults.colors(
+                        unfocusedContainerColor = darkGray,
+                        focusedContainerColor = focusedDarkGray
+                    ),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     visualTransformation = PasswordVisualTransformation()
                 )
@@ -140,6 +164,10 @@ fun SignUp(navigationController: NavHostController) {
                     label = { Text("Confirm Password") },
                     modifier = Modifier.fillMaxWidth(),
                     maxLines = 1,
+                    colors = TextFieldDefaults.colors(
+                        unfocusedContainerColor = darkGray,
+                        focusedContainerColor = focusedDarkGray
+                    ),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     visualTransformation = PasswordVisualTransformation()
                 )
@@ -190,8 +218,9 @@ fun SignUp(navigationController: NavHostController) {
                                 first_name, last_name, email, user_name, password1
                             ) { isSuccessfull ->
                                 if (isSuccessfull) {
+                                    sharedPrefManager.saveCurrentUserFirstName(first_name)
+                                    sharedPrefManager.saveCurrentUsername(user_name)
                                     navigationController.navigate(Screens.PostSignUp.screen)
-                                    sharedPrefManager.saveCurrentUser(first_name)
                                 } else {
                                     Toast.makeText(
                                         thisContext,
@@ -205,7 +234,7 @@ fun SignUp(navigationController: NavHostController) {
 
                         }
                     },
-                    colors = ButtonDefaults.buttonColors(ButtonGreenLayer),
+                    colors = ButtonDefaults.buttonColors(Cerulean),
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(text = "SIGN UP", fontWeight = FontWeight.Bold)

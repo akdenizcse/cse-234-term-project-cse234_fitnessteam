@@ -18,4 +18,8 @@ sealed class Screens(val screen:String) {
     data object ExercisePage3:Screens("exercisepage3")
     data object ExercisePage4:Screens("exercisepage4")
     data object PostSignUp:Screens("postsignuppage")
+
+    data object ExerciseSections : Screens("exercise_sections")
+    data object ExerciseList : Screens("exercise_list")
+    data object ExerciseDetails : Screens("exercise_details/{exerciseName}")
 }

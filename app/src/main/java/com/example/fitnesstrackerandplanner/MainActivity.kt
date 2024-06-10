@@ -3,6 +3,7 @@ package com.example.fitnesstrackerandplanner
 import FirebaseHelper
 import LoginPage
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -34,12 +35,37 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 //TODO: Add gradient text coloring, draggable picker,pop up menu
 class MainActivity : ComponentActivity() {
+    val firebaseHelper=FirebaseHelper()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
         val db= Firebase.firestore
         setContent {
+            val context= LocalContext.current
+            val sharedPrefManager by lazy{SharedPrefManager(context)}
+            val userName= sharedPrefManager.getCurrentUsername()
+
+            if (userName != null) {
+                firebaseHelper.fetchHeight(userName) { value ->
+                    if (value != null) {
+                        sharedPrefManager.saveCurrentUserHeight(value)
+                    } else {
+
+                    }
+
+                    // Once height is fetched, fetch weight
+                    firebaseHelper.fetchWeight(userName) { value ->
+                        if (value != null) {
+                            sharedPrefManager.saveCurrentUserWeight(value)
+                        } else {
+                            // Handle case where weight is not found or an error occurs
+                        }
+                    }
+                }
+            }else{
+            }
+
             val navigationController = rememberNavController()
             val firebaseHelper by remember { mutableStateOf(FirebaseHelper()) }
 

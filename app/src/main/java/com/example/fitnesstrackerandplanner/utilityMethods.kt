@@ -1,5 +1,7 @@
 package com.example.fitnesstrackerandplanner
 
+import Exercise
+import SubExercise
 import android.view.MotionEvent
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
@@ -57,41 +59,96 @@ enum class WeightClassification(){
     MorbidObese()
 }
 
-class utilityMethods {
-companion object{
-    fun calculateBMI(weightKg:Short,heightCm:Short):Float{
+fun calculateBMI(weightKg:Short,heightCm:Short):Float{
         var personalBMI:Float
         val heightM:Float=heightCm*0.01f
         personalBMI=(((weightKg/((heightM)*(heightM))))).toFloat()
         return Math.round(personalBMI* 10.0f)/10.0f
     }
     //f
-    fun isHealthyBMI(personalBMI:Float,Gender:Boolean):WeightClassification{
-        if(personalBMI>14){
-            return WeightClassification.MorbidObese
-        }
-        return WeightClassification.Overweight
+fun isHealthyBMI(personalBMI:Float,Gender:Boolean):WeightClassification{
+    if(personalBMI>14){
+        return WeightClassification.MorbidObese
     }
-    fun calculateIdealWeight(heightCm:Short,isFemale:Boolean):Float{
-        if(isFemale){
-          return (45.5f+ 2.3f*((heightCm/2.54f)-60))
-
-        }
-        return (50+ 2.3f*((heightCm/2.54f)-60))
-    }
-    fun calculateHowManyCaloriesBurned(metValue:Double,weightKg:Double,durationMin: Double):Double{
-        val caloriesBurnedPerMin=metValue*weightKg*0.0175
-        return caloriesBurnedPerMin*durationMin
-    }
+    return WeightClassification.Overweight
+}
+fun calculateIdealWeight(heightCm:Short,isFemale:Boolean):Float{
+    if(isFemale){
+      return (45.5f+ 2.3f*((heightCm/2.54f)-60))
 
     }
-
-
-
+    return (50+ 2.3f*((heightCm/2.54f)-60))
+}
+fun calculateHowManyCaloriesBurned(metValue:Double,weightKg:Double,durationMin: Double):Double{
+    val caloriesBurnedPerMin=metValue*weightKg*0.0175
+    return caloriesBurnedPerMin*durationMin
 }
 
-fun main(){
-   // print(utilityMethods.isHealthyBMI(22.5f, true))
-    print(utilityMethods.calculateBMI(52,166))
+fun initializeExercises(): List<Exercise> {
+    val exercises = mutableListOf<Exercise>()
 
+    // Initialize exercise groups
+    val chestExercises = Exercise("Chest")
+    val legExercises = Exercise("Legs")
+    val absExercises = Exercise("Abs")
+
+    // Initialize sub-exercises
+    val chestSubExercises = listOf(
+        SubExercise(
+            exerciseName = "Incline Dumbbell Press",
+            description = "Lie on the table and push the dumbbells up.",
+            videoUrl = "https://example.com/videos/incline_dumbbell_press.mp4",
+            groupName = "Chest"
+        ),
+        SubExercise(
+            exerciseName = "Dumbbell Chest Fly",
+            description = "Lie on the table and spread your arms with dumbbells.",
+            videoUrl = "https://example.com/videos/dumbbell_chest_fly.mp4",
+            groupName = "Chest"
+        )
+    )
+
+    val legSubExercises = listOf(
+        SubExercise(
+            exerciseName = "Squat",
+            description = "Stand with your feet shoulder-width apart and squat down.",
+            videoUrl = "https://example.com/videos/squat.mp4",
+            groupName = "Legs"
+        ),
+        SubExercise(
+            exerciseName = "Lunge",
+            description = "Step forward and lower your hips until both knees are bent.",
+            videoUrl = "https://example.com/videos/lunge.mp4",
+            groupName = "Legs"
+        )
+    )
+
+    val absSubExercises = listOf(
+        SubExercise(
+            exerciseName = "Crunch",
+            description = "Lie on your back and lift your shoulders off the floor.",
+            videoUrl = "https://example.com/videos/crunch.mp4",
+            groupName = "Abs"
+        ),
+        SubExercise(
+            exerciseName = "Plank",
+            description = "Hold your body in a straight line from head to heels.",
+            videoUrl = "https://example.com/videos/plank.mp4",
+            groupName = "Abs"
+        )
+    )
+
+    // Add sub-exercises to their respective exercise groups
+    chestExercises.addExercise(chestSubExercises)
+    legExercises.addExercise(legSubExercises)
+    absExercises.addExercise(absSubExercises)
+
+    // Add exercise groups to the main list
+    exercises.add(chestExercises)
+    exercises.add(legExercises)
+    exercises.add(absExercises)
+
+    return exercises
 }
+
+

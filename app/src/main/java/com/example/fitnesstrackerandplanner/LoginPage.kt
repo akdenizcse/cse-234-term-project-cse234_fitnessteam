@@ -8,6 +8,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -40,7 +43,7 @@ fun LoginPage(navigationController: NavHostController) {
     val sharedPrefManager by lazy { SharedPrefManager(currentContext) }
     var isValidUser by remember { mutableStateOf<Boolean?>(null) }
 
-    Surface(color = SurfaceGreen, modifier = Modifier.fillMaxSize()) {
+    Surface(color = DeepNavyBlue, modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier,
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -52,9 +55,10 @@ fun LoginPage(navigationController: NavHostController) {
             )
             OutlinedTextField(
                 value = user_name,
+                leadingIcon = {Icon(imageVector = Icons.Outlined.AccountCircle, contentDescription = null)},
                 colors = TextFieldDefaults.colors(
-                    unfocusedContainerColor = UnfocusedTextFieldGreen,
-                    focusedContainerColor = FocusedTextFieldGreen
+                    unfocusedContainerColor = darkGray,
+                    focusedContainerColor = focusedDarkGray
                 ),
                 onValueChange = { user_name = it },
                 label = { Text("Username") },
@@ -65,9 +69,10 @@ fun LoginPage(navigationController: NavHostController) {
             OutlinedTextField(
                 value = password,
                 colors = TextFieldDefaults.colors(
-                    unfocusedContainerColor = UnfocusedTextFieldGreen,
-                    focusedContainerColor = FocusedTextFieldGreen
+                    unfocusedContainerColor = darkGray,
+                    focusedContainerColor = focusedDarkGray
                 ),
+                leadingIcon = {Icon(Icons.Default.Lock, contentDescription = null)},
                 onValueChange = { password = it },
                 label = { Text("Password") },
                 modifier = Modifier,
@@ -91,6 +96,7 @@ fun LoginPage(navigationController: NavHostController) {
 
                     firebaseHelper.loginAuth(user_name,password){isValid->
                         if(isValid){
+                           sharedPrefManager.saveCurrentUsername(user_name)
                             Toast.makeText(currentContext,"Successfully logged in!",Toast.LENGTH_SHORT).show()
                             navigationController.navigate(Screens.Home.screen)
                         }
@@ -101,7 +107,7 @@ fun LoginPage(navigationController: NavHostController) {
                     }
 
                 },
-                color = ButtonGreenLayer,
+                color = Cerulean,
                 fontSize = 25.sp,
                 fontWeight = FontWeight.ExtraBold,
                 buttonWidth = 300.dp,

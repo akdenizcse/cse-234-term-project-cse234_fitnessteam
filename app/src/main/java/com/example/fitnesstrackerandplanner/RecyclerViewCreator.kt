@@ -1,5 +1,6 @@
 package com.example.fitnesstrackerandplanner
 
+import Exercise
 import android.graphics.drawable.shapes.Shape
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -29,6 +30,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.fitnesstrackerandplanner.ui.theme.CharcoalGray
 import com.example.fitnesstrackerandplanner.ui.theme.DarkOrchid
 import com.example.fitnesstrackerandplanner.ui.theme.DarkPeriwinkle
@@ -105,6 +107,10 @@ fun listItem(subTitle:String?,
             }
 }
 
+
+
+
+
 @Composable
 fun RecyclerView(
     names:List<String> =List(10){"$it"},
@@ -148,6 +154,62 @@ fun RecyclerView(
         }
         items(items = names) { name ->
             listItem(title=name,
+                subTitle = subTitle,
+                shape = shape,
+                color = color,
+                textColor = textColor,
+                arrowColor=arrowColor
+            )
+
+        }
+
+    }
+}
+
+@Composable
+fun ExerciseRecyclerView(
+    exercise: Exercise ,
+    greetingMessage:String?,
+    icon: Painter?,
+    subTitle: String?,
+    shape: androidx.compose.ui.graphics.Shape = RectangleShape,
+    color:Color= CharcoalGray,
+    textColor: Color=Color.White,
+    style: TextStyle = MaterialTheme.typography.bodyMedium,
+    arrowColor:Color=Color.White) {
+    LazyColumn(modifier = Modifier.padding(vertical = 4.dp)) {
+        if (greetingMessage != null ) {
+            item {
+
+                Surface(
+                    color = Color.Transparent,
+                    modifier = Modifier
+                        .padding(vertical = 4.dp, horizontal = 8.dp)
+                ) {
+                    Row {
+                        Text(
+                            text = "$greetingMessage",
+                            fontSize = 25.sp,
+                            modifier = Modifier.weight(3f),
+                            color = Color.Black,
+                            fontWeight = FontWeight.ExtraBold,
+                            style=style
+                        )
+                        if(icon!=null) {
+                            Image(
+                                painter = icon,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .size(65.dp)
+                            )
+                        }
+                    }
+                }
+            }
+        }
+        item {
+            listItem(title=exercise.name,
                 subTitle = subTitle,
                 shape = shape,
                 color = color,

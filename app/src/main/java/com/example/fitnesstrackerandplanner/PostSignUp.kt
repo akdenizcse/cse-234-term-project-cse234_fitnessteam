@@ -1,5 +1,8 @@
 package com.example.fitnesstrackerandplanner
 
+import FirebaseHelper
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,6 +29,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.drawscope.DrawStyle
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
@@ -45,6 +49,10 @@ import com.example.fitnesstrackerandplanner.ui.theme.Eggshel
 fun PostSignUp(navController: NavHostController?){
     var height by remember {mutableStateOf("145")}
     var weight by remember{mutableStateOf("125")}
+    val firebaseHelper by lazy { FirebaseHelper() }
+    val context= LocalContext.current
+    val sharedPrefManager by lazy{SharedPrefManager(context)}
+    val currentUser=sharedPrefManager.getCurrentUsername()
     Surface(modifier= Modifier.fillMaxSize(),color= DeepNavyBlue){
 
         Column(verticalArrangement = Arrangement.SpaceEvenly, horizontalAlignment = Alignment.CenterHorizontally) {
@@ -106,16 +114,36 @@ fun PostSignUp(navController: NavHostController?){
                 Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
 
                     Text("Height ", color = Color.White, fontSize = 20.sp)
-                    Text(text = height, fontSize = 20.sp, color = Cerulean)
+                    Text(text ="$height cm" , fontSize = 20.sp, color = Cerulean)
                     Text("Weight ", color = Color.White, fontSize = 20.sp)
-                    Text(text = weight, fontSize = 20.sp, color = Cerulean)
+                    Text(text = "$weight kg", fontSize = 20.sp, color = Cerulean)
                 }
             }
 
 
             AnimatedButton(
                 onClick = {if(navController!=null){
-                    navController.navigate(Screens.Home.screen)}
+                    if (currentUser != null) {
+                        firebaseHelper.setHeightWeight(height=(height).toShort(),
+                            weight = weight.toShort(),
+                            userName =currentUser) { successful ->
+                            if (successful) {
+                                Toast.makeText(context,
+                                    "Height and weight updated successfully!",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+
+                                navController.navigate(Screens.Home.screen)
+                            }
+                            else{
+                                Toast.makeText(context, "Failed to update height and weight!", Toast.LENGTH_SHORT).show()
+                                Log.e("Firebase Helper","Failed to set height and weight!")
+                            }
+                        }
+
+                        }
+                    }
+
                           },
                 text = "CONFIRM", color = Cerulean, buttonWidth = 200.dp, buttonHeight = 50.dp,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
