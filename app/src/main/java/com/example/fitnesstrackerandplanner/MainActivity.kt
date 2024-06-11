@@ -73,7 +73,8 @@ class MainActivity : ComponentActivity() {
 
             FitnessTrackerAndPlannerTheme {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    BottomAppBar(navigationController, firebaseHelper)
+ //                   BottomAppBar(navigationController, firebaseHelper)
+                    ExerciseInfoPage(subExercise = null)
                 }
             }
         }

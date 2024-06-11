@@ -30,5 +30,10 @@ sealed class Screens(val screen:String) {
             const val routeWithArgs = "exercisepage/{exerciseName}" //HATA KAYNAĞI OLABİLİR
         }
     }
+    data class ExerciseInfoPage(val exerciseName:String,val exerciseURL:String) : Screens("exerciseinfopage/$exerciseName"){
+        companion object {
+            const val routeWithArgs = "exerciseinfopage/{exerciseName}" //HATA KAYNAĞI OLABİLİR
+        }
+    }
 
 }

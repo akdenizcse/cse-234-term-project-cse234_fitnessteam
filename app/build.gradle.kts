@@ -52,6 +52,12 @@ android {
 
 dependencies {
     implementation("com.google.firebase:firebase-database-ktx:21.0.0")
+    implementation("androidx.media3:media3-exoplayer-smoothstreaming:1.3.1")
+    implementation("androidx.media3:media3-ui:1.3.1")
+    implementation("androidx.media3:media3-exoplayer:1.3.1")
+    implementation("androidx.media3:media3-datasource:1.3.1")
+    implementation("androidx.media3:media3-common:1.3.1")
+
     dependencies {
         implementation("androidx.sqlite:sqlite:2.1.0") //
         implementation(platform("com.google.firebase:firebase-bom:33.1.0"))
@@ -59,6 +65,7 @@ dependencies {
         implementation("androidx.activity:activity-compose:1.9.0")
         implementation(platform("androidx.compose:compose-bom:2024.05.00"))
         implementation("androidx.compose.ui:ui")
+        implementation("com.google.android.exoplayer:exoplayer-ui:2.19.1")
         implementation("androidx.compose.ui:ui-graphics")
         implementation("com.google.firebase:firebase-auth")
         implementation("com.google.firebase:firebase-firestore")
