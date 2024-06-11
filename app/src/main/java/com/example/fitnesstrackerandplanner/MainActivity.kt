@@ -25,9 +25,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.fitnesstrackerandplanner.ui.theme.*
 import com.google.firebase.Firebase
 import com.google.firebase.database.FirebaseDatabase
@@ -81,6 +83,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun BottomAppBar(navigationController: NavHostController, firebaseHelper: FirebaseHelper) {
     val context = LocalContext.current
+    val exList by lazy{initializeExercises()}
     var currentRoute by remember { mutableStateOf(Screens.LoginPage.screen) }
     val selected = remember { mutableStateOf(Icons.Default.Home) }
 
@@ -253,7 +256,7 @@ fun BottomAppBar(navigationController: NavHostController, firebaseHelper: Fireba
                 currentRoute = Screens.Home.screen
             }
             composable(Screens.Goals.screen) {
-                Goals()
+                Goals(navController = navigationController, exList = exList)
                 currentRoute = Screens.Goals.screen
             }
             composable(Screens.Profile.screen) {
@@ -288,6 +291,31 @@ fun BottomAppBar(navigationController: NavHostController, firebaseHelper: Fireba
                 PostSignUp(navController = navigationController)
                 currentRoute=Screens.PostSignUp.screen
             }
+            composable(
+                route = Screens.SubExerciseDetail.routeWithArgs,
+                arguments = listOf(navArgument("exerciseID") { type = NavType.IntType })
+            ) { backStackEntry ->
+                val exerciseID = backStackEntry.arguments?.getInt("exerciseID") ?: 0
+                SubExercisePage(navController = navigationController, exercise = getExerciseByID(exList,exerciseID))
+                currentRoute = Screens.SubExerciseDetail(exerciseID).screen
+            }
+            composable(
+                route = Screens.ExercisePage.routeWithArgs,
+                arguments = listOf(navArgument("exerciseName") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val exerciseName = backStackEntry.arguments?.getString("exerciseName") ?: ""
+                ExercisePage1(
+                    exerciseName = exerciseName
+                )
+            }
+
+            // Main Exercise Type screens
+
+            // Sub-Exercise Detail screens
+
+
+
+
         }
     }
 }

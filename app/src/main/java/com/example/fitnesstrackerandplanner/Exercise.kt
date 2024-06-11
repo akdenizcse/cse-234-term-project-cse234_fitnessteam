@@ -2,13 +2,14 @@ import androidx.compose.runtime.Composable
 
 // Define Exercise data model
  open class Exercise(
-    val name: String
+    val name: String,
+     val exerciseID:Int
 ) {
-val subExercises:MutableList<Exercise>
+val subExercises:MutableList<SubExercise>
 init{
     subExercises=  mutableListOf()
 }
-fun addExercise(exList:List<Exercise>){
+fun addExercise(exList:List<SubExercise>){
     subExercises.addAll(exList)
 }
 
@@ -19,7 +20,7 @@ fun addExercise(exList:List<Exercise>){
 class SubExercise(val exerciseName:String,
                    val description: String,
                    val videoUrl: String,
-                   groupName:String): Exercise(groupName) {
+                   groupName:String,exerciseID: Int): Exercise(groupName, exerciseID = exerciseID) {
 
 
 

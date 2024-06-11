@@ -15,14 +15,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.example.fitnesstrackerandplanner.ui.theme.CharcoalGray
 import com.example.fitnesstrackerandplanner.ui.theme.DarkRecyclerPurple
 import com.example.fitnesstrackerandplanner.ui.theme.DeepNavyBlue
 import com.example.fitnesstrackerandplanner.ui.theme.SurfaceGreen
 
 @Composable
-fun Goals() {
-    //TODO:Saate göre karşılama olacak
+fun Goals(navController: NavHostController,exList:List<Exercise>) {
+    //TODO:Saate göre karşılama olacak --> YAPILDI
     //TODO: Bugün yapacağı aktiviteleri checkbox ile seçecek
     //TODO:Seçtikten sonra GO ekranında koyduğu egzersizler gözükecek
     //TODO:Aşağıda start tuşu ile başlayacak
@@ -40,13 +42,12 @@ fun Goals() {
 
 
 
-    val exList= initializeExercises()
 
     Surface(color= DeepNavyBlue, modifier = Modifier.fillMaxSize()
     ) {
         val exerciseTypes:List<String> = mutableListOf("Abs","Arm","Legs","Shoulders","Belly","Chest","Back","Neck")
 
-        ExerciseRecyclerView(ex,
+        ExerciseRecyclerView(exList, // bunu normal recycler çevir düzelir
             greetingMessage = greeting,
             icon=icon,
             subTitle = "Exercise Type",
@@ -56,8 +57,8 @@ fun Goals() {
                 brush= Brush.linearGradient(
                     colors=listOf(Color.Magenta, Color.Cyan)
                 )
-            )
-
+            ),
+            navController = navController
 
             )
 
@@ -70,9 +71,3 @@ fun Goals() {
 
 
 
-
-@Preview
-@Composable
-fun GoalsPreview() {
-   listItem( "1","2", RectangleShape)
-}

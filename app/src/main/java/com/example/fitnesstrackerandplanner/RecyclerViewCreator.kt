@@ -31,6 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.example.fitnesstrackerandplanner.ui.theme.CharcoalGray
 import com.example.fitnesstrackerandplanner.ui.theme.DarkOrchid
 import com.example.fitnesstrackerandplanner.ui.theme.DarkPeriwinkle
@@ -51,8 +52,8 @@ fun listItem(subTitle:String?,
              shape:androidx.compose.ui.graphics.Shape,
              color:Color= RecyclerPurple,
              textColor:Color=Color.White,
-             arrowColor: Color=Color.White
-
+             arrowColor: Color=Color.White,
+             onClick:()->Unit={},
 
 ){
 
@@ -61,7 +62,9 @@ fun listItem(subTitle:String?,
             color = color,
             modifier = Modifier
                 .padding(vertical = 4.dp, horizontal = 8.dp)
-                .clickable { },
+                .clickable {
+                   onClick()
+                },
             shape = shape, tonalElevation = 10.dp, shadowElevation = 15.dp
         )
         {
@@ -97,7 +100,7 @@ fun listItem(subTitle:String?,
                         Icon(Icons.Default.ArrowForward, contentDescription = null,
                             Modifier
                                 .padding(horizontal = 6.dp)
-                                .clickable { }
+                                .clickable {onClick() }
                         ,tint=arrowColor)
 
                     }
@@ -158,7 +161,9 @@ fun RecyclerView(
                 shape = shape,
                 color = color,
                 textColor = textColor,
-                arrowColor=arrowColor
+                arrowColor=arrowColor,
+                onClick = {},
+
             )
 
         }
@@ -168,7 +173,7 @@ fun RecyclerView(
 
 @Composable
 fun ExerciseRecyclerView(
-    exercise: Exercise ,
+    exercise: List<Exercise> ,
     greetingMessage:String?,
     icon: Painter?,
     subTitle: String?,
@@ -176,7 +181,8 @@ fun ExerciseRecyclerView(
     color:Color= CharcoalGray,
     textColor: Color=Color.White,
     style: TextStyle = MaterialTheme.typography.bodyMedium,
-    arrowColor:Color=Color.White) {
+    arrowColor:Color=Color.White,
+    navController: NavHostController) {
     LazyColumn(modifier = Modifier.padding(vertical = 4.dp)) {
         if (greetingMessage != null ) {
             item {
@@ -208,16 +214,80 @@ fun ExerciseRecyclerView(
                 }
             }
         }
-        item {
-            listItem(title=exercise.name,
+            items(exercise) { item ->
+                listItem(
+                    title = item.name,
+                    subTitle = subTitle,
+                    shape = shape,
+                    color = color,
+                    textColor = textColor,
+                    arrowColor = arrowColor,
+                    onClick = {navController.navigate(Screens.SubExerciseDetail(item.exerciseID).screen)}
+
+                )
+            }
+
+
+
+    }
+}
+
+@Composable
+fun SubExerciseRecyclerView(
+    exercise: Exercise ,
+    greetingMessage:String?=null,
+    icon: Painter?,
+    subTitle: String?,
+    shape: androidx.compose.ui.graphics.Shape = RectangleShape,
+    color:Color= CharcoalGray,
+    textColor: Color=Color.White,
+    style: TextStyle = MaterialTheme.typography.bodyMedium,
+    arrowColor:Color=Color.White,
+    navController: NavHostController) {
+    LazyColumn(modifier = Modifier.padding(vertical = 4.dp)) {
+        if (greetingMessage != null ) {
+            item {
+
+                Surface(
+                    color = Color.Transparent,
+                    modifier = Modifier
+                        .padding(vertical = 4.dp, horizontal = 8.dp)
+                ) {
+                    Row {
+                        Text(
+                            text = "$greetingMessage",
+                            fontSize = 25.sp,
+                            modifier = Modifier.weight(3f),
+                            color = Color.Black,
+                            fontWeight = FontWeight.ExtraBold,
+                            style=style
+                        )
+                        if(icon!=null) {
+                            Image(
+                                painter = icon,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .size(65.dp)
+                            )
+                        }
+                    }
+                }
+            }
+        }
+        items(exercise.subExercises) { item ->
+            listItem(
+                title = item.exerciseName,
                 subTitle = subTitle,
                 shape = shape,
                 color = color,
                 textColor = textColor,
-                arrowColor=arrowColor
+                arrowColor = arrowColor,
+                onClick = {navController.navigate(Screens.ExercisePage(item.exerciseName).screen)}
             )
-
         }
+
+
 
     }
 }

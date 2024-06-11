@@ -40,8 +40,8 @@ import kotlinx.coroutines.delay
 import java.util.concurrent.TimeUnit
 
 @Composable
-fun ExercisePage1() {
-    val exerciseName = "Lateral Pull"
+fun ExercisePage1(exerciseName:String="Value") { //TODO: Her egzersiz sayfası buradan oluşturulacak
+
     val caloriesBurned = 25
     val fireLogo = painterResource(id = R.drawable.fire)
     var startTime by remember { mutableStateOf(System.currentTimeMillis()) }
@@ -182,7 +182,7 @@ fun ExercisePage4(){
 @Composable
 fun ExercisePage1Preview(){
     FitnessTrackerAndPlannerTheme {
-        ExercisePage1()
+        ExercisePage1("Lateral pull")
     }
 }
 

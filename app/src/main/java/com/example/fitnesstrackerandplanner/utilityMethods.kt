@@ -58,6 +58,21 @@ enum class WeightClassification(){
     Obese,
     MorbidObese()
 }
+fun getExerciseByID(exercises: List<Exercise>, id: Int): Exercise {
+    for (exercise in exercises) {
+        if (exercise.exerciseID == id) {
+            return exercise
+        }
+        for (subExercise in exercise.subExercises) {
+            if (subExercise.exerciseID == id) {
+                return subExercise
+            }
+        }
+    }
+    return Exercise("NoEX",0)
+}
+
+
 
 fun calculateBMI(weightKg:Short,heightCm:Short):Float{
         var personalBMI:Float
@@ -88,9 +103,9 @@ fun initializeExercises(): List<Exercise> {
     val exercises = mutableListOf<Exercise>()
 
     // Initialize exercise groups
-    val chestExercises = Exercise("Chest")
-    val legExercises = Exercise("Legs")
-    val absExercises = Exercise("Abs")
+    val chestExercises = Exercise("Chest",1)
+    val legExercises = Exercise("Legs",2)
+    val absExercises = Exercise("Abs",3)
 
     // Initialize sub-exercises
     val chestSubExercises = listOf(
@@ -98,13 +113,16 @@ fun initializeExercises(): List<Exercise> {
             exerciseName = "Incline Dumbbell Press",
             description = "Lie on the table and push the dumbbells up.",
             videoUrl = "https://example.com/videos/incline_dumbbell_press.mp4",
-            groupName = "Chest"
+            groupName = "Chest",
+            exerciseID = 1
         ),
         SubExercise(
             exerciseName = "Dumbbell Chest Fly",
             description = "Lie on the table and spread your arms with dumbbells.",
             videoUrl = "https://example.com/videos/dumbbell_chest_fly.mp4",
-            groupName = "Chest"
+            groupName = "Chest",
+            exerciseID = 1
+
         )
     )
 
@@ -113,13 +131,18 @@ fun initializeExercises(): List<Exercise> {
             exerciseName = "Squat",
             description = "Stand with your feet shoulder-width apart and squat down.",
             videoUrl = "https://example.com/videos/squat.mp4",
-            groupName = "Legs"
+            groupName = "Legs",
+            exerciseID = 2
+
         ),
         SubExercise(
             exerciseName = "Lunge",
             description = "Step forward and lower your hips until both knees are bent.",
             videoUrl = "https://example.com/videos/lunge.mp4",
-            groupName = "Legs"
+            groupName = "Legs",
+            exerciseID = 2
+
+
         )
     )
 
@@ -128,13 +151,18 @@ fun initializeExercises(): List<Exercise> {
             exerciseName = "Crunch",
             description = "Lie on your back and lift your shoulders off the floor.",
             videoUrl = "https://example.com/videos/crunch.mp4",
-            groupName = "Abs"
+            groupName = "Abs",
+            exerciseID = 3
+
+
         ),
         SubExercise(
             exerciseName = "Plank",
             description = "Hold your body in a straight line from head to heels.",
             videoUrl = "https://example.com/videos/plank.mp4",
-            groupName = "Abs"
+            groupName = "Abs",
+            exerciseID = 3
+
         )
     )
 
@@ -150,5 +178,6 @@ fun initializeExercises(): List<Exercise> {
 
     return exercises
 }
+
 
 

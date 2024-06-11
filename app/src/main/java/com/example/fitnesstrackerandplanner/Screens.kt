@@ -19,7 +19,16 @@ sealed class Screens(val screen:String) {
     data object ExercisePage4:Screens("exercisepage4")
     data object PostSignUp:Screens("postsignuppage")
 
-    data object ExerciseSections : Screens("exercise_sections")
-    data object ExerciseList : Screens("exercise_list")
-    data object ExerciseDetails : Screens("exercise_details/{exerciseName}")
+    data class SubExerciseDetail(val exerciseID: Int) : Screens("subexercisedetail/$exerciseID"){
+        companion object {
+            const val routeWithArgs = "subexercisedetail/{exerciseID}"
+        }
+    }
+
+    data class ExercisePage(val exerciseName:String) : Screens("exercisepage/$exerciseName"){
+        companion object {
+            const val routeWithArgs = "exercisepage/{exerciseName}" //HATA KAYNAĞI OLABİLİR
+        }
+    }
+
 }
