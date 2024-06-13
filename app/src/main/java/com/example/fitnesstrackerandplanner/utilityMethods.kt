@@ -103,9 +103,9 @@ fun initializeExercises(): List<Exercise> {
     val exercises = mutableListOf<Exercise>()
 
     // Initialize exercise groups
-    val chestExercises = Exercise("Chest",1)
-    val legExercises = Exercise("Legs",2)
-    val absExercises = Exercise("Abs",3)
+    val chestExercises = Exercise("Chest", 1)
+    val legExercises = Exercise("Legs", 2)
+    val absExercises = Exercise("Abs", 3)
 
     // Initialize sub-exercises
     val chestSubExercises = listOf(
@@ -122,7 +122,6 @@ fun initializeExercises(): List<Exercise> {
             videoUrl = "https://example.com/videos/dumbbell_chest_fly.mp4",
             groupName = "Chest",
             exerciseID = 1
-
         )
     )
 
@@ -133,7 +132,6 @@ fun initializeExercises(): List<Exercise> {
             videoUrl = "https://example.com/videos/squat.mp4",
             groupName = "Legs",
             exerciseID = 2
-
         ),
         SubExercise(
             exerciseName = "Lunge",
@@ -141,8 +139,6 @@ fun initializeExercises(): List<Exercise> {
             videoUrl = "https://example.com/videos/lunge.mp4",
             groupName = "Legs",
             exerciseID = 2
-
-
         )
     )
 
@@ -153,8 +149,6 @@ fun initializeExercises(): List<Exercise> {
             videoUrl = "https://example.com/videos/crunch.mp4",
             groupName = "Abs",
             exerciseID = 3
-
-
         ),
         SubExercise(
             exerciseName = "Plank",
@@ -162,7 +156,6 @@ fun initializeExercises(): List<Exercise> {
             videoUrl = "https://example.com/videos/plank.mp4",
             groupName = "Abs",
             exerciseID = 3
-
         )
     )
 

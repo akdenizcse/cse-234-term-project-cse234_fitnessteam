@@ -17,7 +17,7 @@ init{
 fun addExercise(exList:List<SubExercise>){
     subExercises.addAll(exList)
 }fun getSubExerciseById(subExerciseID: Int): SubExercise? {
-        return subExercises.find { it.exerciseID == subExerciseID }
+        return subExercises.find { it.subExerciseID == subExerciseID } //crash sebebi buymuş it.exerciseID==subExerciseID'ydi önceden.
     }
 
 
