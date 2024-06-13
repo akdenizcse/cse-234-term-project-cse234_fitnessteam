@@ -26,6 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,6 +37,7 @@ import com.example.fitnesstrackerandplanner.ui.theme.Cerulean
 import com.example.fitnesstrackerandplanner.ui.theme.DeepNavyBlue
 import com.example.fitnesstrackerandplanner.ui.theme.FitnessTrackerAndPlannerTheme
 import com.example.fitnesstrackerandplanner.ui.theme.SurfaceGreen
+import com.example.healthconnect.codelab.data.HealthConnectManager
 import kotlinx.coroutines.delay
 import java.util.concurrent.TimeUnit
 
@@ -47,6 +49,8 @@ fun ExercisePage1(exerciseName:String="Value") { //TODO: Her egzersiz sayfası b
     var startTime by remember { mutableStateOf(System.currentTimeMillis()) }
     var elapsedTime by remember { mutableStateOf(0L) }
     val navController= rememberNavController() //hataya sebep olur parametre olarak vermektense
+    val healthConnectManager=HealthConnectManager(LocalContext.current)
+
     LaunchedEffect(Unit) {
         while (true) {
             val currentTime = System.currentTimeMillis()
@@ -57,6 +61,7 @@ fun ExercisePage1(exerciseName:String="Value") { //TODO: Her egzersiz sayfası b
 
     val minutes = TimeUnit.MILLISECONDS.toMinutes(elapsedTime)
     val seconds = TimeUnit.MILLISECONDS.toSeconds(elapsedTime) % 60
+
     Surface(
         color = DeepNavyBlue,
         modifier = Modifier.fillMaxSize()
@@ -126,6 +131,7 @@ fun ExercisePage1(exerciseName:String="Value") { //TODO: Her egzersiz sayfası b
             Button(
                 onClick = {
                     navController.popBackStack()
+                    healthConnectManager.writeExerciseSession(startTime, end = )
                 },
                 modifier = Modifier
                     .fillMaxWidth()

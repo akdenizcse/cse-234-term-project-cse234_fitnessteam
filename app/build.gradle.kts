@@ -58,6 +58,7 @@ dependencies {
     implementation("androidx.media3:media3-exoplayer:1.3.1")
     implementation("androidx.media3:media3-datasource:1.3.1")
     implementation("androidx.media3:media3-common:1.3.1")
+    implementation ("androidx.health.connect:connect-client:1.0.0-alpha11")
 
     dependencies {
         implementation("androidx.sqlite:sqlite:2.1.0") //

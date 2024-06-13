@@ -25,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.health.connect.client.HealthConnectClient
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -45,7 +46,9 @@ class MainActivity : ComponentActivity() {
         installSplashScreen()
         val db= Firebase.firestore
         setContent {
+
             val context= LocalContext.current
+            val healthConnectClient by lazy { HealthConnectClient.getOrCreate(context) }
             val sharedPrefManager by lazy{SharedPrefManager(context)}
             val userName= sharedPrefManager.getCurrentUsername()
 
