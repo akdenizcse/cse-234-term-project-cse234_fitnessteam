@@ -1,7 +1,9 @@
 package com.example.fitnesstrackerandplanner
 
+import FirebaseHelper
 import android.database.sqlite.SQLiteDatabase
 import android.icu.util.Calendar
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -25,8 +27,10 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -49,10 +53,12 @@ fun Home() {
     val hour by lazy{ Calendar.getInstance().get(Calendar.HOUR_OF_DAY) }
     val context= LocalContext.current
     val sharedPrefManager by lazy{SharedPrefManager(context)}
-    val userName=sharedPrefManager.getCurrentUser()
+    val userName= sharedPrefManager.getCurrentUsername()
+
+
     val isDayTime:Boolean= hour in 6..18
     val greeting:String=if(isDayTime)"Good Morning, $userName!" else "Good Evening, $userName!"
-
+    val firebaseHelper by lazy{FirebaseHelper()}
     //Initializing icons
     val icon= if(isDayTime) painterResource(id = R.drawable.icons8_sunny_48)
     else painterResource(id = R.drawable.icons8_moon_48)
@@ -66,6 +72,11 @@ fun Home() {
     val caloriesBurntProgress = remember { mutableStateOf(0f) }
     val hoursSleptProgress = remember { mutableStateOf(0f) }
     val dietProgress = remember { mutableStateOf(0f) }
+    val height=sharedPrefManager.getCurrentUserHeight()
+    val weight=sharedPrefManager.getCurrentUserWeight()
+
+
+
     Surface(color= DeepNavyBlue,modifier=Modifier.fillMaxSize()) {
         LazyColumn {
 
@@ -107,20 +118,20 @@ fun Home() {
                             ) {
                                 Column() {
                                     Text(
-                                        "Height: 166cm", modifier = Modifier
+                                        "Height:${height}cm", modifier = Modifier
                                             .padding(horizontal = 8.dp)
                                             .weight(1f),
                                         fontWeight = FontWeight.Bold,
-                                        color=Color.Black
+                                        color=Color.White
 
                                     )
                                     Text(
-                                        "Weight: 52kg",
+                                        "Weight: ${weight}kg",
                                         modifier = Modifier
                                             .weight(1f)
                                             .padding(horizontal = 8.dp),
                                         fontWeight = FontWeight.Bold,
-                                        color=Color.Black
+                                        color=Color.White
                                     )
                                     Row() {
                                         Text(
@@ -129,14 +140,15 @@ fun Home() {
                                                 .weight(1f)
                                                 .padding(horizontal = 8.dp),
                                             fontWeight = FontWeight.Bold,
-                                            color=Color.Black
+                                            color=Color.White
                                         )
-                                        Text("BMI:22.9",
+                                        Text("BMI:${calculateBMI(weightKg = weight.toShort(),
+                                            heightCm = height.toShort())}",
                                             modifier = Modifier
                                                 .align(Alignment.Bottom)
                                                 .padding(8.dp),
                                             fontWeight = FontWeight.Bold,
-                                            color=Color.Black
+                                            color=Color.White
 
                                         )
 

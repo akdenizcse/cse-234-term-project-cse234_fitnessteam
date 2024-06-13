@@ -2,7 +2,9 @@ package com.example.fitnesstrackerandplanner
 
 import FirebaseHelper
 import LoginPage
+import SubExercise
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -24,9 +26,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.fitnesstrackerandplanner.ui.theme.*
 import com.google.firebase.Firebase
 import com.google.firebase.database.FirebaseDatabase
@@ -34,18 +38,44 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 //TODO: Add gradient text coloring, draggable picker,pop up menu
 class MainActivity : ComponentActivity() {
+    val firebaseHelper=FirebaseHelper()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
         val db= Firebase.firestore
         setContent {
+            val context= LocalContext.current
+            val sharedPrefManager by lazy{SharedPrefManager(context)}
+            val userName= sharedPrefManager.getCurrentUsername()
+
+            if (userName != null) {
+                firebaseHelper.fetchHeight(userName) { value ->
+                    if (value != null) {
+                        sharedPrefManager.saveCurrentUserHeight(value)
+                    } else {
+                        Log.e("FirebaseHelper","Height can not be fetched, probably such user is not signed")
+                    }
+
+                    // Once height is fetched, fetch weight
+                    firebaseHelper.fetchWeight(userName) { value ->
+                        if (value != null) {
+                            sharedPrefManager.saveCurrentUserWeight(value)
+                        } else {
+                            Log.e("FirebaseHelper","Weight can not be fetched, probably such user is not signed")
+                        }
+                    }
+                }
+            }else{
+            }
+
             val navigationController = rememberNavController()
             val firebaseHelper by remember { mutableStateOf(FirebaseHelper()) }
 
             FitnessTrackerAndPlannerTheme {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    BottomAppBar(navigationController, firebaseHelper)
+                   BottomAppBar(navigationController, firebaseHelper)
+                  //   ExerciseInfoPage(subExercise = null)
                 }
             }
         }
@@ -55,9 +85,10 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun BottomAppBar(navigationController: NavHostController, firebaseHelper: FirebaseHelper) {
     val context = LocalContext.current
+    val exList by lazy{initializeExercises()}
     var currentRoute by remember { mutableStateOf(Screens.LoginPage.screen) }
     val selected = remember { mutableStateOf(Icons.Default.Home) }
-
+    var currentExerciseID by remember{ mutableStateOf(0) }
     Scaffold(
         bottomBar = {
             if (currentRoute != Screens.SignInPage.screen && currentRoute != Screens.LoginPage.screen) {
@@ -227,7 +258,7 @@ fun BottomAppBar(navigationController: NavHostController, firebaseHelper: Fireba
                 currentRoute = Screens.Home.screen
             }
             composable(Screens.Goals.screen) {
-                Goals()
+                Goals(navController = navigationController, exList = exList)
                 currentRoute = Screens.Goals.screen
             }
             composable(Screens.Profile.screen) {
@@ -262,6 +293,47 @@ fun BottomAppBar(navigationController: NavHostController, firebaseHelper: Fireba
                 PostSignUp(navController = navigationController)
                 currentRoute=Screens.PostSignUp.screen
             }
+            composable(
+                route = Screens.SubExerciseDetail.routeWithArgs,
+                arguments = listOf(navArgument("exerciseID") { type = NavType.IntType })
+            ) { backStackEntry ->
+                val exerciseID = backStackEntry.arguments?.getInt("exerciseID") ?: 0
+                currentExerciseID=exerciseID
+                SubExercisePage(navController = navigationController, exercise = getExerciseByID(exList,exerciseID))
+                currentRoute = Screens.SubExerciseDetail(exerciseID).screen
+            }
+            composable(
+                route = Screens.ExercisePage.routeWithArgs,
+                arguments = listOf(navArgument("exerciseName") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val exerciseName = backStackEntry.arguments?.getString("exerciseName") ?: ""
+                ExercisePage1(
+                    exerciseName = exerciseName
+                )
+            }
+
+            composable(
+                route = Screens.ExerciseInfoPage.routeWithArgs,
+                arguments = listOf(navArgument("subExerciseID") { type = NavType.IntType })
+            ) { backStackEntry ->
+
+                val subExerciseID:Int=backStackEntry.arguments?.getInt("subExerciseID") ?: 0
+                val subEx= getExerciseByID(exList,currentExerciseID).getSubExerciseById(subExerciseID) // çok saçma
+                if (subEx != null) {
+                    ExerciseInfoPage(subExercise = subEx)
+                } else {
+                    Toast.makeText(context,"Passed an invalid ID for subexercise!!!",Toast.LENGTH_SHORT).show()
+                    Log.e("NavHost","Passed subexercise is invalid")
+                }            }
+
+
+            // Main Exercise Type screens
+
+            // Sub-Exercise Detail screens
+
+
+
+
         }
     }
 }
