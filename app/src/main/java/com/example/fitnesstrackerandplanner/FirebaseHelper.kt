@@ -1,11 +1,8 @@
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.tasks.await
 
 class FirebaseHelper {
     private val db = FirebaseFirestore.getInstance()
@@ -54,8 +51,8 @@ class FirebaseHelper {
 
     fun setHeightWeight(
         userName: String,
-        height: Short,
-        weight: Short,
+        height: Int,
+        weight: Int,
         callback: (Boolean) -> Unit
     ) {
         // Query the collection to find the document with the specified username

@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.absoluteOffset
-import androidx.compose.foundation.layout.absolutePadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -27,19 +26,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shadow
-import androidx.compose.ui.graphics.drawscope.DrawStyle
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.fitnesstrackerandplanner.ui.theme.Cerulean
 import com.example.fitnesstrackerandplanner.ui.theme.DeepNavyBlue
@@ -124,15 +119,17 @@ fun PostSignUp(navController: NavHostController?){
             AnimatedButton(
                 onClick = {if(navController!=null){
                     if (currentUser != null) {
-                        firebaseHelper.setHeightWeight(height=(height).toShort(),
-                            weight = weight.toShort(),
+                        firebaseHelper.setHeightWeight(
+                            height =height.toInt(),
+                            weight = weight.toInt(),
                             userName =currentUser) { successful ->
                             if (successful) {
                                 Toast.makeText(context,
                                     "Height and weight updated successfully!",
                                     Toast.LENGTH_SHORT
                                 ).show()
-
+                                sharedPrefManager.saveCurrentUserHeight(height.toInt())
+                                sharedPrefManager.saveCurrentUserWeight(weight.toInt())
                                 navController.navigate(Screens.Home.screen)
                             }
                             else{

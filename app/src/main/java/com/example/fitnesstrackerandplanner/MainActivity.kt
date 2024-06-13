@@ -49,25 +49,7 @@ class MainActivity : ComponentActivity() {
             val sharedPrefManager by lazy{SharedPrefManager(context)}
             val userName= sharedPrefManager.getCurrentUsername()
 
-            if (userName != null) {
-                firebaseHelper.fetchHeight(userName) { value ->
-                    if (value != null) {
-                        sharedPrefManager.saveCurrentUserHeight(value)
-                    } else {
-                        Log.e("FirebaseHelper","Height can not be fetched, probably such user is not signed")
-                    }
 
-                    // Once height is fetched, fetch weight
-                    firebaseHelper.fetchWeight(userName) { value ->
-                        if (value != null) {
-                            sharedPrefManager.saveCurrentUserWeight(value)
-                        } else {
-                            Log.e("FirebaseHelper","Weight can not be fetched, probably such user is not signed")
-                        }
-                    }
-                }
-            }else{
-            }
 
             val navigationController = rememberNavController()
             val firebaseHelper by remember { mutableStateOf(FirebaseHelper()) }
@@ -76,6 +58,7 @@ class MainActivity : ComponentActivity() {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
                    BottomAppBar(navigationController, firebaseHelper)
                   //   ExerciseInfoPage(subExercise = null)
+
                 }
             }
         }
@@ -306,11 +289,13 @@ fun BottomAppBar(navigationController: NavHostController, firebaseHelper: Fireba
 
             composable(
                 route = Screens.ExercisePage.routeWithArgs,
-                arguments = listOf(navArgument("exerciseName") { type = NavType.StringType })
+                arguments = listOf(navArgument("subExerciseID") { type = NavType.IntType })
             ) { backStackEntry ->
-                val exerciseName = backStackEntry.arguments?.getString("exerciseName") ?: ""
+                val subExerciseID = backStackEntry.arguments?.getInt("subExerciseID") ?: 0
+                val subEx= getExerciseByID(exList,currentExerciseID).getSubExerciseById(subExerciseID)
                 ExercisePage1(
-                    exerciseName = exerciseName
+                    exerciseName = subEx!!.exerciseName
+
                 )
             }
 
@@ -322,7 +307,7 @@ fun BottomAppBar(navigationController: NavHostController, firebaseHelper: Fireba
                 val subExerciseID:Int=backStackEntry.arguments?.getInt("subExerciseID") ?: 0
                 val subEx= getExerciseByID(exList,currentExerciseID).getSubExerciseById(subExerciseID) // çok saçma
                 if (subEx != null) {
-                    ExerciseInfoPage(subExercise = subEx)
+                    ExerciseInfoPage(subExercise = subEx, navController = navigationController)
                 } else {
                     Toast.makeText(context,"Passed an invalid ID for subexercise!!!",Toast.LENGTH_SHORT).show()
                     Log.e("NavHost","Passed subexercise is invalid")

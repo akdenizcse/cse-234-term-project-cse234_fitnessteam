@@ -25,9 +25,9 @@ sealed class Screens(val screen:String) {
         }
     }
 
-    data class ExercisePage(val exerciseName:String) : Screens("exercisepage/$exerciseName"){
+    data class ExercisePage(val subExerciseID: Int) : Screens("exercisepage/$subExerciseID"){
         companion object {
-            const val routeWithArgs = "exercisepage/{exerciseName}" //HATA KAYNAĞI OLABİLİR
+            const val routeWithArgs = "exercisepage/{subExerciseID}" //HATA KAYNAĞI OLABİLİR
         }
     }
     data class ExerciseInfoPage(val subExerciseID: Int) : Screens("exerciseinfopage/${subExerciseID}") {

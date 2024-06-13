@@ -2,6 +2,7 @@ package com.example.fitnesstrackerandplanner
 
 import Exercise
 import SubExercise
+import android.content.Context
 import android.view.MotionEvent
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
@@ -36,6 +37,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.pointer.pointerInteropFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -87,12 +89,25 @@ fun isHealthyBMI(personalBMI:Float,Gender:Boolean):WeightClassification{
     }
     return WeightClassification.Overweight
 }
-fun calculateIdealWeight(heightCm:Short,isFemale:Boolean):Float{
+private fun calculateIdealWeight(heightCm:Short,isFemale:Boolean):Float{
     if(isFemale){
       return (45.5f+ 2.3f*((heightCm/2.54f)-60))
 
     }
     return (50+ 2.3f*((heightCm/2.54f)-60))
+}
+fun getIdealWeight(heightCm: Short,isFemale: Boolean,context: Context):String{
+    val sharedPrefManager=SharedPrefManager(context =context)
+    val currentWeight=sharedPrefManager.getCurrentUserWeight()
+    val difference=calculateIdealWeight(heightCm,isFemale)-currentWeight
+    if(difference>0){
+        return "You are ${difference}kg behind of your ideal weight."
+    }else if(difference<0){
+        return "You are ${difference}kg ahead of your ideal weight."
+    }
+    else{
+        return "You are at your ideal weight. Keep it up!"
+    }
 }
 fun calculateHowManyCaloriesBurned(metValue:Double,weightKg:Double,durationMin: Double):Double{
     val caloriesBurnedPerMin=metValue*weightKg*0.0175
