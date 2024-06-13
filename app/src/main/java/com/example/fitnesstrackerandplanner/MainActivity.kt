@@ -298,10 +298,12 @@ fun BottomAppBar(navigationController: NavHostController, firebaseHelper: Fireba
                 arguments = listOf(navArgument("exerciseID") { type = NavType.IntType })
             ) { backStackEntry ->
                 val exerciseID = backStackEntry.arguments?.getInt("exerciseID") ?: 0
-                currentExerciseID=exerciseID
-                SubExercisePage(navController = navigationController, exercise = getExerciseByID(exList,exerciseID))
+                Log.d("NavHost", "Navigating to SubExerciseDetail with exerciseID: $exerciseID")
+                currentExerciseID = exerciseID
+                SubExercisePage(navController = navigationController, exercise = getExerciseByID(exList, exerciseID))
                 currentRoute = Screens.SubExerciseDetail(exerciseID).screen
             }
+
             composable(
                 route = Screens.ExercisePage.routeWithArgs,
                 arguments = listOf(navArgument("exerciseName") { type = NavType.StringType })
@@ -324,7 +326,8 @@ fun BottomAppBar(navigationController: NavHostController, firebaseHelper: Fireba
                 } else {
                     Toast.makeText(context,"Passed an invalid ID for subexercise!!!",Toast.LENGTH_SHORT).show()
                     Log.e("NavHost","Passed subexercise is invalid")
-                }            }
+                }
+            }
 
 
             // Main Exercise Type screens
