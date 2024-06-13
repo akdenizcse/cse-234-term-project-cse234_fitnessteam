@@ -283,7 +283,7 @@ fun SubExerciseRecyclerView(
                 color = color,
                 textColor = textColor,
                 arrowColor = arrowColor,
-                onClick = {navController.navigate(Screens.ExercisePage(item.exerciseName).screen)}
+                onClick = {navController.navigate(Screens.ExerciseInfoPage(item.subExerciseID).screen)}
             )
         }
 

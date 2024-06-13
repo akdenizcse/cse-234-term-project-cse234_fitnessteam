@@ -55,7 +55,6 @@ fun VideoPlayerExo() {
         }
     }
 
-    // Use AndroidView to embed an Android View (PlayerView) into Compose
 
     AndroidView(
         factory = { ctx ->
@@ -65,6 +64,6 @@ fun VideoPlayerExo() {
         },
         modifier = Modifier
             .fillMaxWidth()
-            .height(200.dp) // Set your desired height
+            .height(200.dp)
     )
 }

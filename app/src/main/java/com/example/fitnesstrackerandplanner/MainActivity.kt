@@ -2,6 +2,7 @@ package com.example.fitnesstrackerandplanner
 
 import FirebaseHelper
 import LoginPage
+import SubExercise
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -53,7 +54,7 @@ class MainActivity : ComponentActivity() {
                     if (value != null) {
                         sharedPrefManager.saveCurrentUserHeight(value)
                     } else {
-
+                        Log.e("FirebaseHelper","Height can not be fetched, probably such user is not signed")
                     }
 
                     // Once height is fetched, fetch weight
@@ -61,7 +62,7 @@ class MainActivity : ComponentActivity() {
                         if (value != null) {
                             sharedPrefManager.saveCurrentUserWeight(value)
                         } else {
-                            // Handle case where weight is not found or an error occurs
+                            Log.e("FirebaseHelper","Weight can not be fetched, probably such user is not signed")
                         }
                     }
                 }
@@ -73,8 +74,8 @@ class MainActivity : ComponentActivity() {
 
             FitnessTrackerAndPlannerTheme {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
- //                   BottomAppBar(navigationController, firebaseHelper)
-                    ExerciseInfoPage(subExercise = null)
+                   BottomAppBar(navigationController, firebaseHelper)
+                  //   ExerciseInfoPage(subExercise = null)
                 }
             }
         }
@@ -87,7 +88,7 @@ fun BottomAppBar(navigationController: NavHostController, firebaseHelper: Fireba
     val exList by lazy{initializeExercises()}
     var currentRoute by remember { mutableStateOf(Screens.LoginPage.screen) }
     val selected = remember { mutableStateOf(Icons.Default.Home) }
-
+    var currentExerciseID by remember{ mutableStateOf(0) }
     Scaffold(
         bottomBar = {
             if (currentRoute != Screens.SignInPage.screen && currentRoute != Screens.LoginPage.screen) {
@@ -297,6 +298,7 @@ fun BottomAppBar(navigationController: NavHostController, firebaseHelper: Fireba
                 arguments = listOf(navArgument("exerciseID") { type = NavType.IntType })
             ) { backStackEntry ->
                 val exerciseID = backStackEntry.arguments?.getInt("exerciseID") ?: 0
+                currentExerciseID=exerciseID
                 SubExercisePage(navController = navigationController, exercise = getExerciseByID(exList,exerciseID))
                 currentRoute = Screens.SubExerciseDetail(exerciseID).screen
             }
@@ -309,6 +311,21 @@ fun BottomAppBar(navigationController: NavHostController, firebaseHelper: Fireba
                     exerciseName = exerciseName
                 )
             }
+
+            composable(
+                route = Screens.ExerciseInfoPage.routeWithArgs,
+                arguments = listOf(navArgument("subExerciseID") { type = NavType.IntType })
+            ) { backStackEntry ->
+
+                val subExerciseID:Int=backStackEntry.arguments?.getInt("subExerciseID") ?: 0
+                val subEx= getExerciseByID(exList,currentExerciseID).getSubExerciseById(subExerciseID) // çok saçma
+                if (subEx != null) {
+                    ExerciseInfoPage(subExercise = subEx)
+                } else {
+                    Toast.makeText(context,"Passed an invalid ID for subexercise!!!",Toast.LENGTH_SHORT).show()
+                    Log.e("NavHost","Passed subexercise is invalid")
+                }            }
+
 
             // Main Exercise Type screens
 
