@@ -1,8 +1,10 @@
 package com.example.fitnesstrackerandplanner
 
 import Exercise
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -17,10 +19,12 @@ import com.example.fitnesstrackerandplanner.ui.theme.DeepNavyBlue
 
 @Composable
 fun StartAnExercise(navController: NavHostController) {
+
     val context= LocalContext.current
     val sharedPrefManager by lazy{SharedPrefManager(context)}
     val confirmedSubExerciseList=sharedPrefManager.getSelectedExercisesGO()
     Surface(color = DeepNavyBlue,modifier=Modifier.fillMaxSize()) {
+        Spacer(modifier=Modifier.padding(top=10.dp))
         GoRecycler(
             subExerciseIdList = confirmedSubExerciseList,
             greetingMessage = null,

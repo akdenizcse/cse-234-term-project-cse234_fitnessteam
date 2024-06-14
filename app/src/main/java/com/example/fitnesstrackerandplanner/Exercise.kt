@@ -30,8 +30,8 @@ class SubExercise(val exerciseName:String,
                   val description: String,
                   val videoUrl: String,
                   var groupName:String, val exerciseIDs: Int,
-    var subExerciseID:Int= subExerciseIDs
-): Exercise(groupName, exerciseID = exerciseIDs) {
+    var subExerciseID:Int= subExerciseIDs,
+val approximateCaloriesPerSecond:Double): Exercise(groupName, exerciseID = exerciseIDs) {
 
     companion object{
         var subExerciseIDs:Int=0

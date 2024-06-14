@@ -35,4 +35,10 @@ sealed class Screens(val screen:String) {
             const val routeWithArgs = "exerciseinfopage/{subExerciseID}"
         }
     }
+    data class PostExercisePage(val subExerciseID: Int,val caloriesBurned:Double,val minutes:Long,val seconds:Long):Screens(
+        "postexercisepage/${subExerciseID}/${caloriesBurned}/${minutes}/${seconds}"){
+        companion object{
+            const val routeWithArgs="postexercisepage/{subExerciseID}/{caloriesBurned}/{minutes}/{seconds}"
+        }
+    }
     }

@@ -52,7 +52,7 @@ class MainActivity : ComponentActivity() {
 
             val context= LocalContext.current
             val healthConnectManager:HealthConnectManager by lazy{ HealthConnectManager(context)}
-            lazy {sharedPrefManager.saveAllExercises(initializeExercises())}
+            sharedPrefManager.saveAllExercises(initializeExercises())
             lazy{healthConnectManager.requestPermissionsActivityContract()}
 
 
@@ -263,22 +263,7 @@ fun BottomAppBar(navigationController: NavHostController, firebaseHelper: Fireba
                 StartAnExercise(navController = navigationController)
                 currentRoute = Screens.StartAnExercise.screen
             }
-            composable(Screens.ExercisePage1.screen) {
-                ExercisePage1()
-                currentRoute = Screens.ExercisePage1.screen
-            }
-            composable(Screens.ExercisePage2.screen) {
-                ExercisePage2()
-                currentRoute = Screens.ExercisePage2.screen
-            }
-            composable(Screens.ExercisePage3.screen) {
-                ExercisePage3()
-                currentRoute = Screens.ExercisePage3.screen
-            }
-            composable(Screens.ExercisePage4.screen) {
-                ExercisePage4()
-                currentRoute = Screens.ExercisePage4.screen
-            }
+
             composable(Screens.SignInPage.screen) {
                 SignUp(navigationController = navigationController)
                 currentRoute = Screens.SignInPage.screen
@@ -305,8 +290,8 @@ fun BottomAppBar(navigationController: NavHostController, firebaseHelper: Fireba
                 val subExerciseID = backStackEntry.arguments?.getInt("subExerciseID") ?: 0
                 val subEx= getExerciseByID(exList,currentExerciseID).getSubExerciseById(subExerciseID)
                 ExercisePage1(
-                    exerciseName = subEx!!.exerciseName
-
+                    exerciseName = subEx!!.exerciseName,
+                    subExercise=subEx
                 )
             }
 
@@ -325,10 +310,32 @@ fun BottomAppBar(navigationController: NavHostController, firebaseHelper: Fireba
                 }
             }
 
+            composable(
+                route = Screens.PostExercisePage.routeWithArgs,
+                arguments = listOf(
+                    navArgument("subExerciseID") { type = NavType.IntType },
+                    navArgument("caloriesBurned") { type = NavType.FloatType },
+                    navArgument("minutes") { type = NavType.LongType },
+                    navArgument("seconds") { type = NavType.LongType }
+                )
+            ) { backStackEntry ->
+                val subExerciseID = backStackEntry.arguments?.getInt("subExerciseID") ?: 0
+                val caloriesBurned = backStackEntry.arguments?.getDouble("caloriesBurned") ?: 0.0
+                val minutes = backStackEntry.arguments?.getLong("minutes") ?: 0L
+                val seconds = backStackEntry.arguments?.getLong("seconds") ?: 0L
 
-            // Main Exercise Type screens
+                PostExercisePage(
+                    subExerciseID = subExerciseID,
+                    caloriesBurned = caloriesBurned,
+                    minutes = minutes,
+                    seconds = seconds,
+                    navController = navigationController
+                )
+            }
 
-            // Sub-Exercise Detail screens
+
+
+
 
 
 

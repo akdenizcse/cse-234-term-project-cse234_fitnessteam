@@ -27,47 +27,35 @@ import com.example.fitnesstrackerandplanner.ViewModels.SubExerciseViewModel
 import com.example.fitnesstrackerandplanner.ui.theme.DeepNavyBlue
 
 @Composable
-fun SubExercisePage(exercise:Exercise,navController: NavHostController) {
-    val context= LocalContext.current
-    val sharedPrefManager=SharedPrefManager(context)
-    val viewModel:SubExerciseViewModel= viewModel()
+fun SubExercisePage(exercise: Exercise, navController: NavHostController) {
+    val context = LocalContext.current
+    val sharedPrefManager = SharedPrefManager(context)
+    val viewModel: SubExerciseViewModel = viewModel()
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(color = DeepNavyBlue)
-
-    )
-
-    {
-
-        /* Image(
-            painter=bluetooth_logo,
-            contentDescription= null,
-            modifier=Modifier
-                .padding(15.dp)
-                .size(28.dp)
-                .align(Alignment.TopEnd),)
-*/
+    ) {
         val selectedSubExercises = remember { mutableStateListOf(*sharedPrefManager.getSelectedExercises().toTypedArray()) }
-        var isConfirmButton by remember{mutableStateOf(selectedSubExercises.isNotEmpty())}
-      SubExerciseRecyclerView(
-          exercise = exercise,
-          icon = null,
-          subTitle =null, navController =navController
-      ,onSelectionChanged = {selectedExercises ->
-            viewModel.clearSubExercises()
-              selectedExercises.forEach{ viewModel.addSubExercise(it) }
-              sharedPrefManager.saveSelectedExercises(viewModel.selectedSubExercises)
-              isConfirmButton = selectedSubExercises.isNotEmpty()
-              sharedPrefManager.saveSelectedExercisesGO(viewModel.selectedSubExercises)
+        var isConfirmButton by remember { mutableStateOf(selectedSubExercises.isNotEmpty()) }
 
-          }
-      , selectedSubExercises = selectedSubExercises,
-          isConfirmButton=isConfirmButton)
-
-
-
-        }
+        SubExerciseRecyclerView(
+            exercise = exercise,
+            icon = null,
+            subTitle = null,
+            navController = navController,
+            onSelectionChanged = { selectedExercises ->
+                viewModel.clearSubExercises()
+                selectedExercises.forEach { viewModel.addSubExercise(it) }
+                sharedPrefManager.saveSelectedExercises(viewModel.selectedSubExercises)
+                isConfirmButton = selectedExercises.isNotEmpty()
+                sharedPrefManager.saveSelectedExercisesGO(viewModel.selectedSubExercises)
+            },
+            selectedSubExercises = selectedSubExercises,
+            isConfirmButton = isConfirmButton
+        )
     }
+}
+
 

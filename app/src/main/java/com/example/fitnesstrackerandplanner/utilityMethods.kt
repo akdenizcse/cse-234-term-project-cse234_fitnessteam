@@ -118,6 +118,8 @@ fun calculateHowManyCaloriesBurned(metValue:Double,weightKg:Double,durationMin: 
     return caloriesBurnedPerMin*durationMin
 }
 
+
+
 fun initializeExercises(): List<Exercise> {
     val exercises = mutableListOf<Exercise>()
 
@@ -133,14 +135,16 @@ fun initializeExercises(): List<Exercise> {
             description = "Lie on the table and push the dumbbells up.",
             videoUrl = "https://example.com/videos/incline_dumbbell_press.mp4",
             groupName = "Chest",
-            exerciseIDs = 1
+            exerciseIDs = 1,
+            approximateCaloriesPerSecond = 0.12 // Example value
         ),
         SubExercise(
             exerciseName = "Dumbbell Chest Fly",
             description = "Lie on the table and spread your arms with dumbbells.",
             videoUrl = "https://example.com/videos/dumbbell_chest_fly.mp4",
             groupName = "Chest",
-            exerciseIDs = 1
+            exerciseIDs = 1,
+            approximateCaloriesPerSecond = 0.10 // Example value
         )
     )
 
@@ -150,14 +154,16 @@ fun initializeExercises(): List<Exercise> {
             description = "Stand with your feet shoulder-width apart and squat down.",
             videoUrl = "https://example.com/videos/squat.mp4",
             groupName = "Legs",
-            exerciseIDs = 2
+            exerciseIDs = 2,
+            approximateCaloriesPerSecond = 0.15 // Example value
         ),
         SubExercise(
             exerciseName = "Lunge",
             description = "Step forward and lower your hips until both knees are bent.",
             videoUrl = "https://example.com/videos/lunge.mp4",
             groupName = "Legs",
-            exerciseIDs = 2
+            exerciseIDs = 2,
+            approximateCaloriesPerSecond = 0.14 // Example value
         )
     )
 
@@ -167,14 +173,16 @@ fun initializeExercises(): List<Exercise> {
             description = "Lie on your back and lift your shoulders off the floor.",
             videoUrl = "https://example.com/videos/crunch.mp4",
             groupName = "Abs",
-            exerciseIDs = 3
+            exerciseIDs = 3,
+            approximateCaloriesPerSecond = 0.08 // Example value
         ),
         SubExercise(
             exerciseName = "Plank",
             description = "Hold your body in a straight line from head to heels.",
             videoUrl = "https://example.com/videos/plank.mp4",
             groupName = "Abs",
-            exerciseIDs = 3
+            exerciseIDs = 3,
+            approximateCaloriesPerSecond = 0.05 // Example value
         )
     )
 
@@ -190,6 +198,7 @@ fun initializeExercises(): List<Exercise> {
 
     return exercises
 }
+
 
 fun List<Exercise>.getSubExercisesByIds(subExerciseIds: List<Int>): List<SubExercise> {
     val result = mutableListOf<SubExercise>()

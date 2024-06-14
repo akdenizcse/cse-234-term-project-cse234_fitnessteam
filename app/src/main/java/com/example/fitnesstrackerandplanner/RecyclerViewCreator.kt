@@ -4,11 +4,13 @@ import Exercise
 import SubExercise
 import android.content.Intent
 import android.graphics.drawable.shapes.Shape
+import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,8 +19,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
@@ -45,6 +49,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -134,12 +139,13 @@ fun listItem(subTitle:String?,
 fun listSubExercise(
     subTitle: String?,
     title: String,
-    shape: androidx.compose.ui.graphics.Shape,
+    shape: androidx.compose.ui.graphics.Shape= RoundedCornerShape(16.dp),
     color: Color = RecyclerPurple,
     textColor: Color = Color.White,
     arrowColor: Color = Color.White,
     onClick: () -> Unit = {},
     isSelected: Boolean,
+    showCheckbox: Boolean,
     onLongClick: () -> Unit,
     onCheckedChange: (Boolean) -> Unit
 ) {
@@ -157,8 +163,8 @@ fun listSubExercise(
                     onLongClick()
                 },
             )
-            .background(color = if (isLongPressed) LightGray else color)
-    ) {
+            .background(color = if (isLongPressed) LightGray else color),
+        shape = shape) {
         Column(
             modifier = Modifier
                 .padding(24.dp)
@@ -183,7 +189,7 @@ fun listSubExercise(
                         color = textColor
                     )
                 }
-                if (isSelected || isLongPressed) {
+                if (showCheckbox && (isSelected || isLongPressed)) {
                     Checkbox(
                         checked = isSelected,
                         onCheckedChange = { onCheckedChange(it) }
@@ -202,15 +208,17 @@ fun listSubExercise(
         }
     }
 }
+
 @Composable
 fun GoRecycler(
     subExerciseIdList:List<Int>,
     greetingMessage:String?,
     icon: Painter?,
     subTitle: String?,
-    shape: androidx.compose.ui.graphics.Shape = RectangleShape,
+    shape: androidx.compose.ui.graphics.Shape = RoundedCornerShape(16.dp),
     color:Color= CharcoalGray,
     textColor: Color=Color.White,
+
     style: TextStyle = MaterialTheme.typography.bodyMedium,
     arrowColor:Color=Color.White,
     navController: NavHostController) {
@@ -272,7 +280,7 @@ fun RecyclerView(
     greetingMessage:String?,
     icon: Painter?,
     subTitle: String?,
-    shape: androidx.compose.ui.graphics.Shape = RectangleShape,
+    shape: androidx.compose.ui.graphics.Shape = RoundedCornerShape(16.dp),
     color:Color= CharcoalGray,
     textColor: Color=Color.White,
     style: TextStyle = MaterialTheme.typography.bodyMedium,
@@ -330,7 +338,7 @@ fun ExerciseRecyclerView(
     greetingMessage:String?,
     icon: Painter?,
     subTitle: String?,
-    shape: androidx.compose.ui.graphics.Shape = RectangleShape,
+    shape: androidx.compose.ui.graphics.Shape = RoundedCornerShape(16.dp),
     color:Color= CharcoalGray,
     textColor: Color=Color.White,
     style: TextStyle = MaterialTheme.typography.bodyMedium,
@@ -390,8 +398,8 @@ fun ExerciseRecyclerView(
 fun SubExerciseRecyclerView(
     exercise: Exercise,
     greetingMessage: String? = null,
-    icon: Painter?,
-    subTitle: String?,
+    icon: Painter? = null,
+    subTitle: String? = null,
     shape: androidx.compose.ui.graphics.Shape = RectangleShape,
     color: Color = CharcoalGray,
     textColor: Color = Color.White,
@@ -403,7 +411,10 @@ fun SubExerciseRecyclerView(
     onSelectionChanged: (List<Int>) -> Unit
 ) {
     val context = LocalContext.current
-    val sharedPrefManager:SharedPrefManager by lazy {SharedPrefManager(context)}
+    var showSelection by remember { mutableStateOf(true) }
+    var isConfirmVisible by remember { mutableStateOf(isConfirmButton) }
+    val tempSelectedSubExercises = remember { mutableStateListOf<Int>() }
+
     LazyColumn(modifier = Modifier.padding(vertical = 4.dp)) {
         if (greetingMessage != null) {
             item {
@@ -443,32 +454,68 @@ fun SubExerciseRecyclerView(
                 color = color,
                 textColor = textColor,
                 arrowColor = arrowColor,
-                isSelected = selectedSubExercises.contains(item.subExerciseID),
+                isSelected = tempSelectedSubExercises.contains(item.subExerciseID),
+                showCheckbox = showSelection,
                 onLongClick = {
-                    if (!selectedSubExercises.contains(item.subExerciseID)) {
-                        selectedSubExercises.add(item.subExerciseID)
-                        onSelectionChanged(selectedSubExercises)
+                    if (!tempSelectedSubExercises.contains(item.subExerciseID)) {
+                        tempSelectedSubExercises.add(item.subExerciseID)
+                        isConfirmVisible = tempSelectedSubExercises.isNotEmpty()
                     }
                 },
                 onCheckedChange = { isSelected ->
                     if (isSelected) {
-                        selectedSubExercises.add(item.subExerciseID)
+                        tempSelectedSubExercises.add(item.subExerciseID)
                     } else {
-                        selectedSubExercises.remove(item.subExerciseID)
+                        tempSelectedSubExercises.remove(item.subExerciseID)
                     }
-                    onSelectionChanged(selectedSubExercises)
+                    isConfirmVisible = tempSelectedSubExercises.isNotEmpty()
                 }
             )
         }
 
-        if (isConfirmButton) {
+        if (isConfirmVisible && showSelection) {
             item {
-                val showButton=true
-                Column(horizontalAlignment = Alignment.End,modifier=Modifier.fillMaxWidth()) {
-                    Button(onClick = { onSelectionChanged(selectedSubExercises) } ){
+                Column(
+                    horizontalAlignment = Alignment.End,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Button(
+                        modifier = Modifier.padding(end = 10.dp),
+                        onClick = {
+                            selectedSubExercises.clear()
+                            selectedSubExercises.addAll(tempSelectedSubExercises)
+                            onSelectionChanged(selectedSubExercises)
+                            Toast.makeText(context, "Successfully added!", Toast.LENGTH_SHORT).show()
+                            showSelection = false  // Hide checkboxes and button
+                            isConfirmVisible = false // Hide confirm button
+                        }
+                    ) {
                         Text("Confirm Selection")
-
                     }
+                }
+            }
+        }
+
+        if (!showSelection) {
+            item {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Check,
+                        contentDescription = null,
+                        tint = Color.Green,
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Text(
+                        text = "Successfully added",
+                        color = Color.Green,
+                        modifier = Modifier.padding(start = 4.dp)
+                    )
                 }
             }
         }
