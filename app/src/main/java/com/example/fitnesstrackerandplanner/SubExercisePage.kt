@@ -53,7 +53,8 @@ fun SubExercisePage(exercise: Exercise, navController: NavHostController) {
                 sharedPrefManager.saveSelectedExercisesGO(viewModel.selectedSubExercises)
             },
             selectedSubExercises = selectedSubExercises,
-            isConfirmButton = isConfirmButton
+            isConfirmButton = isConfirmButton,
+
         )
     }
 }

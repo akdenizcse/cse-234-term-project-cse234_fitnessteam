@@ -291,7 +291,8 @@ fun BottomAppBar(navigationController: NavHostController, firebaseHelper: Fireba
                 val subEx= getExerciseByID(exList,currentExerciseID).getSubExerciseById(subExerciseID)
                 ExercisePage1(
                     exerciseName = subEx!!.exerciseName,
-                    subExercise=subEx
+                    subExercise=subEx,
+                    navController = navigationController
                 )
             }
 
@@ -313,27 +314,29 @@ fun BottomAppBar(navigationController: NavHostController, firebaseHelper: Fireba
             composable(
                 route = Screens.PostExercisePage.routeWithArgs,
                 arguments = listOf(
-                    navArgument("subExerciseID") { type = NavType.IntType },
-                    navArgument("caloriesBurned") { type = NavType.FloatType },
-                    navArgument("minutes") { type = NavType.LongType },
-                    navArgument("seconds") { type = NavType.LongType }
+                    navArgument("subExerciseID") { type = NavType.IntType ;Log.d("NavHost/PostExercisePage","Received subexerciseID")},
+                    navArgument("caloriesBurned") { type = NavType.FloatType ;Log.d("NavHost/PostExercisePage","Received caloriesBurned")},
+                    navArgument("minutes") { type = NavType.LongType ;Log.d("NavHost/PostExercisePage","Received minutes")},
+                    navArgument("seconds") { type = NavType.LongType ;Log.d("NavHost/PostExercisePage","Received seconds")}
                 )
             ) { backStackEntry ->
                 val subExerciseID = backStackEntry.arguments?.getInt("subExerciseID") ?: 0
-                val caloriesBurned = backStackEntry.arguments?.getDouble("caloriesBurned") ?: 0.0
-                val minutes = backStackEntry.arguments?.getLong("minutes") ?: 0L
+                Log.d("NavHost/PostExercisePage","Popped backstack subExerciseID = $subExerciseID")
+                val caloriesBurned = backStackEntry.arguments?.getFloat("caloriesBurned") ?:0.0
+                Log.d("NavHost/PostExercisePage","Popped backstack caloriesBurned =$caloriesBurned")
+                val minutes = backStackEntry.arguments?.getLong("minutes")  ?:0L
+                Log.d("NavHost/PostExercisePage","Popped backstack minutes = $minutes")
                 val seconds = backStackEntry.arguments?.getLong("seconds") ?: 0L
+                Log.d("NavHost/PostExercisePage","Popped backstack seconds = $seconds")
 
                 PostExercisePage(
                     subExerciseID = subExerciseID,
-                    caloriesBurned = caloriesBurned,
+                    caloriesBurned = caloriesBurned.toInt(),
                     minutes = minutes,
                     seconds = seconds,
                     navController = navigationController
                 )
             }
-
-
 
 
 

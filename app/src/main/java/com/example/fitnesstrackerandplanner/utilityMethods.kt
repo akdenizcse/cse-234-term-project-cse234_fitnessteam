@@ -217,6 +217,7 @@ fun List<Exercise>.getSubExercisesByIds(subExerciseIds: List<Int>): List<SubExer
     return result
 }
 
+
 //Health Connect Utility Methods
 fun dateTimeWithOffsetOrDefault(time: Instant, offset: ZoneOffset?): ZonedDateTime =
     if (offset != null) {

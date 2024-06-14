@@ -69,6 +69,11 @@ class SharedPrefManager(context: Context){
         editor.putString("selected_exercises_go", exerciseIds.joinToString(","))
         editor.apply()
     }
+    fun removeSubExerciseFromSelectedGO(subExerciseId: Int) {
+        val selectedExercises = getSelectedExercisesGO().toMutableList()
+        selectedExercises.remove(subExerciseId)
+        saveSelectedExercisesGO(selectedExercises)
+    }
     fun clearSelectedExercisesGO() {
         val editor = sharedPreferences.edit()
         editor.remove("selected_exercises_go")

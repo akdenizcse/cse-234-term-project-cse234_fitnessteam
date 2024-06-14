@@ -44,6 +44,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.health.connect.client.records.ExerciseSessionRecord
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.fitnesstrackerandplanner.ui.theme.Cerulean
 import com.example.fitnesstrackerandplanner.ui.theme.DeepNavyBlue
@@ -56,7 +57,7 @@ import java.time.ZonedDateTime
 import java.util.concurrent.TimeUnit
 
 @Composable
-fun ExercisePage1(subExercise: SubExercise, exerciseName: String = "Value") {
+fun ExercisePage1(subExercise: SubExercise, exerciseName: String = "Value",navController:NavHostController) {
     var caloriesBurned by remember { mutableStateOf(0.0) }
     val caloriesBurntPerSecond = subExercise.approximateCaloriesPerSecond
     val fireLogo = painterResource(id = R.drawable.fire)
@@ -67,14 +68,13 @@ fun ExercisePage1(subExercise: SubExercise, exerciseName: String = "Value") {
     val startTime = remember { ZonedDateTime.now() }
     var startTimeDisp by remember { mutableStateOf(System.currentTimeMillis()) }
     var elapsedTime by remember { mutableStateOf(0L) }
-    val navController = rememberNavController()
     val healthConnectManager = HealthConnectManager(context)
     var isButtonClicked by remember { mutableStateOf(false) }
     var isStopped by remember { mutableStateOf(false) }
     var showStatusLogo by remember { mutableStateOf(false) }
     var statusLogo by remember { mutableStateOf(stoppedLogo) }
     var showDialog by remember { mutableStateOf(false) }
-
+    val sharedPrefManager by lazy{SharedPrefManager(context)}
     val blinkAnimation = remember { Animatable(1f) }
 
     LaunchedEffect(Unit) {
@@ -262,8 +262,9 @@ fun ExercisePage1(subExercise: SubExercise, exerciseName: String = "Value") {
             confirmButton = {
                 Button(
                     onClick = {
+                        sharedPrefManager.removeSubExerciseFromSelectedGO(subExerciseId = subExercise.subExerciseID)
                         navController.navigate(
-                            Screens.PostExercisePage(subExercise.subExerciseID,caloriesBurned,minutes,seconds).screen
+                            Screens.PostExercisePage(subExercise.subExerciseID, caloriesBurned, minutes, seconds).screen
                         )
 
                         showDialog = false
@@ -286,7 +287,6 @@ fun ExercisePage1(subExercise: SubExercise, exerciseName: String = "Value") {
     LaunchedEffect(isButtonClicked) {
         if (isButtonClicked) {
             val endTime = ZonedDateTime.now()
-            navController.popBackStack()
             with(healthConnectManager) {
                 try {
                     writeExerciseSession(startTime, endTime)

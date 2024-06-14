@@ -71,13 +71,13 @@ import com.example.fitnesstrackerandplanner.ui.theme.Thistle
 @Composable
 fun listItem(subTitle:String?,
              title:String,
-             shape:androidx.compose.ui.graphics.Shape,
+             shape:androidx.compose.ui.graphics.Shape= RoundedCornerShape(16.dp),
              color:Color= RecyclerPurple,
              textColor:Color=Color.White,
              arrowColor: Color=Color.White,
              onClick:()->Unit={},
 
-){
+             ){
 
 
         Surface(
