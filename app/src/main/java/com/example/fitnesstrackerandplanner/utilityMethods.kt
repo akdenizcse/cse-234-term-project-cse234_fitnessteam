@@ -3,6 +3,10 @@ package com.example.fitnesstrackerandplanner
 import Exercise
 import SubExercise
 import android.content.Context
+import java.time.Instant
+import java.time.ZoneId
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
 import android.view.MotionEvent
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
@@ -129,14 +133,14 @@ fun initializeExercises(): List<Exercise> {
             description = "Lie on the table and push the dumbbells up.",
             videoUrl = "https://example.com/videos/incline_dumbbell_press.mp4",
             groupName = "Chest",
-            exerciseID = 1
+            exerciseIDs = 1
         ),
         SubExercise(
             exerciseName = "Dumbbell Chest Fly",
             description = "Lie on the table and spread your arms with dumbbells.",
             videoUrl = "https://example.com/videos/dumbbell_chest_fly.mp4",
             groupName = "Chest",
-            exerciseID = 1
+            exerciseIDs = 1
         )
     )
 
@@ -146,14 +150,14 @@ fun initializeExercises(): List<Exercise> {
             description = "Stand with your feet shoulder-width apart and squat down.",
             videoUrl = "https://example.com/videos/squat.mp4",
             groupName = "Legs",
-            exerciseID = 2
+            exerciseIDs = 2
         ),
         SubExercise(
             exerciseName = "Lunge",
             description = "Step forward and lower your hips until both knees are bent.",
             videoUrl = "https://example.com/videos/lunge.mp4",
             groupName = "Legs",
-            exerciseID = 2
+            exerciseIDs = 2
         )
     )
 
@@ -163,14 +167,14 @@ fun initializeExercises(): List<Exercise> {
             description = "Lie on your back and lift your shoulders off the floor.",
             videoUrl = "https://example.com/videos/crunch.mp4",
             groupName = "Abs",
-            exerciseID = 3
+            exerciseIDs = 3
         ),
         SubExercise(
             exerciseName = "Plank",
             description = "Hold your body in a straight line from head to heels.",
             videoUrl = "https://example.com/videos/plank.mp4",
             groupName = "Abs",
-            exerciseID = 3
+            exerciseIDs = 3
         )
     )
 
@@ -186,36 +190,25 @@ fun initializeExercises(): List<Exercise> {
 
     return exercises
 }
+
+fun List<Exercise>.getSubExercisesByIds(subExerciseIds: List<Int>): List<SubExercise> {
+    val result = mutableListOf<SubExercise>()
+
+    // Iterate through each Exercise in the list
+    forEach { exercise ->
+        // Iterate through each SubExercise in the current Exercise
+        exercise.subExercises.forEach { subExercise ->
+            // Check if the subExerciseID is in the list of desired IDs
+            if (subExercise.subExerciseID in subExerciseIds) {
+                result.add(subExercise)
+            }
+        }
+    }
+
+    return result
+}
+
 //Health Connect Utility Methods
-/*
- * Copyright 2022 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-package com.example.healthconnect.codelab.data
-
-import java.time.Duration
-import java.time.Instant
-import java.time.ZoneId
-import java.time.ZoneOffset
-import java.time.ZonedDateTime
-
-/**
- * Creates a [ZonedDateTime] either using the offset stored in Health Connect, or falling back on
- * the zone offset for the device, where Health Connect contains no zone offset data. This fallback
- * may be correct in a number of circumstances, but may also not apply in others, so is used here
- * just as an example.
- */
 fun dateTimeWithOffsetOrDefault(time: Instant, offset: ZoneOffset?): ZonedDateTime =
     if (offset != null) {
         ZonedDateTime.ofInstant(time, offset)

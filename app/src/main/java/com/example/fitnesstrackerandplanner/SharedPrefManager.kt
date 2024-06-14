@@ -1,9 +1,12 @@
 package com.example.fitnesstrackerandplanner
 
+import Exercise
 import android.content.Context
-
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 class SharedPrefManager(context: Context){
     private val sharedPreferences=context.getSharedPreferences("FitnessApp",Context.MODE_PRIVATE)
+    private val gson = Gson()
 
     fun saveCurrentUserFirstName(userFirstName:String){
         val editor=sharedPreferences.edit()
@@ -45,6 +48,65 @@ class SharedPrefManager(context: Context){
     fun getCurrentUsername():String?{
         return sharedPreferences.getString("currentUsername",null)
     }
+
+    fun getSelectedExercises(): List<Int> {
+        val serializedExercises = sharedPreferences.getString("selected_exercises", "")
+        return serializedExercises?.split(",")?.map { it.toIntOrNull() }?.filterNotNull() ?: emptyList()
+    }
+
+    fun saveSelectedExercises(exerciseIds: List<Int>) {
+        val editor = sharedPreferences.edit()
+        editor.putString("selected_exercises", exerciseIds.joinToString(","))
+        editor.apply()
+    }
+    fun getSelectedExercisesGO():List<Int>{
+        val serializedExercises = sharedPreferences.getString("selected_exercises_go", "")
+        return serializedExercises?.split(",")?.map { it.toIntOrNull() }?.filterNotNull() ?: emptyList()
+    }
+
+    fun saveSelectedExercisesGO(exerciseIds: List<Int>) {
+        val editor = sharedPreferences.edit()
+        editor.putString("selected_exercises_go", exerciseIds.joinToString(","))
+        editor.apply()
+    }
+    fun clearSelectedExercisesGO() {
+        val editor = sharedPreferences.edit()
+        editor.remove("selected_exercises_go")
+        editor.apply()
+    }
+    fun clearSelectedExercises() {
+        val editor = sharedPreferences.edit()
+        editor.remove("selected_exercises")
+        editor.apply()
+    }
+
+
+    fun saveAllExercises(exercises: List<Exercise>) {
+        val editor = sharedPreferences.edit()
+        val json = gson.toJson(exercises)
+        editor.putString("exercises", json)
+        editor.apply()
+    }
+
+    fun getAllExercises(): List<Exercise> {
+        val json = sharedPreferences.getString("exercises", "")
+        if (json.isNullOrEmpty()) {
+            return emptyList()
+        }
+        return gson.fromJson(json, object : TypeToken<List<Exercise>>() {}.type)
+    }
+
+    fun clearAllExercises() {
+        val editor = sharedPreferences.edit()
+        editor.remove("exercises")
+        editor.apply()
+    }
+
+
+
+
+
+
 
 
 

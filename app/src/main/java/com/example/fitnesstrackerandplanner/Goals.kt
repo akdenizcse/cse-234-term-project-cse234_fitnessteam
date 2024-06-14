@@ -22,6 +22,7 @@ import com.example.fitnesstrackerandplanner.ui.theme.DarkRecyclerPurple
 import com.example.fitnesstrackerandplanner.ui.theme.DeepNavyBlue
 import com.example.fitnesstrackerandplanner.ui.theme.SurfaceGreen
 
+
 @Composable
 fun Goals(navController: NavHostController,exList:List<Exercise>) {
     //TODO:Saate göre karşılama olacak --> YAPILDI
@@ -59,6 +60,7 @@ fun Goals(navController: NavHostController,exList:List<Exercise>) {
                 )
             ),
             navController = navController
+
 
             )
 

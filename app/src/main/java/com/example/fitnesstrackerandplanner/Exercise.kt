@@ -1,6 +1,7 @@
 import android.os.Parcel
 import android.os.Parcelable
 import androidx.compose.runtime.Composable
+import com.google.gson.annotations.Expose
 import kotlinx.parcelize.Parceler
 import kotlinx.parcelize.Parcelize
 
@@ -8,6 +9,7 @@ import kotlinx.parcelize.Parcelize
 // Define Exercise data model
  open class Exercise(
     val name: String,
+    @Expose(serialize = false, deserialize = false)
     open val exerciseID:Int
 ) {
 val subExercises:MutableList<SubExercise>
@@ -27,9 +29,9 @@ fun addExercise(exList:List<SubExercise>){
 class SubExercise(val exerciseName:String,
                   val description: String,
                   val videoUrl: String,
-                  var groupName:String, override val exerciseID: Int,
+                  var groupName:String, val exerciseIDs: Int,
     var subExerciseID:Int= subExerciseIDs
-): Exercise(groupName, exerciseID = exerciseID) {
+): Exercise(groupName, exerciseID = exerciseIDs) {
 
     companion object{
         var subExerciseIDs:Int=0

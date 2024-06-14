@@ -9,7 +9,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun Profile() {
-
+//TODO:CONTACT US PAGE WITH INTENT EMAILS
     /*Box(
         modifier = Modifier
             .fillMaxSize()

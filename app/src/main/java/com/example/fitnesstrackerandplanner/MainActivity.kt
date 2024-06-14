@@ -25,7 +25,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.health.connect.client.HealthConnectClient
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -33,6 +32,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.fitnesstrackerandplanner.ui.theme.*
+import com.example.healthconnect.codelab.data.HealthConnectManager
 import com.google.firebase.Firebase
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
@@ -40,18 +40,20 @@ import com.google.firebase.firestore.firestore
 //TODO: Add gradient text coloring, draggable picker,pop up menu
 class MainActivity : ComponentActivity() {
     val firebaseHelper=FirebaseHelper()
+    private lateinit var sharedPrefManager: SharedPrefManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
         val db= Firebase.firestore
         setContent {
+            sharedPrefManager = SharedPrefManager(this)
+            sharedPrefManager.clearSelectedExercisesGO()
 
             val context= LocalContext.current
-            val healthConnectClient by lazy { HealthConnectClient.getOrCreate(context) }
-            val sharedPrefManager by lazy{SharedPrefManager(context)}
-            val userName= sharedPrefManager.getCurrentUsername()
-
+            val healthConnectManager:HealthConnectManager by lazy{ HealthConnectManager(context)}
+            lazy {sharedPrefManager.saveAllExercises(initializeExercises())}
+            lazy{healthConnectManager.requestPermissionsActivityContract()}
 
 
             val navigationController = rememberNavController()
@@ -66,15 +68,20 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+    override fun onDestroy(){
+        super.onDestroy()
+        sharedPrefManager.clearSelectedExercisesGO()
+        }
 }
 
 @Composable
 fun BottomAppBar(navigationController: NavHostController, firebaseHelper: FirebaseHelper) {
     val context = LocalContext.current
-    val exList by lazy{initializeExercises()}
     var currentRoute by remember { mutableStateOf(Screens.LoginPage.screen) }
     val selected = remember { mutableStateOf(Icons.Default.Home) }
     var currentExerciseID by remember{ mutableStateOf(0) }
+    val sharedPrefManager by lazy{SharedPrefManager(context)}
+    val exList =sharedPrefManager.getAllExercises()
     Scaffold(
         bottomBar = {
             if (currentRoute != Screens.SignInPage.screen && currentRoute != Screens.LoginPage.screen) {
@@ -245,6 +252,7 @@ fun BottomAppBar(navigationController: NavHostController, firebaseHelper: Fireba
             }
             composable(Screens.Goals.screen) {
                 Goals(navController = navigationController, exList = exList)
+                sharedPrefManager.clearSelectedExercises()
                 currentRoute = Screens.Goals.screen
             }
             composable(Screens.Profile.screen) {
@@ -252,7 +260,7 @@ fun BottomAppBar(navigationController: NavHostController, firebaseHelper: Fireba
                 currentRoute = Screens.Profile.screen
             }
             composable(Screens.StartAnExercise.screen) {
-                initiateStartAnExercise(navController = navigationController)
+                StartAnExercise(navController = navigationController)
                 currentRoute = Screens.StartAnExercise.screen
             }
             composable(Screens.ExercisePage1.screen) {

@@ -52,6 +52,8 @@ android {
 }
 
 dependencies {
+    implementation ("com.google.code.gson:gson:2.8.8")
+
     implementation("com.google.firebase:firebase-database-ktx:21.0.0")
     implementation("androidx.media3:media3-exoplayer-smoothstreaming:1.3.1")
     implementation("androidx.media3:media3-ui:1.3.1")

@@ -1,6 +1,8 @@
 package com.example.fitnesstrackerandplanner
 
 import android.database.sqlite.SQLiteDatabase
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,6 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.health.connect.client.records.ExerciseSessionRecord
 import androidx.navigation.compose.rememberNavController
 import com.example.fitnesstrackerandplanner.ui.theme.Cerulean
 import com.example.fitnesstrackerandplanner.ui.theme.DeepNavyBlue
@@ -39,22 +42,26 @@ import com.example.fitnesstrackerandplanner.ui.theme.FitnessTrackerAndPlannerThe
 import com.example.fitnesstrackerandplanner.ui.theme.SurfaceGreen
 import com.example.healthconnect.codelab.data.HealthConnectManager
 import kotlinx.coroutines.delay
+import java.time.Instant
+import java.time.ZonedDateTime
 import java.util.concurrent.TimeUnit
 
 @Composable
-fun ExercisePage1(exerciseName:String="Value") { //TODO: Her egzersiz sayfası buradan oluşturulacak
-
+fun ExercisePage1(exerciseName: String = "Value") {
     val caloriesBurned = 25
     val fireLogo = painterResource(id = R.drawable.fire)
-    var startTime by remember { mutableStateOf(System.currentTimeMillis()) }
+    val context = LocalContext.current
+    var startTime = remember { ZonedDateTime.now() }
+    var startTimeDisp by remember { mutableStateOf(System.currentTimeMillis()) }
     var elapsedTime by remember { mutableStateOf(0L) }
-    val navController= rememberNavController() //hataya sebep olur parametre olarak vermektense
-    val healthConnectManager=HealthConnectManager(LocalContext.current)
+    val navController = rememberNavController()
+    val healthConnectManager = HealthConnectManager(context)
+    var isButtonClicked by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         while (true) {
             val currentTime = System.currentTimeMillis()
-            elapsedTime = (currentTime - startTime)
+            elapsedTime = (currentTime - startTimeDisp)
             delay(1000)
         }
     }
@@ -73,21 +80,17 @@ fun ExercisePage1(exerciseName:String="Value") { //TODO: Her egzersiz sayfası b
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-
             Text(
                 text = "Calories Burned",
                 color = Color.White,
                 fontWeight = FontWeight.Bold,
                 fontSize = 24.sp,
-                modifier=Modifier.padding(5.dp)
+                modifier = Modifier.padding(5.dp)
             )
-
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier=Modifier.padding(5.dp)
-
+                modifier = Modifier.padding(5.dp)
             ) {
-
                 Text(
                     text = "$caloriesBurned",
                     color = Color.White,
@@ -99,8 +102,6 @@ fun ExercisePage1(exerciseName:String="Value") { //TODO: Her egzersiz sayfası b
                     color = Color.White,
                     fontSize = 18.sp
                 )
-
-                // Wrap the Icon with a Box to adjust alignment
                 Box(
                     modifier = Modifier.size(50.dp)
                 ) {
@@ -112,26 +113,27 @@ fun ExercisePage1(exerciseName:String="Value") { //TODO: Her egzersiz sayfası b
                             .padding(5.dp)
                     )
                 }
-
             }
             Text(
                 text = exerciseName,
                 color = Color.White,
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp,
-                modifier=Modifier.padding(25.dp)
-
+                modifier = Modifier.padding(25.dp)
             )
             Text(
                 text = "Time Elapsed: ${formatTime(minutes, seconds)}",
                 color = Color.White,
                 fontSize = 18.sp,
-                modifier=Modifier.padding(5.dp)
+                modifier = Modifier.padding(5.dp)
             )
             Button(
                 onClick = {
+                    val endTime = ZonedDateTime.now()
                     navController.popBackStack()
-                    healthConnectManager.writeExerciseSession(startTime, end = )
+                    isButtonClicked = true
+
+
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -148,7 +150,25 @@ fun ExercisePage1(exerciseName:String="Value") { //TODO: Her egzersiz sayfası b
             }
         }
     }
+
+
+    LaunchedEffect(isButtonClicked) {
+        if (isButtonClicked) {
+            val endTime = ZonedDateTime.now()
+            navController.popBackStack()
+            with(healthConnectManager) {
+                try {
+                    writeExerciseSession(startTime, endTime)
+                    Toast.makeText(context,"Succesfully ended the exercise!",Toast.LENGTH_SHORT).show()
+                }catch (e: Exception) {
+                    Log.e("ExercisePage1", "Error writing to Health Connect", e)
+                }
+
+            }
+        }
+    }
 }
+
 
 
 @Composable
