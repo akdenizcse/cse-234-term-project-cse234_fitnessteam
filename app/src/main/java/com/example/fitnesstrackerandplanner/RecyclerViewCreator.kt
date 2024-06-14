@@ -463,22 +463,11 @@ fun SubExerciseRecyclerView(
 
         if (isConfirmButton) {
             item {
-                Column(
-                    horizontalAlignment = Alignment.End,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    var showButton by remember { mutableStateOf(true) } // Mutable state to toggle button visibility
+                val showButton=true
+                Column(horizontalAlignment = Alignment.End,modifier=Modifier.fillMaxWidth()) {
+                    Button(onClick = { onSelectionChanged(selectedSubExercises) } ){
+                        Text("Confirm Selection")
 
-                    if (showButton) {
-                        Button(
-                            onClick = {
-                                onSelectionChanged(selectedSubExercises)
-                                showButton = false // Hide the button after clicking
-                            },
-                            enabled = isConfirmButton
-                        ) {
-                            Text("Confirm Selection")
-                        }
                     }
                 }
             }
