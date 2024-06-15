@@ -55,10 +55,16 @@ fun LoginPage(navigationController: NavHostController) {
             )
             OutlinedTextField(
                 value = user_name,
-                leadingIcon = {Icon(imageVector = Icons.Outlined.AccountCircle, contentDescription = null)},
+                leadingIcon = {Icon(imageVector = Icons.Outlined.AccountCircle, contentDescription = null
+                ,tint= Eggshel)},
                 colors = TextFieldDefaults.colors(
                     unfocusedContainerColor = darkGray,
-                    focusedContainerColor = focusedDarkGray
+                    focusedContainerColor = focusedDarkGray,
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Taupe,
+                    focusedLabelColor = Color.White,
+                    unfocusedLabelColor = LightPaletteGray
+
                 ),
                 onValueChange = { user_name = it },
                 label = { Text("Username") },
@@ -70,9 +76,14 @@ fun LoginPage(navigationController: NavHostController) {
                 value = password,
                 colors = TextFieldDefaults.colors(
                     unfocusedContainerColor = darkGray,
-                    focusedContainerColor = focusedDarkGray
+                    focusedContainerColor = focusedDarkGray,
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Taupe,
+                    focusedLabelColor = Color.White,
+                    unfocusedLabelColor = LightPaletteGray
                 ),
-                leadingIcon = {Icon(Icons.Default.Lock, contentDescription = null)},
+                leadingIcon = {Icon(Icons.Default.Lock, contentDescription = null,
+                    tint= Eggshel)},
                 onValueChange = { password = it },
                 label = { Text("Password") },
                 modifier = Modifier,

@@ -47,8 +47,10 @@
     import com.example.fitnesstrackerandplanner.ui.theme.Cerulean
     import com.example.fitnesstrackerandplanner.ui.theme.DeepNavyBlue
     import com.example.fitnesstrackerandplanner.ui.theme.FocusedTextFieldGreen
+    import com.example.fitnesstrackerandplanner.ui.theme.LightPaletteGray
     import com.example.fitnesstrackerandplanner.ui.theme.PurpleGrey40
     import com.example.fitnesstrackerandplanner.ui.theme.SurfaceGreen
+    import com.example.fitnesstrackerandplanner.ui.theme.Taupe
     import com.example.fitnesstrackerandplanner.ui.theme.UnfocusedTextFieldGreen
     import com.example.fitnesstrackerandplanner.ui.theme.darkGray
     import com.example.fitnesstrackerandplanner.ui.theme.focusedDarkGray
@@ -100,9 +102,13 @@
                         maxLines = 1,
                         colors = TextFieldDefaults.colors(
                             unfocusedContainerColor = darkGray,
-                            focusedContainerColor = focusedDarkGray
+                            focusedContainerColor = focusedDarkGray,
+                            focusedTextColor = Color.White,
+                            unfocusedTextColor = Taupe,
+                            focusedLabelColor = Color.White,
+                            unfocusedLabelColor = LightPaletteGray
                         ),
-                        keyboardOptions = KeyboardOptions.Default.copy(
+                                    keyboardOptions = KeyboardOptions.Default.copy(
                             keyboardType = KeyboardType.Text,
                             imeAction = ImeAction.Next
                         )
@@ -115,7 +121,11 @@
                         maxLines = 1,
                         colors = TextFieldDefaults.colors(
                             unfocusedContainerColor = darkGray,
-                            focusedContainerColor = focusedDarkGray
+                            focusedContainerColor = focusedDarkGray,
+                            focusedTextColor = Color.White,
+                            unfocusedTextColor = Taupe,
+                            focusedLabelColor = Color.White,
+                            unfocusedLabelColor = LightPaletteGray
                         ),
                         keyboardOptions = KeyboardOptions.Default.copy(
                             keyboardType = KeyboardType.Text,
@@ -130,7 +140,11 @@
                         maxLines = 1,
                         colors = TextFieldDefaults.colors(
                             unfocusedContainerColor = darkGray,
-                            focusedContainerColor = focusedDarkGray
+                            focusedContainerColor = focusedDarkGray,
+                            focusedTextColor = Color.White,
+                            unfocusedTextColor = Taupe,
+                            focusedLabelColor = Color.White,
+                            unfocusedLabelColor = LightPaletteGray
                         ),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
                     )
@@ -141,7 +155,11 @@
                         modifier = Modifier.fillMaxWidth(),
                         colors = TextFieldDefaults.colors(
                             unfocusedContainerColor = darkGray,
-                            focusedContainerColor = focusedDarkGray
+                            focusedContainerColor = focusedDarkGray,
+                            focusedTextColor = Color.White,
+                            unfocusedTextColor = Taupe,
+                            focusedLabelColor = Color.White,
+                            unfocusedLabelColor = LightPaletteGray
                         ),
                         maxLines = 1
                     )
@@ -153,7 +171,11 @@
                         maxLines = 1,
                         colors = TextFieldDefaults.colors(
                             unfocusedContainerColor = darkGray,
-                            focusedContainerColor = focusedDarkGray
+                            focusedContainerColor = focusedDarkGray,
+                            focusedTextColor = Color.White,
+                            unfocusedTextColor = Taupe,
+                            focusedLabelColor = Color.White,
+                            unfocusedLabelColor = LightPaletteGray
                         ),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                         visualTransformation = PasswordVisualTransformation()
@@ -166,7 +188,11 @@
                         maxLines = 1,
                         colors = TextFieldDefaults.colors(
                             unfocusedContainerColor = darkGray,
-                            focusedContainerColor = focusedDarkGray
+                            focusedContainerColor = focusedDarkGray,
+                            focusedTextColor = Color.White,
+                            unfocusedTextColor = Taupe,
+                            focusedLabelColor = Color.White,
+                            unfocusedLabelColor = LightPaletteGray
                         ),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                         visualTransformation = PasswordVisualTransformation()

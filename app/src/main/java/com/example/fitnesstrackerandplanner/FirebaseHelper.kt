@@ -271,6 +271,7 @@ class FirebaseHelper {
                 var totalWaterConsumed = 0.0f
                 for (document in querySnapshot.documents) {
                     val waterDrank = document.getDouble("waterDrank")?.toFloat() ?: 0.0f
+                    Log.d("FirebaseHelperWater","Fetched data $waterDrank")
                     totalWaterConsumed += waterDrank
                 }
 

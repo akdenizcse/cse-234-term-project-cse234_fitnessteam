@@ -34,6 +34,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -51,6 +52,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fitnesstrackerandplanner.ui.theme.*
+import kotlinx.coroutines.launch
+
 //TODO:Add a diet "ADD" Button onClick action.
 @Composable
 fun Home() {
@@ -63,7 +66,6 @@ fun Home() {
     val isDayTime: Boolean = hour in 6..18
     val greeting: String = if (isDayTime) "Good Morning, $userName!" else "Good Evening, $userName!"
 
-    // Initializing icons
     val icon = if (isDayTime) painterResource(id = R.drawable.icons8_sunny_48)
     else painterResource(id = R.drawable.icons8_moon_48)
 
@@ -73,7 +75,7 @@ fun Home() {
     val foodLogo = painterResource(id = R.drawable.foodlogo)
     val dumbellLogo = painterResource(id = R.drawable.gymdumbell)
 
-    val waterProgress = remember { mutableStateOf(0f) }
+    var waterProgress = remember { mutableStateOf(0f) }
     val caloriesBurntProgress = remember { mutableStateOf(0f) }
     val hoursSleptProgress = remember { mutableStateOf(0f) }
     val dietProgress = remember { mutableStateOf(0f) }
@@ -83,8 +85,12 @@ fun Home() {
 
     var waterDrank by remember { mutableStateOf(0.0f) }
     var totalHealthPoints by remember { mutableStateOf(0.0f) }
+    var tempTotalHealthPoints=0.0f
+    if(waterDrank>=2.5f){
+        tempTotalHealthPoints+=0.25f
+    }
+    totalHealthPoints=tempTotalHealthPoints
 
-    // Launch effect to delete old water data
     LaunchedEffect(Unit) {
         if (userName != null) {
             firebaseHelper.deleteOldWaterData(userName) { success ->
@@ -94,12 +100,14 @@ fun Home() {
             }
         }
     }
-    LaunchedEffect(key1 = userName) {
-        if (userName!!.isNotEmpty()) {
+    LaunchedEffect(userName) {
+        if (!userName.isNullOrEmpty()) {
             val waterConsumed = firebaseHelper.fetchWaterConsumption(userName)
-            waterDrank = waterConsumed
+            Log.d("HomeFireStore","Fetched water consumption ${waterConsumed}")
+            waterDrank = waterConsumed ?: 0.0f
         }
     }
+
 
     Surface(color = DeepNavyBlue, modifier = Modifier.fillMaxSize()) {
         LazyColumn {
@@ -247,12 +255,13 @@ fun Home() {
                                     )
                                     AnimatedButton(
                                         onClick = {
-                                            if (waterProgress.value < 1f) waterProgress.value += 0.1f
                                             if (waterDrank < 10f) {
-                                                if (waterDrank < 2.5f) waterDrank += 0.25f
+                                                if (waterDrank < 2.5f) {
+                                                    waterDrank += 0.25f
+                                                    waterProgress.value += 0.1f
+                                                }
                                                 if (waterDrank == 2.5f) {
                                                     waterDrank += 0.25f
-                                                    totalHealthPoints += 0.25f
                                                 } else {
                                                     waterDrank += 0.25f
                                                 }

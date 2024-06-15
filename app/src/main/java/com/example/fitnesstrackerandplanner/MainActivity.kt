@@ -43,7 +43,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-//TODO: Add gradient text coloring, draggable picker,pop up menu
+//TODO:Hours slept DO'ya basınca popup açsın ve oradan seçebilsin
+//TODO: exercisesession database kaydetme ve çekme
+//TODO:Activitiesi exercisesession ile doldurma
+//TODO: Age datasını kaydolurken alma ve kaydetme
+
 class MainActivity : ComponentActivity() {
 
     private lateinit var sharedPrefManager: SharedPrefManager
