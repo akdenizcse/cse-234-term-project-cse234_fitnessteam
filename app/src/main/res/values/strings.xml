@@ -3,5 +3,7 @@
     <string name="welcomeText">Welcome to Fittie!</string>
     <string name="heightWeightSelectInfo">In order to fully utilize our system, please enter your body measurements.
     This data will only be used for calculating and optimizing the optimal schedules for the user.</string>
-
+    <string name="emptyGoRecyclerView">Hi! It seems like you have not yet added
+    an exercise. To add one, navigate to Goals page, select an exercise group then simply long click on
+    a sub exercise and confirm selection!</string>
 </resources>

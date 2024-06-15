@@ -61,7 +61,9 @@ dependencies {
     implementation("androidx.media3:media3-datasource:1.3.1")
     implementation("androidx.media3:media3-common:1.3.1")
     implementation ("androidx.health.connect:connect-client:1.0.0-alpha11")
-    implementation ("com.github.HaarigerHarald:android-youtubeExtractor:master-SNAPSHOT")
+    implementation ("com.pierfrancescosoffritti.androidyoutubeplayer:core:12.1.0")
+    implementation ("com.pierfrancescosoffritti.androidyoutubeplayer:chromecast-sender:0.28")
+
 
     dependencies {
         implementation("androidx.sqlite:sqlite:2.1.0") //

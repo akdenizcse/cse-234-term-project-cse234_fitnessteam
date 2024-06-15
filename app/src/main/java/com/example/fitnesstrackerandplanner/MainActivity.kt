@@ -1,8 +1,10 @@
 package com.example.fitnesstrackerandplanner
 
+import Exercise
 import FirebaseHelper
 import LoginPage
 import SubExercise
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -37,42 +39,55 @@ import com.google.firebase.Firebase
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+
 //TODO: Add gradient text coloring, draggable picker,pop up menu
 class MainActivity : ComponentActivity() {
-    val firebaseHelper=FirebaseHelper()
+
     private lateinit var sharedPrefManager: SharedPrefManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        sharedPrefManager = SharedPrefManager(this)
+        val firebaseHelper = FirebaseHelper()
+        sharedPrefManager.clearSelectedExercisesGO()
+
+        GlobalScope.launch(Dispatchers.Main) {
+            try {
+                val fetchedExercises = firebaseHelper.initializeExercises()
+                sharedPrefManager.saveAllExercises(fetchedExercises)
+                Log.d("MainActivityFirebaseHelper", "Fetched exercises -- ${fetchedExercises.getOrNull(0)?.exerciseName ?: "No exercises"}")
+            } catch (e: Exception) {
+                Log.e("MainActivityFirebaseHelper", "Error initializing exercises", e)
+                Toast.makeText(applicationContext, "Error fetching exercises", Toast.LENGTH_LONG).show()
+            }
+        }
+
         installSplashScreen()
-        val db= Firebase.firestore
+
         setContent {
-            sharedPrefManager = SharedPrefManager(this)
-            sharedPrefManager.clearSelectedExercisesGO()
-
-            val context= LocalContext.current
-            val healthConnectManager:HealthConnectManager by lazy{ HealthConnectManager(context)}
-            sharedPrefManager.saveAllExercises(initializeExercises())
-            lazy{healthConnectManager.requestPermissionsActivityContract()}
-
-
+            val context = LocalContext.current
+            val healthConnectManager: HealthConnectManager by lazy { HealthConnectManager(context) }
             val navigationController = rememberNavController()
-            val firebaseHelper by remember { mutableStateOf(FirebaseHelper()) }
 
             FitnessTrackerAndPlannerTheme {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                   BottomAppBar(navigationController, firebaseHelper)
-                  //   ExerciseInfoPage(subExercise = null)
-
+                    BottomAppBar(navigationController, firebaseHelper)
+                    // ExerciseInfoPage(subExercise = null)
                 }
             }
         }
     }
+
+
     override fun onDestroy(){
         super.onDestroy()
         sharedPrefManager.clearSelectedExercisesGO()
         }
 }
+
 
 @Composable
 fun BottomAppBar(navigationController: NavHostController, firebaseHelper: FirebaseHelper) {
@@ -162,6 +177,7 @@ fun BottomAppBar(navigationController: NavHostController, firebaseHelper: Fireba
                             elevation = FloatingActionButtonDefaults.elevation(35.dp),
                             shape = fabShape,
                             onClick = {
+                                selected.value=Icons.Default.Add
                                 Toast.makeText(context, "GO!", Toast.LENGTH_SHORT).show()
                                 navigationController.navigate(Screens.StartAnExercise.screen) {
                                     popUpTo(0)

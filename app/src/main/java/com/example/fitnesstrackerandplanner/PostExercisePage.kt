@@ -40,7 +40,7 @@ fun PostExercisePage(
 ) {
     val fireimg=painterResource(R.drawable.fire)
     val clockimg=painterResource(R.drawable.watch)
-
+    val infoimg= painterResource(id = R.drawable.info)
     // Use the received arguments as needed in this Composable
     Surface(
         color = DeepNavyBlue,

@@ -12,6 +12,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,6 +25,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.LinearGradient
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
@@ -45,9 +50,16 @@ Surface(color = DeepNavyBlue, modifier= Modifier.fillMaxSize()) {
         modifier = Modifier.size(200.dp, 300.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.size(height = 45.dp, width = 0.dp))
+        IconButton(onClick = {
+            navController.popBackStack()
+        },
+            modifier=Modifier.padding(top=6.dp,start=4.dp).align(Alignment.Start)) {
+            Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null,
+                modifier=Modifier.size(50.dp,80.dp), tint = Color.White)
+        }
+        Spacer(modifier = Modifier.size(height = 25.dp, width = 0.dp))
         Text(
-            text = subExercise!!.exerciseName,
+            text = subExercise!!.subExerciseName,
             modifier = Modifier.align(Alignment.CenterHorizontally), fontSize = 32.sp, fontWeight = FontWeight.ExtraBold,
             color = Color.White
 
@@ -55,11 +67,17 @@ Surface(color = DeepNavyBlue, modifier= Modifier.fillMaxSize()) {
 
         Spacer(modifier = Modifier.size(25.dp))
         Box(modifier = Modifier.padding(horizontal = 18.dp)) {
-            VideoPlayerExo()
+            YoutubePlayer(
+                youtubeVideoId = subExercise.videoUrl
+                , lifecycleOwner = LocalLifecycleOwner.current
+            )
+
         }
         Spacer(modifier = Modifier.size(15.dp))
         Row(modifier=Modifier.align(Alignment.Start)) {
-            Image(painter = targetimg, contentDescription = null, modifier = Modifier.size(30.dp).padding(start=6.dp))
+            Image(painter = targetimg, contentDescription = null, modifier = Modifier
+                .size(30.dp)
+                .padding(start = 6.dp))
 
             Text(
                 text = subExercise.description,
@@ -67,7 +85,9 @@ Surface(color = DeepNavyBlue, modifier= Modifier.fillMaxSize()) {
                 modifier = Modifier.padding(start = 6.dp)
             )
         }
-            Row(modifier = Modifier.padding(vertical = 30.dp).align(Alignment.Start)) {
+            Row(modifier = Modifier
+                .padding(vertical = 30.dp)
+                .align(Alignment.Start)) {
                 Image(painter = fireimg, contentDescription = null, modifier = Modifier.padding(start = 4.dp))
                 Text(
                     text = "Upon 60m of this exercise you will burn" +
@@ -76,9 +96,13 @@ Surface(color = DeepNavyBlue, modifier= Modifier.fillMaxSize()) {
                     modifier = Modifier.padding(start = 6.dp)
                 )
             }
-        Row(modifier = Modifier.padding(bottom = 30.dp).align(Alignment.Start)){
+        Row(modifier = Modifier
+            .padding(bottom = 30.dp)
+            .align(Alignment.Start)){
             //TODO:Add targeted muscle groups with icon next to it.
-            Image(painter = targetimg, contentDescription = null, modifier = Modifier.size(30.dp).padding(start=6.dp))
+            Image(painter = targetimg, contentDescription = null, modifier = Modifier
+                .size(30.dp)
+                .padding(start = 6.dp))
 
             Text(
                 text = buildAnnotatedString {
@@ -90,7 +114,7 @@ Surface(color = DeepNavyBlue, modifier= Modifier.fillMaxSize()) {
                             )
                         )
                     ){
-                        append("${subExercise.name}")
+                        append("${subExercise.exerciseName}")
                     }
                 },
                 modifier = Modifier.padding(start = 6.dp),
@@ -101,7 +125,8 @@ Surface(color = DeepNavyBlue, modifier= Modifier.fillMaxSize()) {
             AnimatedButton(
                 onClick = { navController.navigate(Screens.ExercisePage(subExerciseID = subExercise.subExerciseID).screen) },
                 text = "START",
-                buttonWidth = 100.dp,
+                buttonWidth = 115.dp,
+                buttonHeight = 60.dp,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
 

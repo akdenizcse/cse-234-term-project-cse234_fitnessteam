@@ -57,6 +57,12 @@ import java.time.Duration
 //fun calculateBMI(weight:Double,height:Double){}
 // fun caloriesBurned(){}
 // and such ...
+interface SlideGestureListener {
+    fun onSlideStart()
+    fun onSlide(offset: Float)
+    fun onSlideEnd()
+}
+
 enum class WeightClassification(){
     Underweight,
     Normal,
@@ -131,7 +137,7 @@ fun initializeExercises(): List<Exercise> {
     // Initialize sub-exercises
     val chestSubExercises = listOf(
         SubExercise(
-            exerciseName = "Incline Dumbbell Press",
+            subExerciseName = "Incline Dumbbell Press",
             description = "Lie on the table and push the dumbbells up.",
             videoUrl = "https://example.com/videos/incline_dumbbell_press.mp4",
             groupName = "Chest",
@@ -139,7 +145,7 @@ fun initializeExercises(): List<Exercise> {
             approximateCaloriesPerSecond = 0.12 // Example value
         ),
         SubExercise(
-            exerciseName = "Dumbbell Chest Fly",
+            subExerciseName = "Dumbbell Chest Fly",
             description = "Lie on the table and spread your arms with dumbbells.",
             videoUrl = "https://example.com/videos/dumbbell_chest_fly.mp4",
             groupName = "Chest",
@@ -150,7 +156,7 @@ fun initializeExercises(): List<Exercise> {
 
     val legSubExercises = listOf(
         SubExercise(
-            exerciseName = "Squat",
+            subExerciseName = "Squat",
             description = "Stand with your feet shoulder-width apart and squat down.",
             videoUrl = "https://example.com/videos/squat.mp4",
             groupName = "Legs",
@@ -158,7 +164,7 @@ fun initializeExercises(): List<Exercise> {
             approximateCaloriesPerSecond = 0.15 // Example value
         ),
         SubExercise(
-            exerciseName = "Lunge",
+            subExerciseName = "Lunge",
             description = "Step forward and lower your hips until both knees are bent.",
             videoUrl = "https://example.com/videos/lunge.mp4",
             groupName = "Legs",
@@ -169,7 +175,7 @@ fun initializeExercises(): List<Exercise> {
 
     val absSubExercises = listOf(
         SubExercise(
-            exerciseName = "Crunch",
+            subExerciseName = "Crunch",
             description = "Lie on your back and lift your shoulders off the floor.",
             videoUrl = "https://example.com/videos/crunch.mp4",
             groupName = "Abs",
@@ -177,7 +183,7 @@ fun initializeExercises(): List<Exercise> {
             approximateCaloriesPerSecond = 0.08 // Example value
         ),
         SubExercise(
-            exerciseName = "Plank",
+            subExerciseName = "Plank",
             description = "Hold your body in a straight line from head to heels.",
             videoUrl = "https://example.com/videos/plank.mp4",
             groupName = "Abs",
@@ -216,7 +222,9 @@ fun List<Exercise>.getSubExercisesByIds(subExerciseIds: List<Int>): List<SubExer
 
     return result
 }
-
+fun List<Exercise>.getSubExerciseById(subExerciseId: Int): SubExercise? {
+    return flatMap { it.subExercises }.find { it.subExerciseID == subExerciseId }
+}
 
 //Health Connect Utility Methods
 fun dateTimeWithOffsetOrDefault(time: Instant, offset: ZoneOffset?): ZonedDateTime =

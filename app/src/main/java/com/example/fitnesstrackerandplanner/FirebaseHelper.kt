@@ -3,10 +3,19 @@ import android.util.Log
 import android.widget.Toast
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 
 class FirebaseHelper {
     private val db = FirebaseFirestore.getInstance()
     private val usersCollection = db.collection("users")
+    private val exerciseCollectionRef = db.collection("exercise")
+    private val subExerciseCollectionRef = db.collection("subExercise")
+    private val waterConsumptionCollection = db.collection("userData")
 
     fun addUser(
         context: Context,
@@ -30,7 +39,7 @@ class FirebaseHelper {
                     "lastName" to lastName,
                     "email" to email,
                     "userName" to userName,
-                    "password" to password
+                    "password" to password,
                 )
 
                 usersCollection.add(user)
@@ -135,10 +144,6 @@ class FirebaseHelper {
     }
 
 
-
-
-
-
     fun fetchWeight(userName: String, callback: (Int?) -> Unit) {
         val usernameQuery = usersCollection.whereEqualTo("userName", userName).get()
         usernameQuery.addOnSuccessListener { documents ->
@@ -156,11 +161,127 @@ class FirebaseHelper {
     }
 
 
+//****************------------------------*-*--*-*-*-*-*-*-*-*-*------------------*********************************//
+
+
+// Assuming you have Firebase dependencies set up
+
+
+    suspend fun initializeExercises(): List<Exercise> {
+        return withContext(Dispatchers.IO) {
+            try {
+                // Fetch exercises
+                val exerciseQuerySnapshot = exerciseCollectionRef.get().await()
+                val exercises = mutableListOf<Exercise>()
+
+                for (exerciseDocument in exerciseQuerySnapshot.documents) {
+                    val exerciseID = exerciseDocument.getLong("exerciseID")?.toInt() ?: 0
+                    val exerciseName = exerciseDocument.getString("exerciseName") ?: ""
+                    val exercise = Exercise(exerciseName, exerciseID)
+
+                    // Fetch sub-exercises for the current exercise
+                    val subExerciseQuerySnapshot = subExerciseCollectionRef
+                        .whereEqualTo("parentExerciseID", exercise.exerciseID)
+                        .get()
+                        .await()
+
+                    val subExercises = mutableListOf<SubExercise>()
+                    for (subDocument in subExerciseQuerySnapshot.documents) {
+                        val subExerciseID = subDocument.getLong("subExerciseID")?.toInt() ?: 0
+                        val subExerciseName = subDocument.getString("subExerciseName") ?: ""
+                        val videoUrl = subDocument.getString("youtubeID") ?: ""
+                        val approximateCaloriesPerSecond =
+                            subDocument.getDouble("subExerciseCaloriesBurnedPerSec") ?: 0.0
+
+                        val subExercise = SubExercise(
+                            subExerciseName = subExerciseName,
+                            description = "",  // You can fetch description if added to Firestore
+                            videoUrl = videoUrl,
+                            groupName = exerciseName,
+                            exerciseIDs = exerciseID,
+                            subExerciseID = subExerciseID,
+                            approximateCaloriesPerSecond = approximateCaloriesPerSecond
+                        )
+                        subExercises.add(subExercise)
+                    }
+
+                    exercise.addExercise(subExercises)
+                    exercises.add(exercise)
+                }
+
+                exercises // Return fetched exercises
+            } catch (e: Exception) {
+                Log.e("FirebaseHelper", "Error fetching exercises", e)
+                emptyList() // Return empty list on error
+            }
+        }
+    }
+
+    fun updateWaterConsumption(username: String, waterDrank: Float, callback: (Boolean) -> Unit) {
+        val currentTime = System.currentTimeMillis()
+        val data = hashMapOf(
+            "userName" to username,
+            "waterDrank" to waterDrank,
+            "timestamp" to currentTime
+        )
+        val documentId = "$username-${currentTime / 86400000}"  // 86400000 ms in a day
+        waterConsumptionCollection.document(documentId)
+            .set(data)
+            .addOnSuccessListener {
+                callback(true)
+            }
+            .addOnFailureListener { e ->
+                Log.w("FirebaseHelper", "Error updating water consumption: ", e)
+                callback(false)
+            }
+    }
+    fun deleteOldWaterData(username: String, callback: (Boolean) -> Unit) {
+        val currentTime = System.currentTimeMillis()
+        val oneDayAgo = currentTime - 86400000
+
+        waterConsumptionCollection
+            .whereEqualTo("userName", username)
+            .whereLessThan("timestamp", oneDayAgo)
+            .get()
+            .addOnSuccessListener { documents ->
+                for (document in documents) {
+                    waterConsumptionCollection.document(document.id).delete()
+                }
+                callback(true)
+            }
+            .addOnFailureListener { e ->
+                Log.w("FirebaseHelper", "Error deleting old water data: ", e)
+                callback(false)
+            }
+    }
+    suspend fun fetchWaterConsumption(userName: String): Float {
+        return withContext(Dispatchers.IO) {
+            try {
+                val currentTime = System.currentTimeMillis()
+                val oneDayAgo = currentTime - 86400000  // 86400000 ms in a day
+
+                // Query water consumption data for the current day
+                val querySnapshot = waterConsumptionCollection
+                    .whereEqualTo("userName", userName)
+                    .whereGreaterThan("timestamp", oneDayAgo)
+                    .get()
+                    .await()
+
+                // Calculate total water consumed for the current day
+                var totalWaterConsumed = 0.0f
+                for (document in querySnapshot.documents) {
+                    val waterDrank = document.getDouble("waterDrank")?.toFloat() ?: 0.0f
+                    totalWaterConsumed += waterDrank
+                }
+
+                totalWaterConsumed
+            } catch (e: Exception) {
+                Log.e("FirebaseHelper", "Error fetching water consumption", e)
+                0.0f  // Return 0.0f on error
+            }
+        }
+    }
+
 }
-
-
-
-
-
 
 
