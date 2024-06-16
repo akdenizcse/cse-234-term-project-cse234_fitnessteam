@@ -2,6 +2,7 @@ import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import com.google.android.gms.tasks.Tasks
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -9,6 +10,8 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import java.time.ZonedDateTime
+import java.util.Date
 
 class FirebaseHelper {
     private val db = FirebaseFirestore.getInstance()
@@ -16,7 +19,7 @@ class FirebaseHelper {
     private val exerciseCollectionRef = db.collection("exercise")
     private val subExerciseCollectionRef = db.collection("subExercise")
     private val waterConsumptionCollection = db.collection("userData")
-
+    private val exerciseSessionsCollection = db.collection("exerciseSessions")
     fun addUser(
         context: Context,
         firstName: String,
@@ -235,6 +238,7 @@ class FirebaseHelper {
                 callback(false)
             }
     }
+
     fun deleteOldWaterData(username: String, callback: (Boolean) -> Unit) {
         val currentTime = System.currentTimeMillis()
         val oneDayAgo = currentTime - 86400000
@@ -254,6 +258,7 @@ class FirebaseHelper {
                 callback(false)
             }
     }
+
     suspend fun fetchWaterConsumption(userName: String): Float {
         return withContext(Dispatchers.IO) {
             try {
@@ -271,7 +276,7 @@ class FirebaseHelper {
                 var totalWaterConsumed = 0.0f
                 for (document in querySnapshot.documents) {
                     val waterDrank = document.getDouble("waterDrank")?.toFloat() ?: 0.0f
-                    Log.d("FirebaseHelperWater","Fetched data $waterDrank")
+                    Log.d("FirebaseHelperWater", "Fetched data $waterDrank")
                     totalWaterConsumed += waterDrank
                 }
 
@@ -283,6 +288,69 @@ class FirebaseHelper {
         }
     }
 
+    fun logExerciseSession(
+        userName: String,
+        subExerciseID: Int,
+        caloriesBurned: Double,
+        exerciseTime: Long,
+        fittyHealthPointsGained: Int,
+        startTime: ZonedDateTime,
+        endTime: ZonedDateTime,
+        callback: (Boolean) -> Unit
+    ) {
+        val exerciseSession = hashMapOf(
+            "userName" to userName,
+            "subExerciseID" to subExerciseID,
+            "caloriesBurned" to caloriesBurned,
+            "exerciseTime" to exerciseTime,
+            "fittyHealthPointsGained" to fittyHealthPointsGained,
+            "startTime" to Timestamp(startTime.toInstant().toEpochMilli() / 1000, 0),
+            "endTime" to Timestamp(endTime.toInstant().toEpochMilli() / 1000, 0)
+        )
+
+            exerciseSessionsCollection
+            .add(exerciseSession)
+            .addOnSuccessListener {
+                callback(true)
+            }
+            .addOnFailureListener {
+                callback(false)
+            }
+    }
+
+    fun fetchExerciseSessions(userName: String, callback: (List<ExerciseSession>) -> Unit) {
+       exerciseSessionsCollection
+            .whereEqualTo("userName", userName)
+            .get()
+            .addOnSuccessListener { documents ->
+                val exerciseSessions = mutableListOf<ExerciseSession>()
+                for (document in documents) {
+                    val exerciseSession = ExerciseSession(
+                        userName = document.getString("userName") ?: "",
+                        subExerciseID = document.getLong("subExerciseID")?.toInt() ?: 0 ,
+                        caloriesBurned = document.getDouble("caloriesBurned") ?: 0.0,
+                        exerciseTime = document.getLong("exerciseTime") ?: 0L,
+                        fittyHealthPointsGained = document.getLong("fittyHealthPointsGained")?.toInt() ?: 0,
+                        startTime = document.getTimestamp("startTime")?.toDate() ?: Date(),
+                        endTime = document.getTimestamp("endTime")?.toDate() ?: Date()
+                    )
+                    exerciseSessions.add(exerciseSession)
+                }
+                callback(exerciseSessions)
+            }
+            .addOnFailureListener {
+                callback(emptyList())
+            }
+    }
 }
+data class ExerciseSession(
+    val userName: String,
+    val subExerciseID: Int,
+    val caloriesBurned: Double,
+    val exerciseTime: Long,
+    val fittyHealthPointsGained: Int,
+    val startTime: Date,
+    val endTime: Date
+)
 
 

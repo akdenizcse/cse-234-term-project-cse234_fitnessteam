@@ -5,9 +5,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,35 +24,33 @@ import com.example.fitnesstrackerandplanner.ui.theme.SurfaceGreen
 
 @Composable
 fun Activities() {
+    val selectedInterval = remember { mutableStateOf("Last 1 Day") }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(color= DeepNavyBlue)
+            .background(color = DeepNavyBlue)
+    ) {
 
-    )
-    {
-        /* Image(
-            painter=bluetooth_logo,
-            contentDescription= null,
-            modifier=Modifier
-                .padding(15.dp)
-                .size(28.dp)
-                .align(Alignment.TopEnd),)
-*/
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .align(Alignment.Center),
-            horizontalAlignment =  Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ){
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
+        ) {
+            MyDropDownMenu(modifier=Modifier.align(Alignment.Start))
+
+
+
+
+
+
             Text(
-                text ="Activities page",
+                text = "Exercises for ${selectedInterval.value}",
                 fontSize = 30.sp,
                 color = Color.White
             )
-            
-
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.example.fitnesstrackerandplanner
 
+import FirebaseHelper
 import SubExercise
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
@@ -57,13 +58,13 @@ import java.time.ZonedDateTime
 import java.util.concurrent.TimeUnit
 
 @Composable
-fun ExercisePage1(subExercise: SubExercise, exerciseName: String = "Value",navController:NavHostController) {
+fun ExercisePage1(subExercise: SubExercise, exerciseName: String = "Value", navController: NavHostController) {
     var caloriesBurned by remember { mutableStateOf(0.0) }
     val caloriesBurntPerSecond = subExercise.approximateCaloriesPerSecond
     val fireLogo = painterResource(id = R.drawable.fire)
-    val stoppedLogo = painterResource(id = R.drawable.stopped) // Replace with your stopped logo resource
-    val resumedLogo = painterResource(id = R.drawable.resumed) // Replace with your resumed logo resource
-    val watchIcon = painterResource(id = R.drawable.watch) // Replace with your watch icon resource
+    val stoppedLogo = painterResource(id = R.drawable.stopped)
+    val resumedLogo = painterResource(id = R.drawable.resumed)
+    val watchIcon = painterResource(id = R.drawable.watch)
     val context = LocalContext.current
     val startTime = remember { ZonedDateTime.now() }
     var startTimeDisp by remember { mutableStateOf(System.currentTimeMillis()) }
@@ -74,8 +75,9 @@ fun ExercisePage1(subExercise: SubExercise, exerciseName: String = "Value",navCo
     var showStatusLogo by remember { mutableStateOf(false) }
     var statusLogo by remember { mutableStateOf(stoppedLogo) }
     var showDialog by remember { mutableStateOf(false) }
-    val sharedPrefManager by lazy{SharedPrefManager(context)}
+    val sharedPrefManager by lazy { SharedPrefManager(context) }
     val blinkAnimation = remember { Animatable(1f) }
+    val userName = sharedPrefManager!!.getCurrentUsername()
 
     LaunchedEffect(Unit) {
         while (true) {
@@ -209,15 +211,13 @@ fun ExercisePage1(subExercise: SubExercise, exerciseName: String = "Value",navCo
                         fontSize = 18.sp
                     )
                 }
-
             }
             Button(
                 onClick = {
                     showDialog = true
                 },
                 modifier = Modifier
-                    .size(120.dp)
-                    ,
+                    .size(120.dp),
                 shape = CircleShape,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Red,
@@ -232,6 +232,7 @@ fun ExercisePage1(subExercise: SubExercise, exerciseName: String = "Value",navCo
                 )
             }
         }
+
         if (showStatusLogo) {
             Box(
                 modifier = Modifier
@@ -287,12 +288,22 @@ fun ExercisePage1(subExercise: SubExercise, exerciseName: String = "Value",navCo
     LaunchedEffect(isButtonClicked) {
         if (isButtonClicked) {
             val endTime = ZonedDateTime.now()
-            with(healthConnectManager) {
-                try {
-                    writeExerciseSession(startTime, endTime)
-                    Toast.makeText(context, "Successfully ended the exercise!", Toast.LENGTH_SHORT).show()
-                } catch (e: Exception) {
-                    Log.e("ExercisePage1", "Error writing to Health Connect", e)
+            val firebaseHelper = FirebaseHelper()
+            if (userName != null) {
+                firebaseHelper.logExerciseSession(
+                    userName = userName ,
+                    subExerciseID = subExercise.subExerciseID,
+                    caloriesBurned = caloriesBurned,
+                    exerciseTime = elapsedTime,
+                    fittyHealthPointsGained = 0,
+                    startTime = startTime,
+                    endTime = endTime
+                ) { success ->
+                    if (success) {
+                        Toast.makeText(context, "Exercise session logged successfully!", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(context, "Failed to log exercise session.", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }
