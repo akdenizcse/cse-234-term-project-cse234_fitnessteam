@@ -27,6 +27,7 @@ class FirebaseHelper {
         userName: String,
         password: String,
         age: Int,
+        gender: Boolean,
         callback: (Boolean) -> Unit
     ) {
 
@@ -43,7 +44,8 @@ class FirebaseHelper {
                     "email" to email,
                     "userName" to userName,
                     "password" to password,
-                    "age" to age
+                    "age" to age,
+                    "gender" to gender
                 )
 
                 usersCollection.add(user)
@@ -127,6 +129,26 @@ class FirebaseHelper {
         }
     }
 
+    fun fetchAge(userName: String, callback: (Int?) -> Unit) {
+        Log.d("FirebaseHelper", "Fetching age for user: $userName")
+        val usernameQuery = usersCollection.whereEqualTo("userName", userName).get()
+        usernameQuery.addOnSuccessListener { documents ->
+            if (!documents.isEmpty) {
+                val document = documents.documents[0]
+                val age = document.getLong("age")?.toInt()
+                Log.d("FirebaseHelper", "Fetched age for user $userName: $age")
+                callback(age)
+            } else {
+                Log.d("FirebaseHelper", "User $userName not found")
+                callback(null)
+            }
+        }.addOnFailureListener { e ->
+            Log.w("FirebaseHelper", "Error fetching age: ", e)
+            callback(null)
+        }
+
+    }
+
     fun fetchHeight(userName: String, callback: (Int?) -> Unit) {
         Log.d("FirebaseHelper", "Fetching height for user: $userName")
         val usernameQuery = usersCollection.whereEqualTo("userName", userName).get()
@@ -142,6 +164,25 @@ class FirebaseHelper {
             }
         }.addOnFailureListener { e ->
             Log.w("FirebaseHelper", "Error fetching height: ", e)
+            callback(null)
+        }
+    }
+
+    fun fetchGender(userName: String, callback: (Boolean?) -> Unit) {
+        Log.d("FirebaseHelper", "Fetching gender for user: $userName")
+        val usernameQuery = usersCollection.whereEqualTo("userName", userName).get()
+        usernameQuery.addOnSuccessListener { documents ->
+            if (!documents.isEmpty) {
+                val document = documents.documents[0]
+                val gender = document.getBoolean("gender")
+                Log.d("FirebaseHelper", "Fetched gender for user $userName: $gender")
+                callback(gender)
+            } else {
+                Log.d("FirebaseHelper", "User $userName not found")
+                callback(null)
+            }
+        }.addOnFailureListener { e ->
+            Log.w("FirebaseHelper", "Error fetching gender: ", e)
             callback(null)
         }
     }
@@ -165,8 +206,6 @@ class FirebaseHelper {
 
 
 //****************------------------------*-*--*-*-*-*-*-*-*-*-*------------------*********************************//
-
-
 
 
     suspend fun initializeExercises(): List<Exercise> {
@@ -295,8 +334,7 @@ class FirebaseHelper {
         startTime: ZonedDateTime,
         endTime: ZonedDateTime,
         callback: (Boolean) -> Unit
-    )
-    {
+    ) {
         val exerciseSession = hashMapOf(
             "userName" to userName,
             "subExerciseID" to subExerciseID,
@@ -307,7 +345,7 @@ class FirebaseHelper {
             "endTime" to Timestamp(endTime.toInstant().toEpochMilli() / 1000, 0)
         )
 
-            exerciseSessionsCollection
+        exerciseSessionsCollection
             .add(exerciseSession)
             .addOnSuccessListener {
                 callback(true)
@@ -317,29 +355,34 @@ class FirebaseHelper {
             }
     }
 
-    fun fetchExerciseSessions(userName: String, callback: (List<ExerciseSession>) -> Unit) {
-       exerciseSessionsCollection
-            .whereEqualTo("userName", userName)
-            .get()
-            .addOnSuccessListener { documents ->
-                val exerciseSessions = mutableListOf<ExerciseSession>()
-                for (document in documents) {
-                    val exerciseSession = ExerciseSession(
+    suspend fun fetchExerciseSessions(userName: String): List<ExerciseSession> {
+        val exerciseSessionsCollection =
+            FirebaseFirestore.getInstance().collection("exerciseSessions")
+
+        return withContext(Dispatchers.IO) {
+            try {
+                val querySnapshot = exerciseSessionsCollection
+                    .whereEqualTo("userName", userName)
+                    .get()
+                    .await()
+
+                querySnapshot.documents.map { document ->
+                    ExerciseSession(
                         userName = document.getString("userName") ?: "",
-                        subExerciseID = document.getLong("subExerciseID")?.toInt() ?: 0 ,
+                        subExerciseID = document.getLong("subExerciseID")?.toInt() ?: 0,
                         caloriesBurned = document.getDouble("caloriesBurned") ?: 0.0,
                         exerciseTime = document.getLong("exerciseTime") ?: 0L,
-                        fittyHealthPointsGained = document.getLong("fittyHealthPointsGained")?.toInt() ?: 0,
+                        fittyHealthPointsGained = document.getLong("fittyHealthPointsGained")
+                            ?.toInt() ?: 0,
                         startTime = document.getTimestamp("startTime")?.toDate() ?: Date(),
                         endTime = document.getTimestamp("endTime")?.toDate() ?: Date()
                     )
-                    exerciseSessions.add(exerciseSession)
                 }
-                callback(exerciseSessions)
+            } catch (e: Exception) {
+                Log.e("Firestore", "Error fetching exercise sessions: ", e)
+                emptyList()
             }
-            .addOnFailureListener {
-                callback(emptyList())
-            }
+        }
     }
 }
 data class ExerciseSession(

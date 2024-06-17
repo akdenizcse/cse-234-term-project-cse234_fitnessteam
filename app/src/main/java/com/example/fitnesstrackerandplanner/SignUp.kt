@@ -2,21 +2,30 @@
 
     import FirebaseHelper
     import android.widget.Toast
+    import androidx.compose.foundation.Image
+    import androidx.compose.foundation.clickable
     import androidx.compose.foundation.layout.Arrangement
     import androidx.compose.foundation.layout.Column
     import androidx.compose.foundation.layout.Row
     import androidx.compose.foundation.layout.Spacer
     import androidx.compose.foundation.layout.fillMaxSize
     import androidx.compose.foundation.layout.fillMaxWidth
+    import androidx.compose.foundation.layout.height
     import androidx.compose.foundation.layout.padding
     import androidx.compose.foundation.layout.size
+    import androidx.compose.foundation.layout.width
+    import androidx.compose.foundation.layout.wrapContentWidth
     import androidx.compose.foundation.text.KeyboardOptions
     import androidx.compose.material.icons.Icons
     import androidx.compose.material.icons.filled.ArrowBack
     import androidx.compose.material3.ButtonDefaults
+    import androidx.compose.material3.DropdownMenu
+    import androidx.compose.material3.DropdownMenuItem
     import androidx.compose.material3.Icon
     import androidx.compose.material3.IconButton
+    import androidx.compose.material3.MaterialTheme
     import androidx.compose.material3.OutlinedButton
+    import androidx.compose.material3.OutlinedCard
     import androidx.compose.material3.OutlinedTextField
     import androidx.compose.material3.Surface
     import androidx.compose.material3.Text
@@ -30,15 +39,19 @@
     import androidx.compose.ui.Modifier
     import androidx.compose.ui.graphics.Color
     import androidx.compose.ui.platform.LocalContext
+    import androidx.compose.ui.res.painterResource
     import androidx.compose.ui.text.font.FontWeight
     import androidx.compose.ui.text.input.ImeAction
     import androidx.compose.ui.text.input.KeyboardType
     import androidx.compose.ui.text.input.PasswordVisualTransformation
     import androidx.compose.ui.unit.dp
+    import androidx.compose.ui.unit.sp
+    import androidx.compose.ui.window.Dialog
     import androidx.navigation.NavHostController
     import com.example.fitnesstrackerandplanner.ui.theme.Cerulean
     import com.example.fitnesstrackerandplanner.ui.theme.DeepNavyBlue
     import com.example.fitnesstrackerandplanner.ui.theme.LightPaletteGray
+    import com.example.fitnesstrackerandplanner.ui.theme.PurpleGrey40
     import com.example.fitnesstrackerandplanner.ui.theme.Taupe
     import com.example.fitnesstrackerandplanner.ui.theme.darkGray
     import com.example.fitnesstrackerandplanner.ui.theme.focusedDarkGray
@@ -57,15 +70,19 @@
         var passwordsDoNotMatch by remember { mutableStateOf(false) }
         var emailOrUsernameTaken by remember { mutableStateOf(false) }
         var isSimplePassword by remember { mutableStateOf(false) }
-        var dateOfBirth: LocalDateTime by remember{ mutableStateOf(LocalDateTime.now()) }
+        var isAgeNotSelected by remember { mutableStateOf(false) }
+        var isGenderNotSelected by remember { mutableStateOf(false) }
         val thisContext = LocalContext.current
         val sharedPrefManager by lazy { SharedPrefManager(thisContext) }
         val firebaseHelper by lazy { FirebaseHelper() }
+        val selectedAge = remember { mutableStateOf(0) }
+        var showDialog by remember { mutableStateOf(false) }
+        val selectedGender = remember { mutableStateOf(false) }
+        var genderSelected by remember { mutableStateOf(false) } // To track if gender is selected
 
         Surface(color = DeepNavyBlue, modifier = Modifier.fillMaxSize()) {
             Column {
-                // Back Button Row
-                Spacer(modifier=Modifier.size(10.dp))
+                Spacer(modifier = Modifier.size(10.dp))
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth()
@@ -73,8 +90,12 @@
                     IconButton(onClick = {
                         navigationController.popBackStack()
                     }) {
-                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null,
-                            modifier=Modifier.size(50.dp,80.dp), tint = Color.White)
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = null,
+                            modifier = Modifier.size(50.dp, 80.dp),
+                            tint = Color.White
+                        )
                     }
                 }
 
@@ -97,7 +118,7 @@
                             focusedLabelColor = Color.White,
                             unfocusedLabelColor = LightPaletteGray
                         ),
-                                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardOptions = KeyboardOptions.Default.copy(
                             keyboardType = KeyboardType.Text,
                             imeAction = ImeAction.Next
                         )
@@ -186,7 +207,18 @@
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                         visualTransformation = PasswordVisualTransformation()
                     )
-                    MyWheelDatePicker(dateOfBirth = remember { mutableStateOf(dateOfBirth) })
+                    Row {
+                        MyAgeDropDownMenu(
+                            modifier = Modifier,
+                            selectedAge = selectedAge.value,
+                            onClick = { showDialog = true }
+                        )
+                        MyGenderDropDownMenu(
+                            modifier = Modifier.fillMaxWidth(),
+                            selectedGender = selectedGender
+                        )
+                    }
+
                     if (isBlankField) {
                         Text(text = "All fields are required!", color = Color.Red)
                     }
@@ -195,12 +227,15 @@
                     }
                     if (isSimplePassword) {
                         Text(text = "Password length must be greater than 6!", color = Color.Red)
-
                     }
-
                     if (emailOrUsernameTaken) {
                         Text(text = "Email or username taken!", color = Color.Red)
-
+                    }
+                    if (isAgeNotSelected) {
+                        Text(text = "Please select your age!", color = Color.Red)
+                    }
+                    if (isGenderNotSelected) {
+                        Text(text = "Please select your gender!", color = Color.Red)
                     }
 
                     OutlinedButton(
@@ -209,29 +244,39 @@
                             passwordsDoNotMatch = false
                             emailOrUsernameTaken = false
                             isSimplePassword = false
+                            isAgeNotSelected = false
+                            isGenderNotSelected = false
+
                             fun fieldsAreValid(): Boolean {
-                                if (!password1.equals(password2)) {
+                                if (password1 != password2) {
                                     passwordsDoNotMatch = true
                                     return false
                                 }
-                                if (!(password1.length > 6)) {
+                                if (password1.length <= 6) {
                                     isSimplePassword = true
                                     return false
-                                } else {
-                                    isBlankField = !(first_name.isNotBlank() &&
-                                            last_name.isNotBlank() &&
-                                            email.isNotBlank() &&
-                                            user_name.isNotBlank() &&
-                                            password1.isNotBlank() &&
-                                            password2.isNotBlank()
-                                            )
-                                    return !isBlankField
                                 }
+                                if (selectedAge.value == 0) {
+                                    isAgeNotSelected = true
+                                    return false
+                                }
+                                if (selectedGender.value == null) {
+                                    isGenderNotSelected = true
+                                    return false
+                                }
+                                isBlankField = !(first_name.isNotBlank() &&
+                                        last_name.isNotBlank() &&
+                                        email.isNotBlank() &&
+                                        user_name.isNotBlank() &&
+                                        password1.isNotBlank() &&
+                                        password2.isNotBlank())
+                                return !isBlankField
                             }
+
                             if (fieldsAreValid()) {
                                 firebaseHelper.addUser(
                                     thisContext,
-                                    first_name, last_name, email, user_name, password1,dateOfBirth
+                                    first_name, last_name, email, user_name, password1, selectedAge.value, selectedGender.value
                                 ) { isSuccessfull ->
                                     if (isSuccessfull) {
                                         sharedPrefManager.saveCurrentUserFirstName(first_name)
@@ -240,14 +285,12 @@
                                     } else {
                                         Toast.makeText(
                                             thisContext,
-                                            "User can not be added",
+                                            "User cannot be added",
                                             Toast.LENGTH_SHORT
                                         ).show()
                                         emailOrUsernameTaken = true
                                     }
                                 }
-                            } else {
-
                             }
                         },
                         colors = ButtonDefaults.buttonColors(Cerulean),
@@ -257,10 +300,32 @@
                     }
                 }
             }
+
+            if (showDialog) {
+                Dialog(onDismissRequest = { showDialog = false }) {
+                    Surface(
+                        shape = MaterialTheme.shapes.medium,
+                        tonalElevation = 8.dp,
+                        modifier = Modifier.padding(16.dp)
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center,
+                            modifier = Modifier.padding(16.dp)
+                        ) {
+                            WheelViewSelector(selectedAge)
+                            OutlinedButton(
+                                onClick = { showDialog = false },
+                                colors = ButtonDefaults.buttonColors(Cerulean),
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text(text = "Confirm", fontWeight = FontWeight.Bold)
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
-
-
-
 
 

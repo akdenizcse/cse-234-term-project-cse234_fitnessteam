@@ -62,7 +62,7 @@ fun Home() {
     val sharedPrefManager by lazy { SharedPrefManager(context) }
     val userName = sharedPrefManager.getCurrentUsername()
     val firebaseHelper by lazy { FirebaseHelper() }
-
+    var userAge by remember{ mutableStateOf(0) }
     val isDayTime: Boolean = hour in 6..18
     val greeting: String = if (isDayTime) "Good Morning, $userName!" else "Good Evening, $userName!"
 
@@ -82,10 +82,12 @@ fun Home() {
 
     val height = sharedPrefManager.getCurrentUserHeight()
     val weight = sharedPrefManager.getCurrentUserWeight()
-
+    var userGender by remember { mutableStateOf(false) }
+    var genderString by remember{mutableStateOf("")}
     var waterDrank by remember { mutableStateOf(0.0f) }
     var totalHealthPoints by remember { mutableStateOf(0.0f) }
     var tempTotalHealthPoints=0.0f
+
     if(waterDrank>=2.5f){
         tempTotalHealthPoints+=0.25f
     }
@@ -105,6 +107,34 @@ fun Home() {
             val waterConsumed = firebaseHelper.fetchWaterConsumption(userName)
             Log.d("HomeFireStore","Fetched water consumption ${waterConsumed}")
             waterDrank = waterConsumed ?: 0.0f
+        }
+    }
+    LaunchedEffect(userName) {
+        if (!userName.isNullOrEmpty()) {
+            firebaseHelper.fetchAge(userName){ value->
+                Log.d("HomeFireStore","Fetched age ${value}")
+                if (value != null) {
+                    userAge=value
+                    sharedPrefManager.saveCurrentUserAge(userAge)
+                }
+            }
+        }
+    }
+    LaunchedEffect(userName) {
+        if (!userName.isNullOrEmpty()) {
+            firebaseHelper.fetchGender(userName){ value->
+                Log.d("HomeFireStore","Fetched gender ${value}")
+                if (value != null) {
+                    userGender=value
+                    if(userGender==true){
+                        genderString="Female"
+                    }
+                    else{
+                        genderString="Male"
+                    }
+                    sharedPrefManager.saveCurrentUserGender(userGender)
+                }
+            }
         }
     }
 
@@ -143,49 +173,69 @@ fun Home() {
                         Surface(
                             modifier = Modifier.size(350.dp, 100.dp),
                             color = CharcoalGray,
-                            shape = RoundedCornerShape(16.dp)
+                            shape = RoundedCornerShape(16.dp),
+                            tonalElevation = 8.dp,
+                            border = BorderStroke(0.3.dp, Brush.linearGradient(
+                                colors = listOf(Color.Magenta, Color.Cyan)
+                            ))
                         ) {
-                            Column {
-                                Text(
-                                    "Height: ${height}cm", modifier = Modifier
-                                        .padding(horizontal = 8.dp)
-                                        .weight(1f),
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.White
-                                )
-                                Text(
-                                    "Weight: ${weight}kg",
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .padding(horizontal = 8.dp),
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.White
-                                )
-                                Row {
+                            Column(
+                                modifier = Modifier.padding(8.dp)
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
                                     Text(
-                                        "Age: 21",
-                                        modifier = Modifier
-                                            .weight(1f)
-                                            .padding(horizontal = 8.dp),
+                                        text = "Height: ${height}cm",
+                                        modifier = Modifier.weight(1f),
                                         fontWeight = FontWeight.Bold,
                                         color = Color.White
                                     )
                                     Text(
-                                        "BMI: ${calculateBMI(weightKg = weight.toShort(), heightCm = height.toShort())}",
-                                        modifier = Modifier
-                                            .align(Alignment.Bottom)
-                                            .padding(8.dp),
+                                        text = "Gender: $genderString",
+                                        modifier = Modifier.padding(start = 8.dp),
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color.White
+                                    )
+                                }
+                                Text(
+                                    text = "Weight: ${weight}kg",
+                                    modifier = Modifier.padding(top = 8.dp),
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White
+                                )
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(
+                                        text = "Age: $userAge",
+                                        modifier = Modifier.weight(1f),
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color.White
+                                    )
+                                    Text(
+                                        text = "BMI: ${calculateBMI(weightKg = weight.toShort(), heightCm = height.toShort())}",
+                                        modifier = Modifier.padding(start = 8.dp),
                                         fontWeight = FontWeight.Bold,
                                         color = Color.White
                                     )
                                 }
                             }
                         }
+
+                        Spacer(modifier=Modifier.size(2.dp))
                         Surface(
                             modifier = Modifier.size(350.dp, 125.dp),
-                            color = Taupe,
-                            shape = RoundedCornerShape(16.dp)
-                        ) {
+                            color = Silver,
+                            shape = RoundedCornerShape(16.dp),
+                            tonalElevation = 8.dp,
+                            border = BorderStroke(
+                                width=0.4.dp,brush=Brush.linearGradient(
+                                    colors=listOf(Color.Cyan,Color.Magenta)
+                                )
+                                )
+                            )
+                         {
                             Column {
                                 Text(
                                     text = if (totalHealthPoints != 1f) "You have completed ${(totalHealthPoints * 100).toInt()}% of your daily goals, congratulations!"
@@ -232,7 +282,12 @@ fun Home() {
                             Surface(
                                 modifier = Modifier.size(350.dp, 75.dp),
                                 color = CharcoalGray,
-                                shape = RoundedCornerShape(16.dp)
+                                shape = RoundedCornerShape(16.dp),
+                                tonalElevation = 8.dp,
+                                border = BorderStroke(0.3.dp, Brush.linearGradient(
+                                    colors = listOf(Color.Magenta, Color.Cyan)
+                                )
+                                )
                             ) {
                                 Row(
                                     modifier = Modifier,
@@ -314,7 +369,12 @@ fun Home() {
                             Surface(
                                 modifier = Modifier.size(350.dp, 75.dp),
                                 color = CharcoalGray,
-                                shape = RoundedCornerShape(16.dp)
+                                shape = RoundedCornerShape(16.dp),
+                                tonalElevation = 8.dp,
+                                border = BorderStroke(0.3.dp, Brush.linearGradient(
+                                    colors = listOf(Color.Magenta, Color.Cyan)
+                                )
+                                )
                             ) {
                                 Row(
                                     modifier = Modifier,
@@ -365,7 +425,12 @@ fun Home() {
                             Surface(
                                 modifier = Modifier.size(350.dp, 75.dp),
                                 color = CharcoalGray,
-                                shape = RoundedCornerShape(16.dp)
+                                shape = RoundedCornerShape(16.dp),
+                                tonalElevation = 8.dp,
+                                border = BorderStroke(0.3.dp, Brush.linearGradient(
+                                    colors = listOf(Color.Magenta, Color.Cyan)
+                                )
+                                )
                             ) {
                                 Row(
                                     modifier = Modifier,
@@ -423,7 +488,12 @@ fun Home() {
                             Surface(
                                 modifier = Modifier.size(350.dp, 75.dp),
                                 color = CharcoalGray,
-                                shape = RoundedCornerShape(16.dp)
+                                shape = RoundedCornerShape(16.dp),
+                                tonalElevation = 8.dp,
+                                border = BorderStroke(0.3.dp, Brush.linearGradient(
+                                    colors = listOf(Color.Magenta, Color.Cyan)
+                                )
+                                )
                             ) {
                                 Row(
                                     modifier = Modifier,
@@ -477,6 +547,7 @@ fun Home() {
         }
     }
 }
+
 
 
 

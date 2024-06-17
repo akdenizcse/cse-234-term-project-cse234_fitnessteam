@@ -45,6 +45,22 @@ class SharedPrefManager(context: Context){
         editor.putString("currentUsername",username)
         editor.apply()
     }
+    fun saveCurrentUserAge(userAge:Int){
+        val editor= sharedPreferences.edit()
+        editor.putInt("currentUserAge",userAge)
+        editor.apply()
+    }
+    fun saveCurrentUserGender(userGender:Boolean){
+        val editor= sharedPreferences.edit()
+        editor.putBoolean("currentUserGender",userGender)
+        editor.apply()
+    }
+    fun getCurrentUserGender():Boolean{
+        return sharedPreferences.getBoolean("currentUserGender",false)
+    }
+    fun getCurrentUserAge():Int{
+        return sharedPreferences.getInt("currentUserAge",0)
+    }
     fun getCurrentUsername():String?{
         return sharedPreferences.getString("currentUsername",null)
     }

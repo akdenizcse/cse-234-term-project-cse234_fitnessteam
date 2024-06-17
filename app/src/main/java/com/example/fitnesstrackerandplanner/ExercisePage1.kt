@@ -78,12 +78,13 @@ fun ExercisePage1(subExercise: SubExercise, exerciseName: String = "Value", navC
     val sharedPrefManager by lazy { SharedPrefManager(context) }
     val blinkAnimation = remember { Animatable(1f) }
     val userName = sharedPrefManager!!.getCurrentUsername()
-
+    var exerciseTime by remember{ mutableStateOf(0L) }
     LaunchedEffect(Unit) {
         while (true) {
             if (!isStopped) {
                 val currentTime = System.currentTimeMillis()
                 elapsedTime = currentTime - startTimeDisp
+                exerciseTime+=1
                 caloriesBurned += caloriesBurntPerSecond
             }
             delay(1000)
@@ -294,7 +295,7 @@ fun ExercisePage1(subExercise: SubExercise, exerciseName: String = "Value", navC
                     userName = userName ,
                     subExerciseID = subExercise.subExerciseID,
                     caloriesBurned = caloriesBurned,
-                    exerciseTime = elapsedTime,
+                    exerciseTime = exerciseTime,
                     fittyHealthPointsGained = 0,
                     startTime = startTime,
                     endTime = endTime

@@ -7,41 +7,21 @@ import java.time.Instant
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
-import android.view.MotionEvent
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -51,33 +31,21 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.input.pointer.pointerInteropFilter
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.DpSize
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.example.fitnesstrackerandplanner.ui.theme.ButtonPurple
-import com.google.firebase.Timestamp
+import com.example.fitnesstrackerandplanner.ui.theme.CharcoalGray
 import com.ozcanalasalvar.wheelview.SelectorOptions
 import com.ozcanalasalvar.wheelview.WheelView
-import org.w3c.dom.Text
+import java.text.SimpleDateFormat
 import java.time.Duration
-import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
+import java.util.Date
+import java.util.Locale
 
 //TODO: Implement methods that are might be used in anywhere in the app.
 //fun calculateBMI(weight:Double,height:Double){}
@@ -323,23 +291,183 @@ fun MyDropDownMenu(modifier:Modifier=Modifier) {
     }
 }
 @Composable
+fun MySessionDropDownMenu(
+    modifier: Modifier = Modifier,
+    selectedInterval: String,
+    onIntervalChanged: (String) -> Unit
+) {
+    var dropControl by remember { mutableStateOf(false) }
+    val intervalList = listOf("Last 1 Day", "Last 7 Days", "Last 1 Month", "Last 1 Year")
+
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Card(
+            modifier = Modifier
+                .padding(16.dp)
+                .clickable { dropControl = true }
+                .fillMaxWidth()
+                .height(50.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.padding(5.dp)
+            ) {
+                Text(
+                    text = selectedInterval, // Display current selected interval
+                    modifier = Modifier.weight(1f)
+                )
+                Icon(
+                    imageVector = ImageVector.vectorResource(id = R.drawable.baseline_arrow_drop_down_24),
+                    contentDescription = "Dropdown Arrow",
+                    modifier = Modifier.padding(end = 8.dp)
+                )
+            }
+        }
+
+        DropdownMenu(
+            expanded = dropControl,
+            onDismissRequest = { dropControl = false }
+        ) {
+            intervalList.forEachIndexed { index, interval ->
+                DropdownMenuItem(
+                    onClick = {
+                        dropControl = false
+                        onIntervalChanged(interval) // Call callback with selected interval
+                    },
+                    text = { Text(text = interval) }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun MyGenderDropDownMenu(modifier: Modifier = Modifier, selectedGender: MutableState<Boolean>) {
+    var dropControl by remember { mutableStateOf(false) }
+    var selectIndex by remember { mutableStateOf(-1) }
+    val genderList = listOf("Gender", "Male", "Female")
+
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        OutlinedCard(modifier = Modifier.padding(16.dp)) {
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .background(CharcoalGray)
+                    .height(50.dp)
+                    .padding(5.dp)
+                    .clickable {
+                        dropControl = true
+                    }
+            ) {
+                Text(text = genderList[selectIndex + 1])
+                Image(
+                    painter = painterResource(id = R.drawable.baseline_arrow_drop_down_24),
+                    contentDescription = ""
+                )
+            }
+
+            DropdownMenu(expanded = dropControl, onDismissRequest = { dropControl = false }) {
+                genderList.forEachIndexed { index, gender ->
+                    DropdownMenuItem(
+                        text = { Text(text = gender) },
+                        onClick = {
+                            dropControl = false
+                            selectIndex = index - 1
+                            if (index == 2) {
+                                selectedGender.value = true
+                            } else if (index == 1) {
+                                selectedGender.value = false
+                            }
+                        }
+                    )
+                }
+            }
+        }
+    }
+}
+
+
+@Composable
 fun WheelViewSelector(
-    selectedAge:MutableState<Int>
+    selectedAge: MutableState<Int>
 ){
 
+    val ageList= (0..120).toList()
     WheelView(
         modifier = Modifier,
-        itemSize = DpSize(200.dp,150.dp),
+        itemSize = DpSize(60.dp,30.dp),
         selection = 0,
-        itemCount = 100,
-        selectorOption = SelectorOptions(),
+        itemCount = 120,
+        selectorOption = SelectorOptions(color = CharcoalGray),
         rowOffset = 1,
         onFocusItem = { index ->
             selectedAge.value=index
         },
-        content = {
-            Text("sas")
+        content = {index->
+                Text("${ageList.get(index)}",modifier=Modifier.background(Color.Transparent))
+
         })
 }
 
 
+@Composable
+fun MyAgeDropDownMenu(modifier: Modifier = Modifier, selectedAge: Int, onClick: () -> Unit) {
+    var dropControl by remember { mutableStateOf(false) }
+    val ageDisplay = if (selectedAge == 0) "Enter Age" else "Age: $selectedAge"
+
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        OutlinedCard(modifier = Modifier.padding(16.dp)) {
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .background(CharcoalGray)
+                    .wrapContentWidth()
+                    .height(50.dp)
+                    .padding(5.dp)
+                    .clickable {
+                        dropControl = true
+                        onClick()
+                    }
+            ) {
+                Text(text = ageDisplay)
+                Image(
+                    painter = painterResource(id = R.drawable.baseline_arrow_drop_down_24),
+                    contentDescription = ""
+                )
+            }
+
+            DropdownMenu(expanded = dropControl, onDismissRequest = { dropControl = false}) {
+
+
+            }
+        }
+    }
+}
+fun formatTimeSeconds(totalSeconds: Long): String {
+    val minutes = totalSeconds / 60
+    val seconds = totalSeconds % 60
+    return "${minutes}:${String.format("%02d", seconds)}"
+}
+fun formatDate(date: Date): String {
+    val sdf = SimpleDateFormat("d MMM HH:mm - yyyy", Locale.ENGLISH)
+    return sdf.format(date)
+}
+fun Date.toLocalDateTime(): LocalDateTime {
+    return Instant.ofEpochMilli(this.time).atZone(ZoneId.systemDefault()).toLocalDateTime()
+}

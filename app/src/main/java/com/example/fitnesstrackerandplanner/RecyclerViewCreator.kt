@@ -1,11 +1,13 @@
 package com.example.fitnesstrackerandplanner
 
 import Exercise
+import ExerciseSession
 import SubExercise
 import android.content.Intent
 import android.graphics.drawable.shapes.Shape
 import android.widget.Toast
 import androidx.compose.animation.core.Animatable
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -16,10 +18,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,6 +32,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -105,9 +113,17 @@ fun listItem(
                     onDragEnd = {
                         coroutineScope.launch {
                             if (offsetX.value >= 100) {
-                                SharedPrefManager(context).removeSubExerciseFromSelectedGO(subExerciseID)
+                                SharedPrefManager(context).removeSubExerciseFromSelectedGO(
+                                    subExerciseID
+                                )
                                 onExerciseRemoved(subExerciseID)
-                                Toast.makeText(context, "Successfully removed from the list", Toast.LENGTH_SHORT).show()
+                                Toast
+                                    .makeText(
+                                        context,
+                                        "Successfully removed from the list",
+                                        Toast.LENGTH_SHORT
+                                    )
+                                    .show()
                             }
                             offsetX.animateTo(0f)  // Animate back to the original position
                         }
@@ -419,6 +435,123 @@ fun RecyclerView(
         }
 
     }
+}
+
+
+@Composable
+fun ExerciseSessionRecyclerView(exerciseSessions: List<ExerciseSession>) {
+    LazyColumn(modifier = Modifier.padding(vertical = 4.dp)) {
+        items(items = exerciseSessions) { session ->
+            ExerciseSessionItem(session = session)
+        }
+    }
+}
+
+@Composable
+fun ExerciseSessionItem(session: ExerciseSession) {
+    Card(
+        colors = CardDefaults.cardColors(containerColor = CharcoalGray),
+        shape = RoundedCornerShape(16.dp),
+        modifier = Modifier
+            .size(380.dp, 200.dp)
+            .padding(vertical = 4.dp, horizontal = 8.dp)
+            .fillMaxWidth(),
+        border = BorderStroke(0.4.dp, Brush.linearGradient(colors = listOf(Color.Magenta, Color.Cyan)))
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            // Exercise name
+            val context = LocalContext.current
+            val sharedPrefManager = SharedPrefManager(context)
+            val allExercises = sharedPrefManager.getAllExercises()
+            val exerciseName = allExercises.getSubExerciseById(subExerciseId = session.subExerciseID)?.subExerciseName
+                ?: "Unknown Exercise"
+
+            Text(
+                text = exerciseName,
+                fontSize = 20.sp,
+                color = Color.White,
+                fontWeight = FontWeight.ExtraBold,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            )
+
+            // Calories burned
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.fire),
+                    contentDescription = "Calories Burned",
+                    modifier = Modifier.size(24.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "Calories Burned: %.2f".format(session.caloriesBurned),
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+            }
+
+            // Exercise Date
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.info),
+                    contentDescription = "Exercise Date",
+                    modifier = Modifier.size(24.dp)
+                )
+                Text(
+                    text = "Exercise Date: ${formatDate(session.startTime)}",
+                    fontSize = 16.sp,
+                    color = Color.White
+                )
+            }
+
+            // Exercise Duration
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.info),
+                    contentDescription = "Exercise Duration",
+                    modifier = Modifier.size(24.dp)
+                )
+                Text(
+                    text = "Exercise Duration: ${formatTimeSeconds(session.exerciseTime)}",
+                    fontSize = 16.sp,
+                    color = Color.White
+                )
+            }
+
+            // Fitty Points Gained
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.info),
+                    contentDescription = "Fitty Points Gained",
+                    modifier = Modifier.size(24.dp)
+                )
+                Text(
+                    text = "Fitty Points Gained: ${session.fittyHealthPointsGained}",
+                    fontSize = 16.sp,
+                    color = Color.White
+                )
+            }
+        }
+    }
+}
+
+
+fun getSubExerciseName(subExerciseID: Int): String {
+    return "SubExercise $subExerciseID"
 }
 
 @Composable
