@@ -19,11 +19,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.example.fitnesstrackerandplanner.ui.theme.DeepNavyBlue
+import com.example.fitnesstrackerandplanner.ui.theme.Gold
 import com.example.fitnesstrackerandplanner.ui.theme.PurpleGrey40
 import com.example.fitnesstrackerandplanner.ui.theme.SurfaceGreen
 import java.time.LocalDateTime
@@ -85,7 +88,10 @@ fun Activities() {
             Text(
                 text = "Exercises for ${selectedInterval.value}",
                 fontSize = 30.sp,
-                color = Color.White
+                color = Color.White,
+                style= TextStyle(
+                    brush= Brush.linearGradient(colors=listOf(Color.Cyan,Color.Magenta))
+                )
             )
 
 

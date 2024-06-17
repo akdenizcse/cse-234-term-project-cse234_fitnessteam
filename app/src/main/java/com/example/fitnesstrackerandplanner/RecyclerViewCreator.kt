@@ -105,6 +105,7 @@ fun listItem(
 
     Surface(
         color = color,
+        border = BorderStroke(width=0.3.dp,brush=Brush.linearGradient(colors=listOf(Color.Magenta,Color.Cyan))),
         modifier = Modifier
             .padding(vertical = 4.dp, horizontal = 8.dp)
             .offset { IntOffset(offsetX.value.roundToInt(), 0) }
@@ -198,6 +199,8 @@ fun listSubExercise(
 
     Surface(
         color = color,
+        border = BorderStroke(width=0.3.dp,brush=Brush.linearGradient(colors=listOf(Color.Magenta,Color.Cyan))),
+        shape = shape,
         modifier = Modifier
             .padding(vertical = 4.dp, horizontal = 8.dp)
             .combinedClickable(
@@ -208,7 +211,7 @@ fun listSubExercise(
                 },
             )
             .background(color = if (isLongPressed) LightGray else color),
-        shape = shape) {
+        ) {
         Column(
             modifier = Modifier
                 .padding(24.dp)
@@ -309,6 +312,13 @@ fun GoRecycler(
                 }
             }
         }
+        item{
+            Text("Start an exercise!", fontSize = 32.sp, style=TextStyle(
+                brush=Brush.linearGradient(colors=listOf(Color.Cyan,Color.Magenta))
+            ),maxLines=1, fontWeight = FontWeight.ExtraBold,
+                modifier=Modifier.fillMaxWidth().padding(vertical=6.dp, horizontal = 4.dp),
+                textAlign=TextAlign.Center )
+        }
 
         items(items = selectedSubExercises, key = { it.subExerciseID }) { subExercise ->
             listItem(
@@ -337,13 +347,16 @@ fun GoRecycler(
                     )
                     Text(
                         text = "${subExerciseIdList.size}",
-                        color = Color.Red,
+                        color = Color.White,
                         modifier = Modifier.padding(bottom = 15.dp),
                         fontSize = 28.sp,
-                        fontWeight = FontWeight.ExtraBold
+                        fontWeight = FontWeight.ExtraBold,
+                        style=TextStyle(
+                            brush=Brush.linearGradient(colors=listOf(Color.Cyan,Color.Magenta))
+                        )
                     )
                 }
-                Row {
+                Row(modifier=Modifier.padding(horizontal=4.dp)) {
                     Image(
                         painter = painterResource(id = R.drawable.fire),
                         contentDescription = null,
@@ -356,7 +369,7 @@ fun GoRecycler(
                         fontSize = 20.sp
                     )
                 }
-                Row(modifier=Modifier.padding(vertical=15.dp)) {
+                Row(modifier=Modifier.padding(vertical=15.dp, horizontal = 4.dp)) {
                     Image(
                         painter = painterResource(id = R.drawable.info),
                         contentDescription = null,
@@ -623,7 +636,7 @@ fun SubExerciseRecyclerView(
     greetingMessage: String? = null,
     icon: Painter? = null,
     subTitle: String? = null,
-    shape: androidx.compose.ui.graphics.Shape = RectangleShape,
+    shape: androidx.compose.ui.graphics.Shape = RoundedCornerShape(16.dp),
     color: Color = CharcoalGray,
     textColor: Color = Color.White,
     style: TextStyle = MaterialTheme.typography.bodyMedium,

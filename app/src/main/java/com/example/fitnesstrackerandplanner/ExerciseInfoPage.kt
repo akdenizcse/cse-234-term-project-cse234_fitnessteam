@@ -2,6 +2,7 @@ package com.example.fitnesstrackerandplanner
 
 import Exercise
 import SubExercise
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,6 +39,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.fitnesstrackerandplanner.ui.theme.DeepNavyBlue
 import com.example.fitnesstrackerandplanner.ui.theme.Eggshel
+import com.example.fitnesstrackerandplanner.ui.theme.Gold
 import com.example.fitnesstrackerandplanner.ui.theme.RoyalRed
 import com.example.fitnesstrackerandplanner.ui.theme.VividRed
 
@@ -127,7 +129,9 @@ Surface(color = DeepNavyBlue, modifier= Modifier.fillMaxSize()) {
                 text = "START",
                 buttonWidth = 115.dp,
                 buttonHeight = 60.dp,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                border = BorderStroke(0.3.dp,brush=Brush.linearGradient(colors=listOf(Color.Magenta,Color.Cyan,
+                    Gold)))
             )
 
 

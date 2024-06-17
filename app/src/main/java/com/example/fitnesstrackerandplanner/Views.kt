@@ -4,6 +4,7 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.view.MotionEvent
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -53,6 +54,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fitnesstrackerandplanner.ui.theme.ButtonPurple
+import com.example.fitnesstrackerandplanner.ui.theme.Gold
 import com.example.fitnesstrackerandplanner.ui.theme.Orange
 import com.example.fitnesstrackerandplanner.ui.theme.gray
 import com.example.fitnesstrackerandplanner.ui.theme.white
@@ -120,7 +122,8 @@ fun AnimatedButton(
     innerHeight: Dp =40.dp,
     innerWidth: Dp =120.dp,
     buttonWidth: Dp =85.dp,
-    buttonHeight: Dp =40.dp
+    buttonHeight: Dp =40.dp,
+    border:BorderStroke=BorderStroke(0.3.dp, brush = Brush.linearGradient(colors=listOf(Gold,Color.Cyan,Color.Magenta)))
 
 
 ) {
@@ -137,6 +140,7 @@ fun AnimatedButton(
     ) {
         Button(
             onClick = onClick,
+            border = border,
             colors= ButtonDefaults.buttonColors(color),
             modifier = modifier.size(buttonWidth,buttonHeight)
                 .scale(scale.value)
