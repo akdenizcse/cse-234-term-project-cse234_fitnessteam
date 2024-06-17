@@ -1,16 +1,11 @@
     package com.example.fitnesstrackerandplanner
 
     import FirebaseHelper
-    import android.content.ContentValues
-    import android.database.sqlite.SQLiteDatabase
-    import android.util.Log
     import android.widget.Toast
     import androidx.compose.foundation.layout.Arrangement
-    import androidx.compose.foundation.layout.Box
     import androidx.compose.foundation.layout.Column
     import androidx.compose.foundation.layout.Row
     import androidx.compose.foundation.layout.Spacer
-    import androidx.compose.foundation.layout.absoluteOffset
     import androidx.compose.foundation.layout.fillMaxSize
     import androidx.compose.foundation.layout.fillMaxWidth
     import androidx.compose.foundation.layout.padding
@@ -40,21 +35,15 @@
     import androidx.compose.ui.text.input.KeyboardType
     import androidx.compose.ui.text.input.PasswordVisualTransformation
     import androidx.compose.ui.unit.dp
-    import androidx.compose.ui.unit.sp
     import androidx.navigation.NavHostController
-    import com.example.fitnesstrackerandplanner.ui.theme.Beige
-    import com.example.fitnesstrackerandplanner.ui.theme.ButtonGreenLayer
     import com.example.fitnesstrackerandplanner.ui.theme.Cerulean
     import com.example.fitnesstrackerandplanner.ui.theme.DeepNavyBlue
-    import com.example.fitnesstrackerandplanner.ui.theme.FocusedTextFieldGreen
     import com.example.fitnesstrackerandplanner.ui.theme.LightPaletteGray
-    import com.example.fitnesstrackerandplanner.ui.theme.PurpleGrey40
-    import com.example.fitnesstrackerandplanner.ui.theme.SurfaceGreen
     import com.example.fitnesstrackerandplanner.ui.theme.Taupe
-    import com.example.fitnesstrackerandplanner.ui.theme.UnfocusedTextFieldGreen
     import com.example.fitnesstrackerandplanner.ui.theme.darkGray
     import com.example.fitnesstrackerandplanner.ui.theme.focusedDarkGray
-    import java.util.Calendar
+    import java.time.LocalDateTime
+
     //dont let to user to sign up with same email adddress and redirect to login page
     @Composable
     fun SignUp(navigationController: NavHostController) {
@@ -68,7 +57,7 @@
         var passwordsDoNotMatch by remember { mutableStateOf(false) }
         var emailOrUsernameTaken by remember { mutableStateOf(false) }
         var isSimplePassword by remember { mutableStateOf(false) }
-
+        var dateOfBirth: LocalDateTime by remember{ mutableStateOf(LocalDateTime.now()) }
         val thisContext = LocalContext.current
         val sharedPrefManager by lazy { SharedPrefManager(thisContext) }
         val firebaseHelper by lazy { FirebaseHelper() }
@@ -197,6 +186,7 @@
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                         visualTransformation = PasswordVisualTransformation()
                     )
+                    MyWheelDatePicker(dateOfBirth = remember { mutableStateOf(dateOfBirth) })
                     if (isBlankField) {
                         Text(text = "All fields are required!", color = Color.Red)
                     }
@@ -241,7 +231,7 @@
                             if (fieldsAreValid()) {
                                 firebaseHelper.addUser(
                                     thisContext,
-                                    first_name, last_name, email, user_name, password1
+                                    first_name, last_name, email, user_name, password1,dateOfBirth
                                 ) { isSuccessfull ->
                                     if (isSuccessfull) {
                                         sharedPrefManager.saveCurrentUserFirstName(first_name)

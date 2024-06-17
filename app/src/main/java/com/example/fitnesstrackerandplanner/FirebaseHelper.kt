@@ -1,15 +1,14 @@
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import java.time.LocalDateTime
 import java.time.ZonedDateTime
 import java.util.Date
 
@@ -27,6 +26,7 @@ class FirebaseHelper {
         email: String,
         userName: String,
         password: String,
+        age: Int,
         callback: (Boolean) -> Unit
     ) {
 
@@ -37,12 +37,13 @@ class FirebaseHelper {
             } else {
 
                 val user = hashMapOf(
-                    "userId" to usersCollection.document().id, // Generate unique ID
+                    "userId" to usersCollection.document().id,
                     "firstName" to firstName,
                     "lastName" to lastName,
                     "email" to email,
                     "userName" to userName,
                     "password" to password,
+                    "age" to age
                 )
 
                 usersCollection.add(user)
@@ -67,7 +68,6 @@ class FirebaseHelper {
         weight: Int,
         callback: (Boolean) -> Unit
     ) {
-        // Query the collection to find the document with the specified username
         usersCollection.whereEqualTo("userName", userName).get()
             .addOnSuccessListener { documents ->
                 if (documents.size() == 1) {
@@ -167,7 +167,6 @@ class FirebaseHelper {
 //****************------------------------*-*--*-*-*-*-*-*-*-*-*------------------*********************************//
 
 
-// Assuming you have Firebase dependencies set up
 
 
     suspend fun initializeExercises(): List<Exercise> {
@@ -212,7 +211,7 @@ class FirebaseHelper {
                     exercises.add(exercise)
                 }
 
-                exercises // Return fetched exercises
+                exercises
             } catch (e: Exception) {
                 Log.e("FirebaseHelper", "Error fetching exercises", e)
                 emptyList() // Return empty list on error
@@ -227,7 +226,7 @@ class FirebaseHelper {
             "waterDrank" to waterDrank,
             "timestamp" to currentTime
         )
-        val documentId = "$username-${currentTime / 86400000}"  // 86400000 ms in a day
+        val documentId = "$username-${currentTime / 86400000}"
         waterConsumptionCollection.document(documentId)
             .set(data)
             .addOnSuccessListener {
@@ -265,14 +264,12 @@ class FirebaseHelper {
                 val currentTime = System.currentTimeMillis()
                 val oneDayAgo = currentTime - 86400000  // 86400000 ms in a day
 
-                // Query water consumption data for the current day
                 val querySnapshot = waterConsumptionCollection
                     .whereEqualTo("userName", userName)
                     .whereGreaterThan("timestamp", oneDayAgo)
                     .get()
                     .await()
 
-                // Calculate total water consumed for the current day
                 var totalWaterConsumed = 0.0f
                 for (document in querySnapshot.documents) {
                     val waterDrank = document.getDouble("waterDrank")?.toFloat() ?: 0.0f
@@ -288,6 +285,7 @@ class FirebaseHelper {
         }
     }
 
+    @SuppressLint("SuspiciousIndentation")
     fun logExerciseSession(
         userName: String,
         subExerciseID: Int,
@@ -297,7 +295,8 @@ class FirebaseHelper {
         startTime: ZonedDateTime,
         endTime: ZonedDateTime,
         callback: (Boolean) -> Unit
-    ) {
+    )
+    {
         val exerciseSession = hashMapOf(
             "userName" to userName,
             "subExerciseID" to subExerciseID,

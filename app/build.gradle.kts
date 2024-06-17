@@ -6,6 +6,7 @@ plugins {
 }
 
 android {
+
     namespace = "com.example.fitnesstrackerandplanner"
     compileSdk = 34
 
@@ -68,6 +69,7 @@ dependencies {
     dependencies {
         implementation("androidx.sqlite:sqlite:2.1.0") //
         implementation(platform("com.google.firebase:firebase-bom:33.1.0"))
+        implementation ("com.github.ozcanalasalvar.picker:wheelview:2.0.5")
 
         implementation("androidx.activity:activity-compose:1.9.0")
         implementation(platform("androidx.compose:compose-bom:2024.05.00"))
@@ -91,4 +93,6 @@ dependencies {
         debugImplementation("androidx.compose.ui:ui-tooling")
         debugImplementation("androidx.compose.ui:ui-test-manifest")
     }
+
 }
+

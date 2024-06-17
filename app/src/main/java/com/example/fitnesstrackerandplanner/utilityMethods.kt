@@ -16,6 +16,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -43,6 +44,7 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -63,12 +65,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fitnesstrackerandplanner.ui.theme.ButtonPurple
+import com.google.firebase.Timestamp
+import com.ozcanalasalvar.wheelview.SelectorOptions
+import com.ozcanalasalvar.wheelview.WheelView
 import org.w3c.dom.Text
 import java.time.Duration
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
 
 //TODO: Implement methods that are might be used in anywhere in the app.
 //fun calculateBMI(weight:Double,height:Double){}
@@ -313,3 +322,24 @@ fun MyDropDownMenu(modifier:Modifier=Modifier) {
         }
     }
 }
+@Composable
+fun WheelViewSelector(
+    selectedAge:MutableState<Int>
+){
+
+    WheelView(
+        modifier = Modifier,
+        itemSize = DpSize(200.dp,150.dp),
+        selection = 0,
+        itemCount = 100,
+        selectorOption = SelectorOptions(),
+        rowOffset = 1,
+        onFocusItem = { index ->
+            selectedAge.value=index
+        },
+        content = {
+            Text("sas")
+        })
+}
+
+
