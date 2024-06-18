@@ -2,6 +2,9 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import com.example.fitnesstrackerandplanner.toLocalDateTime
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
@@ -9,6 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.Date
 
@@ -384,7 +388,51 @@ class FirebaseHelper {
             }
         }
     }
+
+
+    fun fetchDailyBurnedCalories(userName: String, callback: (Double) -> Unit) {
+        val exerciseSessionsCollection = FirebaseFirestore.getInstance().collection("exerciseSessions")
+
+        exerciseSessionsCollection
+            .whereEqualTo("userName", userName)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                var totalCalories = 0.0
+                val now = LocalDateTime.now()
+                val sessions = querySnapshot.documents.mapNotNull { document ->
+                    ExerciseSession(
+                        userName = document.getString("userName") ?: "",
+                        subExerciseID = document.getLong("subExerciseID")?.toInt() ?: 0,
+                        caloriesBurned = document.getDouble("caloriesBurned") ?: 0.0,
+                        exerciseTime = document.getLong("exerciseTime") ?: 0L,
+                        fittyHealthPointsGained = document.getLong("fittyHealthPointsGained")?.toInt() ?: 0,
+                        startTime = document.getTimestamp("startTime")?.toDate() ?: Date(),
+                        endTime = document.getTimestamp("endTime")?.toDate() ?: Date()
+                    )
+                }
+
+                val filteredSessions = sessions.filter { session ->
+                    val sessionTime = session.startTime.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime()
+                    sessionTime.isAfter(now.minusDays(1))
+                }
+
+                for (session in filteredSessions) {
+                    totalCalories += session.caloriesBurned
+                }
+
+                callback(totalCalories)
+            }
+            .addOnFailureListener { exception ->
+                Log.e("Firestore", "Error fetching exercise sessions: ", exception)
+                callback(0.0)
+            }
+    }
+
 }
+
+
+
+
 data class ExerciseSession(
     val userName: String,
     val subExerciseID: Int,

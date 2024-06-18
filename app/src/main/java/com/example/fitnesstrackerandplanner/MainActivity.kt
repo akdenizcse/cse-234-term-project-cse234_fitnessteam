@@ -267,7 +267,7 @@ fun BottomAppBar(navigationController: NavHostController, firebaseHelper: Fireba
                 currentRoute = Screens.Activities.screen
             }
             composable(Screens.Home.screen) {
-                Home()
+                Home(navigationController)
                 currentRoute = Screens.Home.screen
             }
             composable(Screens.Goals.screen) {

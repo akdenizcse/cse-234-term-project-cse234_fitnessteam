@@ -26,6 +26,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -51,12 +52,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.navigation.NavHostController
 import com.example.fitnesstrackerandplanner.ui.theme.*
 import kotlinx.coroutines.launch
 
 //TODO:Add a diet "ADD" Button onClick action.
 @Composable
-fun Home() {
+fun Home(navController:NavHostController) {
     val hour by lazy { Calendar.getInstance().get(Calendar.HOUR_OF_DAY) }
     val context = LocalContext.current
     val sharedPrefManager by lazy { SharedPrefManager(context) }
@@ -65,6 +68,7 @@ fun Home() {
     var userAge by remember{ mutableStateOf(0) }
     val isDayTime: Boolean = hour in 6..18
     val greeting: String = if (isDayTime) "Good Morning, $userName!" else "Good Evening, $userName!"
+    var showSleepDialog by remember { mutableStateOf(false) }
 
     val icon = if (isDayTime) painterResource(id = R.drawable.icons8_sunny_48)
     else painterResource(id = R.drawable.icons8_moon_48)
@@ -76,10 +80,8 @@ fun Home() {
     val dumbellLogo = painterResource(id = R.drawable.gymdumbell)
 
     var waterProgress = remember { mutableStateOf(0f) }
-    val caloriesBurntProgress = remember { mutableStateOf(0f) }
-    val hoursSleptProgress = remember { mutableStateOf(0f) }
+    val hoursSlept = remember { mutableStateOf(0) }
     val dietProgress = remember { mutableStateOf(0f) }
-
     val height = sharedPrefManager.getCurrentUserHeight()
     val weight = sharedPrefManager.getCurrentUserWeight()
     var userGender by remember { mutableStateOf(false) }
@@ -87,8 +89,16 @@ fun Home() {
     var waterDrank by remember { mutableStateOf(0.0f) }
     var totalHealthPoints by remember { mutableStateOf(0.0f) }
     var tempTotalHealthPoints=0.0f
+    var dailyCaloriesBurned:Double by remember{mutableStateOf(0.0)}
+    var dailyRecommendedCaloriesBurned by remember { mutableStateOf((0.0)) }
+
 
     if(waterDrank>=2.5f){
+        tempTotalHealthPoints+=0.25f
+    }
+    if(dailyCaloriesBurned>=dailyRecommendedCaloriesBurned)
+        tempTotalHealthPoints=0.25f
+    if(hoursSlept.value >= getRecommendedSleepHours(userAge)){
         tempTotalHealthPoints+=0.25f
     }
     totalHealthPoints=tempTotalHealthPoints
@@ -120,6 +130,7 @@ fun Home() {
             }
         }
     }
+
     LaunchedEffect(userName) {
         if (!userName.isNullOrEmpty()) {
             firebaseHelper.fetchGender(userName){ value->
@@ -136,6 +147,21 @@ fun Home() {
                 }
             }
         }
+    }
+    LaunchedEffect(userName) {
+        if (!userName.isNullOrEmpty()) {
+           firebaseHelper.fetchDailyBurnedCalories(userName){cal->
+               Log.d("HomeFireStore","Fetched calories ${cal}")
+               if (cal != null) {
+                    dailyCaloriesBurned=cal
+                   sharedPrefManager.saveCurrentUserDailyCaloriesBurned(dailyCaloriesBurned)
+               }
+
+           }
+        }
+    }
+    LaunchedEffect(Unit) {
+        dailyRecommendedCaloriesBurned= calculateDailyRecommendedCaloriesToBurn(userGender,userAge,weight,height)
     }
 
 
@@ -347,7 +373,7 @@ fun Home() {
                                                     .padding(start = 8.dp, end = 5.dp, top = 5.dp)
                                             )
                                             Text(
-                                                text = "${(waterProgress.value * 10).toInt()}/10",
+                                                text = "${(waterProgress.value * 200).toInt()}%",
                                                 fontSize = 12.sp,
                                                 modifier = Modifier.padding(start = 17.dp, bottom = 2.dp),
                                                 fontWeight = FontWeight.Medium,
@@ -389,21 +415,23 @@ fun Home() {
                                             .weight(1f)
                                     )
                                     Text(
-                                        text = "Calories burnt\nX calories",
+                                        text = "Calories burnt\n${formatDouble2DecimalPlaces(number = dailyCaloriesBurned)}/${formatDouble2DecimalPlaces(dailyRecommendedCaloriesBurned)} cals",
                                         fontWeight = FontWeight.Medium,
-                                        fontSize = 16.sp,
+                                        fontSize = 14.sp,
                                         color = Eggshel,
                                         modifier = Modifier.weight(1f)
                                     )
                                     AnimatedButton(
-                                        onClick = { if (caloriesBurntProgress.value < 1f) caloriesBurntProgress.value += 0.1f },
+                                        onClick = {navController.navigate(Screens.Goals.screen)},
                                         modifier = Modifier.weight(0.8f),
-                                        color = Cerulean,
-                                        text = "DO"
+                                        text = "DO",
+                                        color = Cerulean
                                     )
+
                                     Column(modifier = Modifier.weight(0.6f)) {
+                                        if(((dailyCaloriesBurned/dailyRecommendedCaloriesBurned) *100).toInt()<100){
                                         CircularProgressBar(
-                                            progress = caloriesBurntProgress.value,
+                                            progress = (dailyCaloriesBurned.toFloat()/dailyRecommendedCaloriesBurned.toFloat()),
                                             strokeCap = StrokeCap.Round,
                                             modifier = Modifier
                                                 .size(60.dp)
@@ -411,12 +439,22 @@ fun Home() {
                                                 .padding(start = 8.dp, end = 5.dp, top = 5.dp)
                                         )
                                         Text(
-                                            text = "${(caloriesBurntProgress.value * 10).toInt()}/10",
+                                            text = "${((dailyCaloriesBurned.toFloat()/dailyRecommendedCaloriesBurned) *100).toInt()}%",
                                             fontSize = 12.sp,
-                                            modifier = Modifier.padding(start = 17.dp, bottom = 2.dp),
+                                            modifier = Modifier.padding(start = 13.dp, bottom = 2.dp,end=1
+                                                .dp),
                                             fontWeight = FontWeight.Medium,
                                             color = Color.White
                                         )
+                                            }
+                                        else{
+                                            Icon(
+                                                imageVector = Icons.Default.Check,
+                                                contentDescription = null,
+                                                tint = Color.Green,
+                                                modifier = Modifier.align(Alignment.CenterHorizontally)
+                                            )
+                                        }
                                     }
                                 }
                             }
@@ -445,21 +483,22 @@ fun Home() {
                                             .weight(1f)
                                     )
                                     Text(
-                                        text = "Hours slept\nX hours",
+                                        text = "Hours slept\n"+hoursSlept.value+"/${getRecommendedSleepHours(userAge)} hours",
                                         fontWeight = FontWeight.Medium,
                                         fontSize = 16.sp,
                                         color = Eggshel,
                                         modifier = Modifier.weight(1f)
                                     )
                                     AnimatedButton(
-                                        onClick = { if (hoursSleptProgress.value < 1f) hoursSleptProgress.value += 0.1f },
+                                        onClick = {showSleepDialog=true },
                                         modifier = Modifier.weight(0.8f),
                                         text = "DO",
                                         color = Cerulean
                                     )
                                     Column(modifier = Modifier.weight(0.6f)) {
+                                        if(hoursSlept.value< getRecommendedSleepHours(userAge)){
                                         CircularProgressBar(
-                                            progress = hoursSleptProgress.value,
+                                            progress =(hoursSlept.value.toFloat()/getRecommendedSleepHours(userAge)) ,
                                             strokeCap = StrokeCap.Round,
                                             modifier = Modifier
                                                 .size(60.dp)
@@ -467,12 +506,21 @@ fun Home() {
                                                 .padding(start = 8.dp, end = 5.dp, top = 5.dp)
                                         )
                                         Text(
-                                            text = "${(hoursSleptProgress.value * 10).toInt()}/10",
+                                            text = "${((hoursSlept.value/getRecommendedSleepHours(userAge).toFloat())*10).toInt()*10}%",
                                             fontSize = 12.sp,
                                             modifier = Modifier.padding(start = 17.dp, bottom = 2.dp),
                                             fontWeight = FontWeight.Medium,
                                             color = Color.White
                                         )
+                                            }
+                                        else{
+                                            Icon(
+                                                imageVector = Icons.Default.Check,
+                                                contentDescription = null,
+                                                tint = Color.Green,
+                                                modifier = Modifier.align(Alignment.CenterHorizontally)
+                                            )
+                                        }
                                     }
                                 }
                             }
@@ -543,7 +591,32 @@ fun Home() {
                         }
                     }
                 }
+                if (showSleepDialog) {
+                    Dialog(onDismissRequest = { showSleepDialog = false }) {
+                        Surface(
+                            shape = MaterialTheme.shapes.medium,
+                            tonalElevation = 8.dp,
+                            modifier = Modifier.padding(16.dp)
+                        ) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center,
+                                modifier = Modifier.padding(16.dp)
+                            ) {
+                                SleepWheelViewSelector(hoursSlept)
+                                OutlinedButton(
+                                    onClick = { showSleepDialog = false },
+                                    colors = ButtonDefaults.buttonColors(Cerulean),
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Text(text = "Confirm", fontWeight = FontWeight.Bold)
+                                }
+                            }
+                        }
+                    }
+                }
             }
+
         }
     }
 }
@@ -551,12 +624,3 @@ fun Home() {
 
 
 
-
-
-
-
-@Preview
-@Composable
-fun HomePreview() {
-    Home()
-}

@@ -64,6 +64,39 @@ enum class WeightClassification(){
     Obese,
     MorbidObese()
 }
+fun calculateFittyPoints(
+    gender: Boolean,
+    age: Int,
+    weight: Int,
+    height: Int,
+    exerciseTime: Long,  // Exercise time in seconds
+    caloriesBurned: Int
+): Int {
+    val basePoints = 10
+    val genderMultiplier = if (gender) 1.1 else 1.0
+    val ageFactor = when {
+        age < 18 -> 1.2
+        age < 30 -> 1.0
+        age < 50 -> 0.8
+        else -> 0.6
+    }
+    val bmi = weight / ((height / 100.0) * (height / 100.0))
+    val bmiFactor = when {
+        bmi < 18.5 -> 0.8
+        bmi < 24.9 -> 1.0
+        bmi < 29.9 -> 0.9
+        else -> 0.7
+    }
+
+    // Calculate fitty points
+    val fittyPoints = basePoints * genderMultiplier * ageFactor * bmiFactor * exerciseTime
+
+    // Return the points as an integer
+    return fittyPoints.toInt()
+}
+
+
+
 fun getExerciseByID(exercises: List<Exercise>, id: Int): Exercise {
     for (exercise in exercises) {
         if (exercise.exerciseID == id) {
@@ -186,12 +219,10 @@ fun initializeExercises(): List<Exercise> {
         )
     )
 
-    // Add sub-exercises to their respective exercise groups
     chestExercises.addExercise(chestSubExercises)
     legExercises.addExercise(legSubExercises)
     absExercises.addExercise(absSubExercises)
 
-    // Add exercise groups to the main list
     exercises.add(chestExercises)
     exercises.add(legExercises)
     exercises.add(absExercises)
@@ -203,11 +234,8 @@ fun initializeExercises(): List<Exercise> {
 fun List<Exercise>.getSubExercisesByIds(subExerciseIds: List<Int>): List<SubExercise> {
     val result = mutableListOf<SubExercise>()
 
-    // Iterate through each Exercise in the list
     forEach { exercise ->
-        // Iterate through each SubExercise in the current Exercise
         exercise.subExercises.forEach { subExercise ->
-            // Check if the subExerciseID is in the list of desired IDs
             if (subExercise.subExerciseID in subExerciseIds) {
                 result.add(subExercise)
             }
@@ -419,6 +447,27 @@ fun WheelViewSelector(
 
         })
 }
+@Composable
+fun SleepWheelViewSelector(
+    sleepAmount: MutableState<Int>
+){
+
+    val hourList= (0..24).toList()
+    WheelView(
+        modifier = Modifier,
+        itemSize = DpSize(60.dp,30.dp),
+        selection = 0,
+        itemCount = 25,
+        selectorOption = SelectorOptions(color = CharcoalGray),
+        rowOffset = 1,
+        onFocusItem = { index ->
+            sleepAmount.value=index
+        },
+        content = {index->
+            Text("${hourList.get(index)}",modifier=Modifier.background(Color.Transparent))
+
+        })
+}
 
 
 @Composable
@@ -459,6 +508,7 @@ fun MyAgeDropDownMenu(modifier: Modifier = Modifier, selectedAge: Int, onClick: 
         }
     }
 }
+
 fun formatTimeSeconds(totalSeconds: Long): String {
     val minutes = totalSeconds / 60
     val seconds = totalSeconds % 60
@@ -470,4 +520,31 @@ fun formatDate(date: Date): String {
 }
 fun Date.toLocalDateTime(): LocalDateTime {
     return Instant.ofEpochMilli(this.time).atZone(ZoneId.systemDefault()).toLocalDateTime()
+}
+fun calculateDailyRecommendedCaloriesToBurn(gender:Boolean,age:Int,weight:Int,height:Int):Double{
+    var bmr:Double
+    if(gender){
+        bmr=447.593 + (9.247 * weight) + (3.098 * height) - (4.330 * age)
+    }
+    else{
+       bmr= 88.362 + (13.397 * weight) + (4.799 * height) - (5.677 * age)
+    }
+    val tdee=bmr*1.55
+    return tdee*0.2
+}
+@Composable
+fun formatDouble2DecimalPlaces(number: Double):String {
+    val formattedNumber = String.format("%.2f", number)
+    return formattedNumber
+}
+fun getRecommendedSleepHours(age: Int): Int {
+    return when {
+        age in 0..2 -> 12 // Infants (0-2 years) recommended sleep hours
+        age in 3..5 -> 10 // Toddlers (3-5 years) recommended sleep hours
+        age in 6..12 -> 9 // Children (6-12 years) recommended sleep hours
+        age in 13..17 -> 8 // Teenagers (13-17 years) recommended sleep hours
+        age in 18..64 -> 7 // Adults (18-64 years) recommended sleep hours
+        age >= 65 -> 7 // Older adults (65 years and older) recommended sleep hours
+        else -> 7 // Default recommendation for any age if not specified
+    }
 }

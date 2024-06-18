@@ -25,18 +25,29 @@ class SharedPrefManager(context: Context){
     fun getCurrentUserHeight(): Int {
         return sharedPreferences.getInt("currentUserHeight", 0)
     }
-
-    fun saveCurrentUserWeight(userWeight: Int) {
+    fun saveCurrentUserDailyCaloriesBurned(userCaloriesBurned: Double) {
         val editor = sharedPreferences.edit()
-        editor.putInt("currentUserWeight", userWeight)
+        editor.putFloat("userDailyCaloriesBurned", userCaloriesBurned.toFloat())
         editor.apply()
     }
+    fun getCurrentUserDailyCaloriesBurned():Float{
+        return sharedPreferences.getFloat("userDailyCaloriesBurned",0.0f)
+    }
+
+
+
+
+
     fun clearAllValues() {
         val editor = sharedPreferences.edit()
         editor.clear() // Clear all values
         editor.apply()
     }
-
+    fun saveCurrentUserWeight(userWeight: Int) {
+        val editor = sharedPreferences.edit()
+        editor.putInt("currentUserWeight", userWeight)
+        editor.apply()
+    }
     fun getCurrentUserWeight(): Int {
         return sharedPreferences.getInt("currentUserWeight", 0)
     }

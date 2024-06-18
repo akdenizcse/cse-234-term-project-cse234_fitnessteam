@@ -296,7 +296,16 @@ fun ExercisePage1(subExercise: SubExercise, exerciseName: String = "Value", navC
                     subExerciseID = subExercise.subExerciseID,
                     caloriesBurned = caloriesBurned,
                     exerciseTime = exerciseTime,
-                    fittyHealthPointsGained = 0,
+                    fittyHealthPointsGained = with(sharedPrefManager){calculateFittyPoints(
+                        getCurrentUserGender(),
+                        getCurrentUserAge(),
+                        getCurrentUserWeight(),
+                        getCurrentUserHeight(),
+                        exerciseTime,
+                        caloriesBurned.toInt()
+                    )
+                    }
+                    ,
                     startTime = startTime,
                     endTime = endTime
                 ) { success ->
