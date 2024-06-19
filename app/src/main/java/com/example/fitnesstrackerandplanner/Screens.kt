@@ -18,8 +18,9 @@ sealed class Screens(val screen:String) {
     data object ExercisePage3:Screens("exercisepage3")
     data object ExercisePage4:Screens("exercisepage4")
     data object PostSignUp:Screens("postsignuppage")
-    data object DietPage:Screens("dietpage")
-    data class SubExerciseDetail(val exerciseID: Int) : Screens("subexercisedetail/$exerciseID"){
+    data object DietPage : Screens("exerciseinfopage") {
+
+    }    data class SubExerciseDetail(val exerciseID: Int) : Screens("subexercisedetail/$exerciseID"){
         companion object {
             const val routeWithArgs = "subexercisedetail/{exerciseID}"
         }

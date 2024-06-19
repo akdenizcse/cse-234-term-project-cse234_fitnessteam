@@ -8,6 +8,16 @@ class SharedPrefManager(context: Context){
     private val sharedPreferences=context.getSharedPreferences("FitnessApp",Context.MODE_PRIVATE)
     private val gson = Gson()
 
+
+    fun addCurrentUserCaloriesConsumed(calories:Int){
+        val currentCalories=getCurrentUserCaloriesConsumed()
+        val editor=sharedPreferences.edit()
+        editor.putInt("currentUserCaloriesConsumed",currentCalories+calories)
+        editor.apply()
+    }
+    fun getCurrentUserCaloriesConsumed():Int{
+        return sharedPreferences.getInt("currentUserCaloriesConsumed",0)
+    }
     fun saveCurrentUserFirstName(userFirstName:String){
         val editor=sharedPreferences.edit()
         editor.putString("currentUserFirstName",userFirstName)

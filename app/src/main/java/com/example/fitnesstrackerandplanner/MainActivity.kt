@@ -1,5 +1,6 @@
 package com.example.fitnesstrackerandplanner
 
+import DietPage
 import Exercise
 import FirebaseHelper
 import LoginPage
