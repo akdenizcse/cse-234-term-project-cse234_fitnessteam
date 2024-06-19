@@ -394,7 +394,7 @@ fun Home(navController:NavHostController) {
                                                     .padding(start = 8.dp, end = 5.dp, top = 5.dp)
                                             )
                                             Text(
-                                                text = "${(waterProgress.value * 200).toInt()}%",
+                                                text = "${(waterProgress.value * 100).toInt()}%",
                                                 fontSize = 12.sp,
                                                 modifier = Modifier.padding(start = 17.dp, bottom = 2.dp),
                                                 fontWeight = FontWeight.Medium,
