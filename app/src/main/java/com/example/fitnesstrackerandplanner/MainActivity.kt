@@ -310,7 +310,7 @@ fun BottomAppBar(navigationController: NavHostController, firebaseHelper: Fireba
                 val subExerciseID = backStackEntry.arguments?.getInt("subExerciseID") ?: 0
                 val subEx= getExerciseByID(exList,currentExerciseID).getSubExerciseById(subExerciseID)
                 ExercisePage1(
-                    exerciseName = subEx!!.exerciseName,
+                    exerciseName = subEx!!.subExerciseName,
                     subExercise=subEx,
                     navController = navigationController
                 )
@@ -356,6 +356,10 @@ fun BottomAppBar(navigationController: NavHostController, firebaseHelper: Fireba
                     seconds = seconds,
                     navController = navigationController
                 )
+            }
+            composable(Screens.DietPage.screen){
+                DietPage()
+                currentRoute=Screens.DietPage.screen
             }
 
 

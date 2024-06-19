@@ -112,6 +112,15 @@ fun Home(navController:NavHostController) {
             }
         }
     }
+    LaunchedEffect(Unit) {
+        if (userName != null) {
+            firebaseHelper.deleteOldSleepData(userName) { success ->
+                if (!success) {
+                    Log.w("Home", "Failed to delete old sleep data")
+                }
+            }
+        }
+    }
     LaunchedEffect(userName) {
         if (!userName.isNullOrEmpty()) {
             val waterConsumed = firebaseHelper.fetchWaterConsumption(userName)
@@ -119,6 +128,18 @@ fun Home(navController:NavHostController) {
             waterDrank = waterConsumed ?: 0.0f
         }
     }
+    LaunchedEffect(userName) {
+        if (userName != null) {
+           firebaseHelper.fetchSleepData(userName){fetchedData->
+               Log.d("HomeFireStore","Fetched hours slept ${fetchedData}")
+               hoursSlept.value=fetchedData.toInt()
+
+           }
+
+
+        }
+        }
+
     LaunchedEffect(userName) {
         if (!userName.isNullOrEmpty()) {
             firebaseHelper.fetchAge(userName){ value->
@@ -339,7 +360,7 @@ fun Home(navController:NavHostController) {
                                             if (waterDrank < 10f) {
                                                 if (waterDrank < 2.5f) {
                                                     waterDrank += 0.25f
-                                                    waterProgress.value += 0.1f
+                                                    waterProgress.value += 0.2f
                                                 }
                                                 if (waterDrank == 2.5f) {
                                                     waterDrank += 0.25f
@@ -563,7 +584,7 @@ fun Home(navController:NavHostController) {
                                         modifier = Modifier.weight(1f)
                                     )
                                     AnimatedButton(
-                                        onClick = { if (dietProgress.value < 1f) dietProgress.value += 0.1f },
+                                        onClick = { if (dietProgress.value < 1f) dietProgress.value += 0.1f ;navController.navigate(Screens.DietPage.screen)},
                                         modifier = Modifier.weight(0.8f),
                                         color = Cerulean,
                                         text = "ADD"
@@ -604,6 +625,17 @@ fun Home(navController:NavHostController) {
                                 modifier = Modifier.padding(16.dp)
                             ) {
                                 SleepWheelViewSelector(hoursSlept)
+                                if (userName != null) {
+                                    firebaseHelper.updateSleepData(userName,hoursSlept.value.toFloat()){success->
+                                        if(success){
+                                            Log.d("HomeFireStore","Successfully updated sleep data for user $userName" +
+                                                    ",with value $hoursSlept")
+                                        }else{
+                                            Log.d("HomeFireStore","Could not update daily hours slept value")
+                                        }
+
+                                    }
+                                }
                                 OutlinedButton(
                                     onClick = { showSleepDialog = false },
                                     colors = ButtonDefaults.buttonColors(Cerulean),

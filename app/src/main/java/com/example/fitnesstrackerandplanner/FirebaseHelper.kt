@@ -21,7 +21,8 @@ class FirebaseHelper {
     private val usersCollection = db.collection("users")
     private val exerciseCollectionRef = db.collection("exercise")
     private val subExerciseCollectionRef = db.collection("subExercise")
-    private val waterConsumptionCollection = db.collection("userData")
+    private val userDataCollection = db.collection("userData")
+    private val userSleepCollection= db.collection("userSleepData")
     private val exerciseSessionsCollection = db.collection("exerciseSessions")
     fun addUser(
         context: Context,
@@ -270,7 +271,7 @@ class FirebaseHelper {
             "timestamp" to currentTime
         )
         val documentId = "$username-${currentTime / 86400000}"
-        waterConsumptionCollection.document(documentId)
+        userDataCollection.document(documentId)
             .set(data)
             .addOnSuccessListener {
                 callback(true)
@@ -285,13 +286,13 @@ class FirebaseHelper {
         val currentTime = System.currentTimeMillis()
         val oneDayAgo = currentTime - 86400000
 
-        waterConsumptionCollection
+        userDataCollection
             .whereEqualTo("userName", username)
             .whereLessThan("timestamp", oneDayAgo)
             .get()
             .addOnSuccessListener { documents ->
                 for (document in documents) {
-                    waterConsumptionCollection.document(document.id).delete()
+                    userDataCollection.document(document.id).delete()
                 }
                 callback(true)
             }
@@ -307,7 +308,7 @@ class FirebaseHelper {
                 val currentTime = System.currentTimeMillis()
                 val oneDayAgo = currentTime - 86400000  // 86400000 ms in a day
 
-                val querySnapshot = waterConsumptionCollection
+                val querySnapshot = userDataCollection
                     .whereEqualTo("userName", userName)
                     .whereGreaterThan("timestamp", oneDayAgo)
                     .get()
@@ -427,12 +428,69 @@ class FirebaseHelper {
                 callback(0.0)
             }
     }
+    fun updateSleepData(username: String, hoursSlept: Float, callback: (Boolean) -> Unit) {
+        val currentTime = Timestamp.now()
+        val data = hashMapOf(
+            "userName" to username,
+            "hoursSlept" to hoursSlept,
+            "timestamp" to currentTime
+        )
+        val documentId = "$username-${currentTime.seconds / 86400}" // Dividing by 86400 to get the day count
+        userSleepCollection.document(documentId)
+            .set(data)
+            .addOnSuccessListener {
+                callback(true)
+            }
+            .addOnFailureListener { e ->
+                Log.w("FirebaseHelper", "Error updating sleep data: ", e)
+                callback(false)
+            }
+    }
 
+
+
+
+    fun fetchSleepData(userName: String, callback: (Float) -> Unit) {
+        val oneDayAgo = Timestamp(Date(System.currentTimeMillis() - 86400000)) // 86400000 ms in a day
+
+        userSleepCollection
+            .whereEqualTo("userName", userName)
+            .whereGreaterThan("timestamp", oneDayAgo)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                var totalSleepHours = 0.0f
+                for (document in querySnapshot.documents) {
+                    val hoursSlept = document.getDouble("hoursSlept")?.toFloat() ?: 0.0f
+                    Log.d("FirebaseHelperSleep", "Fetched data $hoursSlept")
+                    totalSleepHours += hoursSlept
+                }
+                callback(totalSleepHours)
+            }
+            .addOnFailureListener { e ->
+                Log.e("FirebaseHelper", "Error fetching sleep data", e)
+                callback(0.0f) // Return 0.0f on error
+            }
+    }
+
+    fun deleteOldSleepData(username: String, callback: (Boolean) -> Unit) {
+        val oneDayAgo = Timestamp(Date(System.currentTimeMillis() - 86400000)) // 86400000 ms in a day
+
+        userSleepCollection
+            .whereEqualTo("userName", username)
+            .whereLessThan("timestamp", oneDayAgo)
+            .get()
+            .addOnSuccessListener { documents ->
+                for (document in documents) {
+                    userSleepCollection.document(document.id).delete()
+                }
+                callback(true)
+            }
+            .addOnFailureListener { e ->
+                Log.w("FirebaseHelper", "Error deleting old sleep data: ", e)
+                callback(false)
+            }
+    }
 }
-
-
-
-
 data class ExerciseSession(
     val userName: String,
     val subExerciseID: Int,
