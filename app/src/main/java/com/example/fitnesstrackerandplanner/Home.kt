@@ -60,8 +60,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import com.example.fitnesstrackerandplanner.ui.theme.*
 import kotlinx.coroutines.launch
-
-//TODO:Add a diet "ADD" Button onClick action.
+//TODO: ADD NOTIFICATIONS AND CLOCK AND INTENTS TO SEND FEEDBACKS
 @Composable
 fun Home(navController:NavHostController) {
     val hour by lazy { Calendar.getInstance().get(Calendar.HOUR_OF_DAY) }
@@ -211,6 +210,35 @@ fun Home(navController:NavHostController) {
             }
         }
     }
+    LaunchedEffect(userName) {
+        if (userName != null) {
+            firebaseHelper.fetchHeight(userName) { value ->
+                if (value != null) {
+                    sharedPrefManager.saveCurrentUserHeight(value)
+                } else {
+                    Log.e(
+                        "FirebaseHelper",
+                        "Height can not be fetched, probably such user is not signed"
+                    )
+                }
+
+                // Once height is fetched, fetch weight
+                firebaseHelper.fetchWeight(userName) { value ->
+                    if (value != null) {
+                        sharedPrefManager.saveCurrentUsername(userName)
+                        Toast.makeText(context, "Successfully logged in!", Toast.LENGTH_SHORT)
+                            .show()
+                        sharedPrefManager.saveCurrentUserWeight(value)
+                    } else {
+                        Log.e(
+                            "FirebaseHelper",
+                            "Weight can not be fetched, probably such user is not signed"
+                        )
+                    }
+                }
+            }
+        }
+    }
 
     Surface(color = DeepNavyBlue, modifier = Modifier.fillMaxSize()) {
         LazyColumn {
@@ -259,7 +287,7 @@ fun Home(navController:NavHostController) {
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Text(
-                                        text = "Height: ${height}cm",
+                                        text = "Height: ${height} cm",
                                         modifier = Modifier.weight(1f),
                                         fontWeight = FontWeight.Bold,
                                         color = Color.White
@@ -272,7 +300,7 @@ fun Home(navController:NavHostController) {
                                     )
                                 }
                                 Text(
-                                    text = "Weight: ${weight}kg",
+                                    text = "Weight: ${weight} kg",
                                     modifier = Modifier.padding(top = 8.dp),
                                     fontWeight = FontWeight.Bold,
                                     color = Color.White

@@ -392,7 +392,7 @@ fun GoRecycler(
 
 @Composable
 fun RecyclerView(
-    names:List<String> =List(10){"$it"},
+    profilePageElements:List<ProfilePageElement>,
     greetingMessage:String?,
     icon: Painter?,
     subTitle: String?,
@@ -413,10 +413,10 @@ fun RecyclerView(
                         Text(
                             text = "$greetingMessage",
                             fontSize = 25.sp,
-                            modifier = Modifier.weight(3f),
+                            modifier = Modifier.weight(3f).padding(top=6.dp),
                             color = Color.Black,
                             fontWeight = FontWeight.ExtraBold,
-                            style=style
+                            style=TextStyle(brush=Brush.linearGradient(colors=listOf(Color.Cyan,Color.Magenta)))
                         )
                         if(icon!=null) {
                             Image(
@@ -431,14 +431,14 @@ fun RecyclerView(
                 }
             }
         }
-        items(items = names) { name ->
-            listItem(title=name,
+        items(items = profilePageElements) { profilePageElement:ProfilePageElement ->
+            listItem(title=profilePageElement.name,
                 subTitle = subTitle,
                 shape = shape,
                 color = color,
                 textColor = textColor,
                 arrowColor=arrowColor,
-                onClick = {},
+                onClick = profilePageElement.onClick,
                 onExerciseRemoved = {},
                 subExerciseID = 0
 

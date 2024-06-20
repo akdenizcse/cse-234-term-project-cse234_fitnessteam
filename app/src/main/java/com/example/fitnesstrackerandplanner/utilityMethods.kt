@@ -38,6 +38,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.example.fitnesstrackerandplanner.ui.theme.CharcoalGray
 import com.ozcanalasalvar.wheelview.SelectorOptions
 import com.ozcanalasalvar.wheelview.WheelView
@@ -46,6 +48,7 @@ import java.time.Duration
 import java.time.LocalDateTime
 import java.util.Date
 import java.util.Locale
+import kotlin.math.log
 
 //TODO: Implement methods that are might be used in anywhere in the app.
 //fun calculateBMI(weight:Double,height:Double){}
@@ -559,3 +562,23 @@ fun getRecommendedSleepHours(age: Int): Int {
         else -> 7 // Default recommendation for any age if not specified
     }
 }
+fun initiailizeProfileElements(sharedPrefManager:SharedPrefManager,navController: NavHostController):List<ProfilePageElement>{
+    var userInformation:ProfilePageElement=ProfilePageElement("User Information",{navController.navigate(Screens.userInfoPage.screen)})
+    var updateUserMeasurements:ProfilePageElement=ProfilePageElement("Update user measurements",{navController.navigate(Screens.updateUserMeasurements.screen)})
+    var contactUs:ProfilePageElement=ProfilePageElement("Contact us",{})
+
+    var appInfo:ProfilePageElement=ProfilePageElement("Application Information",{navController.navigate(Screens.ApplicationInfo.screen)})
+    var logOut:ProfilePageElement=ProfilePageElement("Log Out",{ onLogOut(sharedPrefManager,navController) })
+
+    val profilePageElements:List<ProfilePageElement> = listOf(userInformation,updateUserMeasurements,
+        contactUs,appInfo, logOut)
+    return profilePageElements
+}
+fun onLogOut(sharedPrefManager: SharedPrefManager,navController: NavController){
+    sharedPrefManager.clearAllValues()
+    navController.navigate(Screens.LoginPage.screen)
+}
+data class ProfilePageElement(
+    val name:String,
+    val onClick: () -> Unit
+)

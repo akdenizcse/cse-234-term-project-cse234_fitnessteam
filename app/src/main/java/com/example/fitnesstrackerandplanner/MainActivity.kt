@@ -5,6 +5,7 @@ import Exercise
 import FirebaseHelper
 import LoginPage
 import SubExercise
+import UpdateHeightWeightScreen
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
@@ -261,7 +262,7 @@ fun BottomAppBar(navigationController: NavHostController, firebaseHelper: Fireba
                 currentRoute = Screens.Goals.screen
             }
             composable(Screens.Profile.screen) {
-                Profile()
+                Profile(navigationController)
                 currentRoute = Screens.Profile.screen
             }
             composable(Screens.StartAnExercise.screen) {
@@ -280,6 +281,20 @@ fun BottomAppBar(navigationController: NavHostController, firebaseHelper: Fireba
             composable(Screens.FitAi.screen){
                 ChatScreen()
                 currentRoute=Screens.FitAi.screen
+            }
+            composable(Screens.ApplicationInfo.screen){
+                ApplicationInformationPage()
+                currentRoute=Screens.ApplicationInfo.screen
+            }
+            composable(Screens.userInfoPage.screen){
+                UserInformationPage()
+                currentRoute=Screens.userInfoPage.screen
+            }
+            composable(Screens.updateUserMeasurements.screen){
+                UpdateHeightWeightScreen(){
+
+                }
+                currentRoute=Screens.updateUserMeasurements.screen
             }
 
             composable(

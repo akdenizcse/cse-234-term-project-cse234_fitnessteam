@@ -107,25 +107,9 @@ fun LoginPage(navigationController: NavHostController) {
 
                     firebaseHelper.loginAuth(user_name,password){isValid->
                         if(isValid){
-                            firebaseHelper.fetchHeight(user_name) { value ->
-                                if (value != null) {
-                                    sharedPrefManager.saveCurrentUserHeight(value)
-                                } else {
-                                    Log.e("FirebaseHelper","Height can not be fetched, probably such user is not signed")
-                                }
+                            sharedPrefManager.saveCurrentUsername(user_name)
+                            navigationController.navigate(Screens.Home.screen)
 
-                                // Once height is fetched, fetch weight
-                                firebaseHelper.fetchWeight(user_name) { value ->
-                                    if (value != null) {
-                                        sharedPrefManager.saveCurrentUsername(user_name)
-                                        Toast.makeText(currentContext,"Successfully logged in!",Toast.LENGTH_SHORT).show()
-                                        navigationController.navigate(Screens.Home.screen)
-                                        sharedPrefManager.saveCurrentUserWeight(value)
-                                    } else {
-                                        Log.e("FirebaseHelper","Weight can not be fetched, probably such user is not signed")
-                                    }
-                                }
-                            }
 
                         }
                         else{

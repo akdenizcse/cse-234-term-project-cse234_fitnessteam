@@ -19,7 +19,10 @@ sealed class Screens(val screen:String) {
     data object ExercisePage4:Screens("exercisepage4")
     data object PostSignUp:Screens("postsignuppage")
     data object DietPage : Screens("exerciseinfopage")
+    data object updateUserMeasurements:Screens("updateusermeasurements")
+    data object userInfoPage:Screens("userinfo")
     data object FitAi:Screens("fitai")
+    data object ApplicationInfo:Screens("applicationinfo")
        data class SubExerciseDetail(val exerciseID: Int) : Screens("subexercisedetail/$exerciseID"){
         companion object {
             const val routeWithArgs = "subexercisedetail/{exerciseID}"
@@ -42,4 +45,5 @@ sealed class Screens(val screen:String) {
             const val routeWithArgs="postexercisepage/{subExerciseID}/{caloriesBurned}/{minutes}/{seconds}"
         }
     }
+
     }
