@@ -24,6 +24,7 @@ class FirebaseHelper {
     private val userDataCollection = db.collection("userData")
     private val userSleepCollection= db.collection("userSleepData")
     private val exerciseSessionsCollection = db.collection("exerciseSessions")
+    private val userCalorieCollection=db.collection("userCalorieData")
     fun addUser(
         context: Context,
         firstName: String,
@@ -490,6 +491,66 @@ class FirebaseHelper {
                 callback(false)
             }
     }
+    fun updateCalorieData(username: String, calorieTaken: Number, callback: (Boolean) -> Unit) {
+        val currentTime = Timestamp.now()
+        val data = hashMapOf(
+            "userName" to username,
+            "caloriesTaken" to calorieTaken,
+            "timestamp" to currentTime
+        )
+        val documentId = "$username-${currentTime.seconds / 86400}" // Dividing by 86400 to get the day count
+        userCalorieCollection.document(documentId)
+            .set(data)
+            .addOnSuccessListener {
+                callback(true)
+            }
+            .addOnFailureListener { e ->
+                Log.w("FirebaseHelper", "Error updating calorie data: ", e)
+                callback(false)
+            }
+    }
+    fun fetchCalorieData(userName: String, callback: (Float) -> Unit) {
+        val oneDayAgo = Timestamp(Date(System.currentTimeMillis() - 86400000)) // 86400000 ms in a day
+
+        userCalorieCollection
+            .whereEqualTo("userName", userName)
+            .whereGreaterThan("timestamp", oneDayAgo)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                var totalCalories = 0.0f
+                for (document in querySnapshot.documents) {
+                    val calorieTaken = document.getDouble("caloriesTaken")?.toFloat() ?: 0.0f
+                    Log.d("FirebaseHelperCalorie", "Fetched data $calorieTaken")
+                    totalCalories += calorieTaken
+                }
+                callback(totalCalories)
+            }
+            .addOnFailureListener { e ->
+                Log.e("FirebaseHelper", "Error fetching calorie data", e)
+                callback(0.0f) // Return 0.0f on error
+            }
+    }
+    fun deleteOldCalorieData(username: String, callback: (Boolean) -> Unit) {
+        val oneDayAgo = Timestamp(Date(System.currentTimeMillis() - 86400000)) // 86400000 ms in a day
+
+        userCalorieCollection
+            .whereEqualTo("userName", username)
+            .whereLessThan("timestamp", oneDayAgo)
+            .get()
+            .addOnSuccessListener { documents ->
+                for (document in documents) {
+                    userCalorieCollection.document(document.id).delete()
+                }
+                callback(true)
+            }
+            .addOnFailureListener { e ->
+                Log.w("FirebaseHelper", "Error deleting old calorie data: ", e)
+                callback(false)
+            }
+    }
+
+
+
 }
 data class ExerciseSession(
     val userName: String,

@@ -3,29 +3,53 @@ package com.example.fitnesstrackerandplanner
 import android.graphics.Paint
 import android.graphics.Rect
 import android.view.MotionEvent
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.EaseInOutCubic
+import androidx.compose.animation.core.EaseInQuad
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,11 +65,14 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
+import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.pointerInteropFilter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -53,13 +80,42 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import com.example.fitnesstrackerandplanner.ui.theme.Beige
 import com.example.fitnesstrackerandplanner.ui.theme.ButtonPurple
+import com.example.fitnesstrackerandplanner.ui.theme.Cerulean
+import com.example.fitnesstrackerandplanner.ui.theme.CharcoalGray
+import com.example.fitnesstrackerandplanner.ui.theme.DarkPeriwinkle
+import com.example.fitnesstrackerandplanner.ui.theme.DarkPurple
+import com.example.fitnesstrackerandplanner.ui.theme.DarkRecyclerPurple
+import com.example.fitnesstrackerandplanner.ui.theme.DeepNavyBlue
+import com.example.fitnesstrackerandplanner.ui.theme.Eggshel
+import com.example.fitnesstrackerandplanner.ui.theme.ElectricBlue
 import com.example.fitnesstrackerandplanner.ui.theme.Gold
+import com.example.fitnesstrackerandplanner.ui.theme.LightLavender
+import com.example.fitnesstrackerandplanner.ui.theme.LightRecyclerPurple
 import com.example.fitnesstrackerandplanner.ui.theme.Orange
+import com.example.fitnesstrackerandplanner.ui.theme.PastelPink
+import com.example.fitnesstrackerandplanner.ui.theme.Pink40
+import com.example.fitnesstrackerandplanner.ui.theme.Pink80
+import com.example.fitnesstrackerandplanner.ui.theme.Purple200
+import com.example.fitnesstrackerandplanner.ui.theme.Purple40
+import com.example.fitnesstrackerandplanner.ui.theme.Purple500
+import com.example.fitnesstrackerandplanner.ui.theme.Purple700
+import com.example.fitnesstrackerandplanner.ui.theme.Purple80
+import com.example.fitnesstrackerandplanner.ui.theme.PurpleGrey40
+import com.example.fitnesstrackerandplanner.ui.theme.RecyclerPurple
+import com.example.fitnesstrackerandplanner.ui.theme.Silver
+import com.example.fitnesstrackerandplanner.ui.theme.Taupe
+import com.example.fitnesstrackerandplanner.ui.theme.Thistle
+import com.example.fitnesstrackerandplanner.ui.theme.VividRed
 import com.example.fitnesstrackerandplanner.ui.theme.gray
+import com.example.fitnesstrackerandplanner.ui.theme.softCoral
 import com.example.fitnesstrackerandplanner.ui.theme.white
 import kotlin.math.abs
+import kotlin.math.cos
 import kotlin.math.roundToInt
+import kotlin.math.sin
 
 @Composable
 fun ProgressBar(progress: Float, modifier: Modifier = Modifier, color: Color, trackColor: Color, strokeCap: StrokeCap) {
@@ -99,7 +155,12 @@ fun GradientOnClickSurface(onClick: () -> Unit,content:@Composable ()->Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .background(
-                brush = if (isClicked) gradientBrush else Brush.verticalGradient(listOf(Color.LightGray, Color.LightGray)),
+                brush = if (isClicked) gradientBrush else Brush.verticalGradient(
+                    listOf(
+                        Color.LightGray,
+                        Color.LightGray
+                    )
+                ),
                 shape = RoundedCornerShape(8.dp)
             )
             .clickable {
@@ -142,7 +203,8 @@ fun AnimatedButton(
             onClick = onClick,
             border = border,
             colors= ButtonDefaults.buttonColors(color),
-            modifier = modifier.size(buttonWidth,buttonHeight)
+            modifier = modifier
+                .size(buttonWidth, buttonHeight)
                 .scale(scale.value)
                 .pointerInteropFilter {
                     when (it.action) {
@@ -407,6 +469,123 @@ fun Rechtangle(
     }
 }
 
+
+@Composable
+fun AnimatedGradientFloatingActionButton(
+    selectedIcon: MutableState<ImageVector>,
+    onClickAction: () -> Unit
+) {
+    val infiniteTransition = rememberInfiniteTransition()
+
+    // Animate the color offset from 0 to 1 and back
+    val colorAnimation by infiniteTransition.animateFloat(
+        initialValue = 35f,
+        targetValue =150f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 5000, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        )
+    )
+
+    val gradientColors = listOf(
+        PastelPink,
+        Pink80,
+        Purple200,
+        RecyclerPurple,
+        Purple500
+
+
+    )
+
+    FloatingActionButton(
+        onClick = {
+            selectedIcon.value = Icons.Default.Add
+            onClickAction()
+        },
+        modifier = Modifier
+            .size(56.dp)
+            .background(
+                brush = Brush.linearGradient(
+                    colors = gradientColors,
+                    start = Offset(colorAnimation, 75f), // Animate horizontally
+                    end = Offset(-100f, colorAnimation),  // Animate vertically
+                    tileMode = TileMode.Mirror
+                ),
+                shape = CircleShape
+            ),
+        content = {
+            Icon(
+                imageVector = selectedIcon.value,
+                contentDescription = null,
+                tint = Color.White
+            )
+        },
+        elevation = FloatingActionButtonDefaults.elevation(22.dp),
+        containerColor = Color.Transparent, // Ensure transparent background
+        shape = CircleShape,
+    )
+}
+
+@Composable
+fun AnimatedAIBorderCard(navController: NavHostController) {
+    val infiniteTransition = rememberInfiniteTransition()
+
+    // Animate the angle value from 0 to 360 degrees
+    val animatedAngle by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 360f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 3000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        )
+    )
+
+    // Calculate start and end points of the gradient based on the animated angle
+    val startOffset = Offset(
+        x = 0.5f + 0.5f * cos(Math.toRadians(animatedAngle.toDouble())).toFloat(),
+        y = 0.5f + 0.5f * sin(Math.toRadians(animatedAngle.toDouble())).toFloat()
+    )
+    val endOffset = Offset(
+        x = 0.5f + 0.5f * cos(Math.toRadians((animatedAngle + 180).toDouble())).toFloat(),
+        y = 0.5f + 0.5f * sin(Math.toRadians((animatedAngle + 180).toDouble())).toFloat()
+    )
+
+    Card(
+        modifier = Modifier
+            .size(350.dp, 100.dp)
+            .clickable {
+                navController.navigate(Screens.FitAi.screen)
+            },
+        colors = CardDefaults.cardColors(containerColor = CharcoalGray),
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.elevatedCardElevation(12.dp),
+        border = BorderStroke(1.dp, Brush.linearGradient(
+            colors = listOf(Color.Magenta, Color.Cyan),
+            start = startOffset,
+            end = endOffset
+        ))
+    ) {
+        Row(modifier = Modifier.padding(top = 10.dp, start = 8.dp, end = 6.dp)) {
+            Image(
+                painter = painterResource(R.drawable.ai_heart),
+                contentDescription = null,
+                modifier = Modifier.size(80.dp)
+            )
+            Text(
+                text = "Seek help from our assistant FitAI on your journey!",
+                modifier = Modifier.padding(start = 10.dp, end = 6.dp, top = 9.dp)
+            )
+        }
+    }
+}
+val icon =  mutableStateOf(Icons.Default.Add)
+@Preview
+@Composable
+fun PreviewFloatingActionButton(){
+    AnimatedGradientFloatingActionButton(selectedIcon = icon) {
+
+    }
+}
 data class PickerStyle(
     val lineColor:Color = Orange,
     val lineLength:Float = 45f,

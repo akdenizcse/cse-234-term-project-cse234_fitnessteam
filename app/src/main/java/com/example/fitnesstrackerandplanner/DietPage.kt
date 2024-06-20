@@ -1,4 +1,5 @@
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -173,7 +174,7 @@ fun DietItem(diet: Diet, caloriesTaken: MutableState<Int>, selectedFoods: Mutabl
     var expanded by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val sharedPrefManager = remember { SharedPrefManager(context) }
-
+    val firebaseHelper=FirebaseHelper()
     Card(
         modifier = Modifier
             .padding(8.dp)
@@ -231,8 +232,17 @@ fun DietItem(diet: Diet, caloriesTaken: MutableState<Int>, selectedFoods: Mutabl
                             )
                             AnimatedButton(
                                 onClick = {
-                                    sharedPrefManager.addCurrentUserCaloriesConsumed(food.calories)
                                     caloriesTaken.value += food.calories
+                                    sharedPrefManager.getCurrentUsername()
+                                        ?.let { firebaseHelper.updateCalorieData(it, calorieTaken = caloriesTaken.value) {
+                                            success->
+                                            if(success){
+                                                Log.d("DietPageFirestoreHelper","Successfully updated daily calories taken value")
+                                            }
+                                            else{
+                                                Log.e("DietPageFirestoreHelper","Failed to update daily calories taken value")
+                                            }
+                                        } }
                                     selectedFoods.value = selectedFoods.value.toMutableList().also { it.add(food) }
                                 },
                                 text = "Add",

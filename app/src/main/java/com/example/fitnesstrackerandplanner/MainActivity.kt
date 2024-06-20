@@ -58,7 +58,7 @@ class MainActivity : ComponentActivity() {
         sharedPrefManager = SharedPrefManager(this)
         val firebaseHelper = FirebaseHelper()
         sharedPrefManager.clearSelectedExercisesGO()
-
+        sharedPrefManager.removeCurrentUserCaloriesConsumed()
         GlobalScope.launch(Dispatchers.Main) {
             try {
                 val fetchedExercises = firebaseHelper.initializeExercises()
@@ -89,6 +89,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onDestroy(){
         super.onDestroy()
+        sharedPrefManager.removeCurrentUserCaloriesConsumed()
         sharedPrefManager.clearSelectedExercisesGO()
         }
 }
@@ -105,7 +106,7 @@ fun BottomAppBar(navigationController: NavHostController, firebaseHelper: Fireba
     Scaffold(
         bottomBar = {
             if (currentRoute != Screens.SignInPage.screen && currentRoute != Screens.LoginPage.screen) {
-                NavigationBar(containerColor = SignificantlyDarkerPowderBlue,modifier = Modifier.height(75.dp)) {
+                NavigationBar(containerColor = Purple80,modifier = Modifier.height(75.dp)) {
                     IconButton(
                         onClick = {
                             selected.value = Icons.Default.Home
@@ -169,33 +170,16 @@ fun BottomAppBar(navigationController: NavHostController, firebaseHelper: Fireba
                         }
                     }
 
-                    val fabShape = RoundedCornerShape(50)
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(6.dp),
-                        contentAlignment = Alignment.TopEnd
-                    ) {
-                        FloatingActionButton(
-                            contentColor = PurpleGrey40,
-                            containerColor = Color.White,
-                            elevation = FloatingActionButtonDefaults.elevation(35.dp),
-                            shape = fabShape,
-                            onClick = {
-                                selected.value=Icons.Default.Add
-                                Toast.makeText(context, "GO!", Toast.LENGTH_SHORT).show()
-                                navigationController.navigate(Screens.StartAnExercise.screen) {
-                                    popUpTo(0)
-                                }
+                    AnimatedGradientFloatingActionButton(
+                        selectedIcon = remember { mutableStateOf(Icons.Default.Add) },
+                        onClickAction = {
+                            selected.value = Icons.Default.Star;
+                            Toast.makeText(context, "GO!", Toast.LENGTH_SHORT).show();
+                            navigationController.navigate(Screens.StartAnExercise.screen) {
+                                popUpTo(0);
                             }
-                        ) {
-                            Icon(
-                                Icons.Default.Add,
-                                contentDescription = null,
-                                tint = if (selected.value == Icons.Default.Add) Pink40 else PurpleGrey40
-                            )
                         }
-                    }
+                    )
 
                     IconButton(
                         onClick = {
@@ -293,6 +277,11 @@ fun BottomAppBar(navigationController: NavHostController, firebaseHelper: Fireba
                 PostSignUp(navController = navigationController)
                 currentRoute=Screens.PostSignUp.screen
             }
+            composable(Screens.FitAi.screen){
+                ChatScreen()
+                currentRoute=Screens.FitAi.screen
+            }
+
             composable(
                 route = Screens.SubExerciseDetail.routeWithArgs,
                 arguments = listOf(navArgument("exerciseID") { type = NavType.IntType })

@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,6 +26,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -81,7 +85,6 @@ fun Home(navController:NavHostController) {
 
     var waterProgress = remember { mutableStateOf(0f) }
     val hoursSlept = remember { mutableStateOf(0) }
-    val dietProgress = remember { mutableStateOf(0f) }
     val height = sharedPrefManager.getCurrentUserHeight()
     val weight = sharedPrefManager.getCurrentUserWeight()
     var userGender by remember { mutableStateOf(false) }
@@ -91,8 +94,8 @@ fun Home(navController:NavHostController) {
     var tempTotalHealthPoints=0.0f
     var dailyCaloriesBurned:Double by remember{mutableStateOf(0.0)}
     var dailyRecommendedCaloriesBurned by remember { mutableStateOf((0.0)) }
-
-
+    var dailyCaloriesConsumed by remember{ mutableStateOf(0) }
+    val recommmendedCaloriesConsumed= getRecommendedCaloriesTaken(userAge)
     if(waterDrank>=2.5f){
         tempTotalHealthPoints+=0.25f
     }
@@ -101,7 +104,10 @@ fun Home(navController:NavHostController) {
     if(hoursSlept.value >= getRecommendedSleepHours(userAge)){
         tempTotalHealthPoints+=0.25f
     }
-    totalHealthPoints=tempTotalHealthPoints
+    if(dailyCaloriesConsumed>=recommmendedCaloriesConsumed) {
+        tempTotalHealthPoints+=0.25f
+    }
+        totalHealthPoints=tempTotalHealthPoints
 
     LaunchedEffect(Unit) {
         if (userName != null) {
@@ -185,6 +191,26 @@ fun Home(navController:NavHostController) {
         dailyRecommendedCaloriesBurned= calculateDailyRecommendedCaloriesToBurn(userGender,userAge,weight,height)
     }
 
+    LaunchedEffect(userName) {
+        if (userName != null) {
+            firebaseHelper.fetchCalorieData(userName) { value ->
+                  dailyCaloriesConsumed=value.toInt()
+                sharedPrefManager.addCurrentUserCaloriesConsumed(dailyCaloriesConsumed)
+            }
+        }
+    }
+    LaunchedEffect(Unit){
+        if(userName!=null){
+            firebaseHelper.deleteOldCalorieData(userName){success->
+                if(success){
+                    Log.d("HomeFireStore","Successfully deleted calorie data after 1 day")
+                }
+                else{
+                    Log.e("HomeFireStore","Could not delete calorie data after 1 day, servers might be busy.")
+                }
+            }
+        }
+    }
 
     Surface(color = DeepNavyBlue, modifier = Modifier.fillMaxSize()) {
         LazyColumn {
@@ -217,11 +243,11 @@ fun Home(navController:NavHostController) {
                         modifier = Modifier.fillMaxSize(),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Surface(
+                        Card(
                             modifier = Modifier.size(350.dp, 100.dp),
-                            color = CharcoalGray,
+                            colors = CardDefaults.cardColors(containerColor = CharcoalGray),
                             shape = RoundedCornerShape(16.dp),
-                            tonalElevation = 8.dp,
+                            elevation = CardDefaults.elevatedCardElevation(12.dp),
                             border = BorderStroke(0.3.dp, Brush.linearGradient(
                                 colors = listOf(Color.Magenta, Color.Cyan)
                             ))
@@ -312,6 +338,16 @@ fun Home(navController:NavHostController) {
                                 )
                             }
                         }
+
+                        Text(
+                            text = "FitAI",
+                            fontWeight = FontWeight.Bold,
+                            color = Purple500,
+                            fontSize = 18.sp
+                        )
+                      AnimatedAIBorderCard(navController = navController)
+
+
                     }
 
                     Column {
@@ -577,35 +613,48 @@ fun Home(navController:NavHostController) {
                                             .weight(1f)
                                     )
                                     Text(
-                                        text = "Add a diet",
+                                        text = "Diet progress ${dailyCaloriesConsumed}"+"/$recommmendedCaloriesConsumed kcals",
                                         fontWeight = FontWeight.Medium,
                                         fontSize = 16.sp,
                                         color = Eggshel,
                                         modifier = Modifier.weight(1f)
                                     )
                                     AnimatedButton(
-                                        onClick = { if (dietProgress.value < 1f) dietProgress.value += 0.1f ;navController.navigate(Screens.DietPage.screen)},
+                                        onClick = { navController.navigate(Screens.DietPage.screen)},
                                         modifier = Modifier.weight(0.8f),
                                         color = Cerulean,
                                         text = "ADD"
                                     )
                                     Column(modifier = Modifier.weight(0.6f)) {
-                                        CircularProgressBar(
-                                            progress = dietProgress.value,
-                                            strokeCap = StrokeCap.Round,
-                                            color = Orange,
-                                            modifier = Modifier
-                                                .size(60.dp)
-                                                .weight(0.6f)
-                                                .padding(start = 8.dp, end = 5.dp, top = 5.dp)
-                                        )
-                                        Text(
-                                            text = "${(dietProgress.value * 10).toInt()}/10",
-                                            fontSize = 12.sp,
-                                            modifier = Modifier.padding(start = 17.dp, bottom = 2.dp),
-                                            fontWeight = FontWeight.Medium,
-                                            color = Color.White
-                                        )
+                                        if(dailyCaloriesConsumed<recommmendedCaloriesConsumed) {
+                                            CircularProgressBar(
+                                                progress = ((dailyCaloriesConsumed / recommmendedCaloriesConsumed.toFloat())),
+                                                strokeCap = StrokeCap.Round,
+                                                color = Orange,
+                                                modifier = Modifier
+                                                    .size(60.dp)
+                                                    .weight(0.6f)
+                                                    .padding(start = 8.dp, end = 5.dp, top = 5.dp)
+                                            )
+                                            Text(
+                                                text = "${((dailyCaloriesConsumed / recommmendedCaloriesConsumed.toFloat()) * 100).toInt()}%",
+                                                fontSize = 12.sp,
+                                                modifier = Modifier.padding(
+                                                    start = 17.dp,
+                                                    bottom = 2.dp
+                                                ),
+                                                fontWeight = FontWeight.Medium,
+                                                color = Color.White
+                                            )
+                                        }
+                                        else{
+                                            Icon(
+                                                imageVector = Icons.Default.Check,
+                                                contentDescription = null,
+                                                tint = Color.Green,
+                                                modifier = Modifier.align(Alignment.CenterHorizontally)
+                                            )
+                                        }
                                     }
                                 }
                             }

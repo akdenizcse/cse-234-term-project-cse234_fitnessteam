@@ -1,3 +1,6 @@
+import java.util.Properties
+
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -9,6 +12,22 @@ android {
 
     namespace = "com.example.fitnesstrackerandplanner"
     compileSdk = 34
+    buildTypes {
+        getByName("release") {
+            val p = Properties()
+            p.load(project.rootProject.file("local.properties").reader())
+            val yourKey: String = p.getProperty("API_KEY")
+            print(yourKey)
+            buildConfigField("String", "API_KEY", "\"$yourKey\"")
+        }
+        getByName("debug"){
+            val p = Properties()
+            p.load(project.rootProject.file("local.properties").reader())
+            val yourKey: String = p.getProperty("API_KEY")
+            buildConfigField("String", "API_KEY", "\"$yourKey\"")
+        }
+
+    }
 
     defaultConfig {
         applicationId = "com.example.fitnesstrackerandplanner"
@@ -16,6 +35,10 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
+
+
+
+
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -41,6 +64,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig=true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -54,6 +78,7 @@ android {
 
 dependencies {
     implementation ("com.google.code.gson:gson:2.8.8")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.8.0")
 
     implementation("com.google.firebase:firebase-database-ktx:21.0.0")
     implementation("androidx.media3:media3-exoplayer-smoothstreaming:1.3.1")
@@ -64,6 +89,10 @@ dependencies {
     implementation ("androidx.health.connect:connect-client:1.0.0-alpha11")
     implementation ("com.pierfrancescosoffritti.androidyoutubeplayer:core:12.1.0")
     implementation ("com.pierfrancescosoffritti.androidyoutubeplayer:chromecast-sender:0.28")
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation ("com.squareup.okhttp3:okhttp:4.9.0")
+    implementation ("com.squareup.okhttp3:logging-interceptor:4.9.0")
 
 
     dependencies {

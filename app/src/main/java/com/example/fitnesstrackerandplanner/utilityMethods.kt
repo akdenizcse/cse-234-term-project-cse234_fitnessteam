@@ -425,6 +425,17 @@ fun MyGenderDropDownMenu(modifier: Modifier = Modifier, selectedGender: MutableS
     }
 }
 
+fun getRecommendedCaloriesTaken(age: Int): Int {
+    return when (age) {
+        in 2..3 -> 1200 // Average for toddlers
+        in 4..8 -> 1600 // Average for young children
+        in 9..13 -> 2200 // Average for preteens
+        in 14..18 -> 2800 // Average for teenagers
+        in 19..30 -> 2600 // Average for young adults
+        in 31..50 -> 2400 // Average for middle-aged adults
+        else -> 2000 // Average for older adults
+    }
+}
 
 @Composable
 fun WheelViewSelector(
