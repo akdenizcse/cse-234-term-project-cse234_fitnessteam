@@ -124,7 +124,7 @@ fun ExercisePage1(subExercise: SubExercise, exerciseName: String = "Value", navC
                 .fillMaxSize()
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top
+            verticalArrangement = Arrangement.Center
         ) {
             Text(
                 text = "Calories Burned",
