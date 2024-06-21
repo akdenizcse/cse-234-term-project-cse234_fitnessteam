@@ -98,7 +98,7 @@ fun PostSignUp(navController: NavHostController?){
                     modifier = Modifier
                         .height(150.dp)
                         .width(50.dp)
-                        .absoluteOffset(0.dp, -160.dp)
+                        .absoluteOffset(0.dp, -150.dp)
                 )
             }
 

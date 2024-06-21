@@ -90,6 +90,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onDestroy(){
         super.onDestroy()
+        sharedPrefManager.clearAllValues()
         sharedPrefManager.removeCurrentUserCaloriesConsumed()
         sharedPrefManager.clearSelectedExercisesGO()
         }
@@ -356,7 +357,7 @@ fun BottomAppBar(navigationController: NavHostController, firebaseHelper: Fireba
 
                 PostExercisePage(
                     subExerciseID = subExerciseID,
-                    caloriesBurned = caloriesBurned.toInt(),
+                    caloriesBurned = caloriesBurned.toFloat(),
                     minutes = minutes,
                     seconds = seconds,
                     navController = navigationController

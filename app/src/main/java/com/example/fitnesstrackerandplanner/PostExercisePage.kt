@@ -32,7 +32,7 @@ import com.example.fitnesstrackerandplanner.ui.theme.RecyclerPurple
 
 @Composable
 fun PostExercisePage(
-    caloriesBurned: Int,
+    caloriesBurned: Float,
     minutes: Long,
     seconds: Long,
     subExerciseID:Int,
@@ -50,7 +50,7 @@ fun PostExercisePage(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp),
-            verticalArrangement = Arrangement.Top,
+            verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             val gradientColors = listOf(Cyan,LightBlue , RecyclerPurple /*...*/)
@@ -71,11 +71,11 @@ fun PostExercisePage(
                 Image(
                     painter=fireimg,
                     contentDescription=null,
-                    modifier=Modifier.size(30.dp)
+                    modifier=Modifier.size(35.dp)
                 )
                 Text(
-                    text = "Calories Burned: $caloriesBurned kcal",
-                    fontSize = 18.sp,
+                    text = "Calories Burned: ${formatDouble2DecimalPlaces(number = caloriesBurned.toDouble())} kcal",
+                    fontSize = 22.sp,
                     color = Color.White,
                     modifier = Modifier.padding(8.dp)
                 )
@@ -89,7 +89,7 @@ fun PostExercisePage(
                 )
                 Text(
                     text = "Time Elapsed: ${formatTime(minutes, seconds)}",
-                    fontSize = 18.sp,
+                    fontSize = 22.sp,
                     color = Color.White,
                     modifier = Modifier.padding(8.dp)
                 )

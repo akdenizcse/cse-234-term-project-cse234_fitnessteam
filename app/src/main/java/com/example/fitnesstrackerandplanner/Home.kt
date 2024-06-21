@@ -226,8 +226,6 @@ fun Home(navController:NavHostController) {
                 firebaseHelper.fetchWeight(userName) { value ->
                     if (value != null) {
                         sharedPrefManager.saveCurrentUsername(userName)
-                        Toast.makeText(context, "Successfully logged in!", Toast.LENGTH_SHORT)
-                            .show()
                         sharedPrefManager.saveCurrentUserWeight(value)
                     } else {
                         Log.e(
@@ -244,7 +242,7 @@ fun Home(navController:NavHostController) {
         LazyColumn {
             item {
                 Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-                    Row(Modifier.padding(15.dp)) {
+                    Row(Modifier.padding(17.dp), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
                         Text(
                             text = greeting,
                             fontSize = 25.sp,
@@ -724,9 +722,10 @@ fun Home(navController:NavHostController) {
                         }
                     }
                 }
+                Spacer(modifier=Modifier.size(6.dp))
             }
-
         }
+
     }
 }
 

@@ -130,7 +130,7 @@ fun ExercisePage1(subExercise: SubExercise, exerciseName: String = "Value", navC
                 text = "Calories Burned",
                 color = Color.White,
                 fontWeight = FontWeight.Bold,
-                fontSize = 24.sp,
+                fontSize = 26.sp,
                 modifier = Modifier.padding(5.dp)
             )
             Row(
@@ -141,12 +141,12 @@ fun ExercisePage1(subExercise: SubExercise, exerciseName: String = "Value", navC
                     text = "%.2f".format(caloriesBurned),
                     color = Color.White,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 32.sp
+                    fontSize = 36.sp
                 )
                 Text(
                     text = " kcal",
                     color = Color.White,
-                    fontSize = 18.sp
+                    fontSize = 32.sp
                 )
                 Box(
                     modifier = Modifier.size(80.dp)
@@ -157,7 +157,7 @@ fun ExercisePage1(subExercise: SubExercise, exerciseName: String = "Value", navC
                         modifier = Modifier
                             .align(Alignment.Center)
                             .padding(5.dp)
-                            .size(60.dp)
+                            .size(85.dp)
                     )
                 }
             }
@@ -253,6 +253,7 @@ fun ExercisePage1(subExercise: SubExercise, exerciseName: String = "Value", navC
     }
 
     if (showDialog) {
+        isStopped=true
         AlertDialog(
             onDismissRequest = { showDialog = false },
             title = {
@@ -278,7 +279,7 @@ fun ExercisePage1(subExercise: SubExercise, exerciseName: String = "Value", navC
             },
             dismissButton = {
                 Button(
-                    onClick = { showDialog = false }
+                    onClick = { isStopped=false; showDialog = false }
                 ) {
                     Text(text = "No")
                 }
