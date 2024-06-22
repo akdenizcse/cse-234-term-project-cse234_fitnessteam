@@ -184,7 +184,7 @@ fun AnimatedButton(
     innerWidth: Dp =120.dp,
     buttonWidth: Dp =85.dp,
     buttonHeight: Dp =40.dp,
-    border:BorderStroke=BorderStroke(0.3.dp, brush = Brush.linearGradient(colors=listOf(Gold,Color.Cyan,Color.Magenta)))
+    border: BorderStroke=BorderStroke(0.3.dp, brush = Brush.linearGradient(colors=listOf(Gold,Color.Cyan,Color.Magenta)))
 
 
 ) {

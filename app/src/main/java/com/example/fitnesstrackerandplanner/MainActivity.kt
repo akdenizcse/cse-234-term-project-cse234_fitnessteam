@@ -1,5 +1,6 @@
 package com.example.fitnesstrackerandplanner
 
+import ContactPage
 import DietPage
 import Exercise
 import FirebaseHelper
@@ -298,6 +299,10 @@ fun BottomAppBar(navigationController: NavHostController, firebaseHelper: Fireba
             composable(Screens.userInfoPage.screen){
                 UserInformationPage()
                 currentRoute=Screens.userInfoPage.screen
+            }
+            composable(Screens.ContactPage.screen){
+                ContactPage()
+                currentRoute=Screens.ContactPage.screen
             }
             composable(Screens.updateUserMeasurements.screen){
                 UpdateHeightWeightScreen(){

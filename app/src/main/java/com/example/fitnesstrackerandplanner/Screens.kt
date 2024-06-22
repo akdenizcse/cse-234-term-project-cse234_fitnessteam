@@ -22,6 +22,7 @@ sealed class Screens(val screen:String) {
     data object updateUserMeasurements:Screens("updateusermeasurements")
     data object userInfoPage:Screens("userinfo")
     data object FitAi:Screens("fitai")
+    data object ContactPage:Screens("contactpage")
     data object ApplicationInfo:Screens("applicationinfo")
        data class SubExerciseDetail(val exerciseID: Int) : Screens("subexercisedetail/$exerciseID"){
         companion object {

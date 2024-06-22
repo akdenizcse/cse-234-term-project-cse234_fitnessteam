@@ -553,11 +553,11 @@ fun formatDouble2DecimalPlaces(number: Double):String {
 }
 fun getRecommendedSleepHours(age: Int): Int {
     return when {
-        age in 0..2 -> 12 // Infants (0-2 years) recommended sleep hours
-        age in 3..5 -> 10 // Toddlers (3-5 years) recommended sleep hours
-        age in 6..12 -> 9 // Children (6-12 years) recommended sleep hours
-        age in 13..17 -> 8 // Teenagers (13-17 years) recommended sleep hours
-        age in 18..64 -> 7 // Adults (18-64 years) recommended sleep hours
+        age in 0..2 -> 14 // Infants (0-2 years) recommended sleep hours
+        age in 3..5 -> 13 // Toddlers (3-5 years) recommended sleep hours
+        age in 6..12 -> 12 // Children (6-12 years) recommended sleep hours
+        age in 13..17 -> 11 // Teenagers (13-17 years) recommended sleep hours
+        age in 18..64 -> 10// Adults (18-64 years) recommended sleep hours
         age >= 65 -> 7 // Older adults (65 years and older) recommended sleep hours
         else -> 7 // Default recommendation for any age if not specified
     }
@@ -565,7 +565,7 @@ fun getRecommendedSleepHours(age: Int): Int {
 fun initiailizeProfileElements(sharedPrefManager:SharedPrefManager,navController: NavHostController):List<ProfilePageElement>{
     var userInformation:ProfilePageElement=ProfilePageElement("User Information",{navController.navigate(Screens.userInfoPage.screen)})
     var updateUserMeasurements:ProfilePageElement=ProfilePageElement("Update user measurements",{navController.navigate(Screens.updateUserMeasurements.screen)})
-    var contactUs:ProfilePageElement=ProfilePageElement("Contact us",{})
+    var contactUs:ProfilePageElement=ProfilePageElement("Contact us",{navController.navigate(Screens.ContactPage.screen)})
 
     var appInfo:ProfilePageElement=ProfilePageElement("Application Information",{navController.navigate(Screens.ApplicationInfo.screen)})
     var logOut:ProfilePageElement=ProfilePageElement("Log Out",{ onLogOut(sharedPrefManager,navController) })
