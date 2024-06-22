@@ -48,7 +48,7 @@ data class Diet(
 )
 
 val sampleDiets = listOf(
-    Diet("Keto", "A high-fat, low-carb diet.", R.drawable.fire, listOf(
+    Diet("Keto", "A high-fat, low-carb diet.", R.drawable.keto, listOf(
         Food("Avocado", 234),
         Food("Bacon", 42),
         Food("Cheese", 113),
@@ -65,7 +65,7 @@ val sampleDiets = listOf(
         Food("Brazil Nuts", 184),
         Food("Macadamia Nuts", 204)
     )),
-    Diet("Vegan", "A plant-based diet.", R.drawable.fire, listOf(
+    Diet("Vegan", "A plant-based diet.", R.drawable.vegan, listOf(
         Food("Tofu", 76),
         Food("Lentils", 116),
         Food("Quinoa", 120),
@@ -82,7 +82,7 @@ val sampleDiets = listOf(
         Food("Kale", 33),
         Food("Broccoli", 55)
     )),
-    Diet("Paleo", "A diet based on foods similar to what might have been eaten during the Paleolithic era.", R.drawable.fire, listOf(
+    Diet("Paleo", "A very primal diet.", R.drawable.paleo, listOf(
         Food("Chicken Breast", 165),
         Food("Sweet Potato", 103),
         Food("Almonds", 164),
@@ -99,7 +99,7 @@ val sampleDiets = listOf(
         Food("Bell Peppers", 24),
         Food("Brussels Sprouts", 38)
     )),
-    Diet("Mediterranean", "A diet inspired by the eating habits of Greece, Southern Italy, and Spain.", R.drawable.fire, listOf(
+    Diet("Mediterranean", "A diet based on the eating habits of Mediterranean people.", R.drawable.mediterranean, listOf(
         Food("Olive Oil", 119),
         Food("Tomato", 22),
         Food("Feta Cheese", 75),
@@ -116,7 +116,7 @@ val sampleDiets = listOf(
         Food("Oranges", 62),
         Food("Grapes", 104)
     )),
-    Diet("Low-Carb", "A diet that restricts carbohydrates.", R.drawable.fire, listOf(
+    Diet("Low-Carb", "A low-carb diet.", R.drawable.lowcarb, listOf(
         Food("Eggs", 78),
         Food("Chicken Breast", 165),
         Food("Beef", 250),
@@ -133,7 +133,7 @@ val sampleDiets = listOf(
         Food("Salmon", 208),
         Food("Tuna", 132)
     )),
-    Diet("High-Protein", "A diet high in protein.", R.drawable.fire, listOf(
+    Diet("High-Protein", "A diet high in protein.", R.drawable.highprotein, listOf(
         Food("Chicken Breast", 165),
         Food("Turkey Breast", 135),
         Food("Eggs", 78),
@@ -150,7 +150,7 @@ val sampleDiets = listOf(
         Food("Quinoa", 120),
         Food("Almonds", 164)
     )),
-    Diet("Low-Fat", "A diet low in fat.", R.drawable.fire, listOf(
+    Diet("Low-Fat", "A diet low in fat.", R.drawable.lowfat, listOf(
         Food("Chicken Breast", 165),
         Food("Turkey Breast", 135),
         Food("Egg Whites", 17),
@@ -184,14 +184,14 @@ fun DietItem(diet: Diet, caloriesTaken: MutableState<Int>, selectedFoods: Mutabl
         shape = RoundedCornerShape(16.dp)
     ) {
         Column(modifier = Modifier.clickable { expanded = !expanded }) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.width(400.dp)) {
                 Image(
                     painter = painterResource(id = diet.icon),
                     contentDescription = diet.name,
                     modifier = Modifier.size(48.dp)
                 )
                 Spacer(modifier = Modifier.width(16.dp))
-                Column {
+                Column(modifier=Modifier.width(250.dp)) {
                     Text(
                         text = diet.name,
                         fontWeight = FontWeight.Bold,
@@ -203,7 +203,7 @@ fun DietItem(diet: Diet, caloriesTaken: MutableState<Int>, selectedFoods: Mutabl
                         text = diet.description,
                         fontSize = 16.sp,
                         color = Eggshel,
-                        modifier = Modifier.padding(end = 24.dp) // Adding end padding to description text
+                        modifier = Modifier.padding(end = 18.dp)
                     )
                 }
                 Spacer(modifier = Modifier.weight(1f))

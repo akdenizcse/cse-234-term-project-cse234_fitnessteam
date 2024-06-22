@@ -55,7 +55,9 @@ Surface(color = DeepNavyBlue, modifier= Modifier.fillMaxSize()) {
         IconButton(onClick = {
             navController.popBackStack()
         },
-            modifier=Modifier.padding(top=6.dp,start=4.dp).align(Alignment.Start)) {
+            modifier= Modifier
+                .padding(top = 6.dp, start = 4.dp)
+                .align(Alignment.Start)) {
             Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null,
                 modifier=Modifier.size(50.dp,80.dp), tint = Color.White)
         }
@@ -77,7 +79,7 @@ Surface(color = DeepNavyBlue, modifier= Modifier.fillMaxSize()) {
         }
         Spacer(modifier = Modifier.size(15.dp))
         Row(modifier=Modifier.align(Alignment.Start)) {
-            Image(painter = targetimg, contentDescription = null, modifier = Modifier
+            Image(painter = painterResource(id = R.drawable.info), contentDescription = null, modifier = Modifier
                 .size(30.dp)
                 .padding(start = 6.dp))
 

@@ -29,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -41,9 +42,11 @@ import com.google.firebase.Firebase
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 //TODO:Hours slept DO'ya basınca popup açsın ve oradan seçebilsin
 //TODO: exercisesession database kaydetme ve çekme
@@ -53,23 +56,29 @@ import kotlinx.coroutines.launch
 class MainActivity : ComponentActivity() {
 
     private lateinit var sharedPrefManager: SharedPrefManager
-
+    @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
+        var fetchedExercises:List<Exercise>
+
         super.onCreate(savedInstanceState)
         sharedPrefManager = SharedPrefManager(this)
         val firebaseHelper = FirebaseHelper()
         sharedPrefManager.clearSelectedExercisesGO()
         sharedPrefManager.removeCurrentUserCaloriesConsumed()
-        GlobalScope.launch(Dispatchers.Main) {
+        lifecycleScope.launch(Dispatchers.IO) {
             try {
-                val fetchedExercises = firebaseHelper.initializeExercises()
+                fetchedExercises = firebaseHelper.initializeExercises()
                 sharedPrefManager.saveAllExercises(fetchedExercises)
                 Log.d("MainActivityFirebaseHelper", "Fetched exercises -- ${fetchedExercises.getOrNull(0)?.exerciseName ?: "No exercises"}")
             } catch (e: Exception) {
                 Log.e("MainActivityFirebaseHelper", "Error initializing exercises", e)
-                Toast.makeText(applicationContext, "Error fetching exercises", Toast.LENGTH_LONG).show()
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(applicationContext, "Error fetching exercises", Toast.LENGTH_LONG).show()
+                }
             }
         }
+
+
 
         installSplashScreen()
 

@@ -1,6 +1,7 @@
 package com.example.fitnesstrackerandplanner
 
 import FirebaseHelper
+import NotificationHelper
 import android.database.sqlite.SQLiteDatabase
 import android.icu.util.Calendar
 import android.util.Log
@@ -97,14 +98,57 @@ fun Home(navController:NavHostController) {
     val recommmendedCaloriesConsumed= getRecommendedCaloriesTaken(userAge)
     if(waterDrank>=2.5f){
         tempTotalHealthPoints+=0.25f
+
     }
-    if(dailyCaloriesBurned>=dailyRecommendedCaloriesBurned)
-        tempTotalHealthPoints=0.25f
+    else{
+        if(NotificationHelper.shouldNotify(context,NotificationHelper.NOTIFICATION_ID_WATER)) {
+            NotificationHelper.scheduleNotification(
+                context,
+                "Reminder: Do not forget to drink water, you have not drunk enough.",
+                NotificationHelper.NOTIFICATION_ID_WATER
+            )
+        }
+    }
+    if(dailyCaloriesBurned>=dailyRecommendedCaloriesBurned) {
+        tempTotalHealthPoints = 0.25f
+
+    }
+    else{
+        if(NotificationHelper.shouldNotify(context,NotificationHelper.NOTIFICATION_ID_CALORIES_BURNED)) {
+            NotificationHelper.scheduleNotification(
+                context,
+                "Reminder: You have not burned enough calories today.",
+                NotificationHelper.NOTIFICATION_ID_CALORIES_BURNED
+            )
+        }
+    }
     if(hoursSlept.value >= getRecommendedSleepHours(userAge)){
+
         tempTotalHealthPoints+=0.25f
+    }else{
+        if(NotificationHelper.shouldNotify(context,NotificationHelper.NOTIFICATION_ID_SLEEP)) {
+            NotificationHelper.scheduleNotification(
+                context,
+                "Reminder: You have not slept enough today.",
+                NotificationHelper.NOTIFICATION_ID_SLEEP
+            )
+        }
     }
+
+
     if(dailyCaloriesConsumed>=recommmendedCaloriesConsumed) {
+
+
         tempTotalHealthPoints+=0.25f
+
+    }else{
+        if(NotificationHelper.shouldNotify(context,NotificationHelper.NOTIFICATION_ID_CALORIES_CONSUMED)) {
+            NotificationHelper.scheduleNotification(
+                context,
+                "Reminder: You have not consumed enough calories today.",
+                NotificationHelper.NOTIFICATION_ID_CALORIES_CONSUMED
+            )
+        }
     }
         totalHealthPoints=tempTotalHealthPoints
 

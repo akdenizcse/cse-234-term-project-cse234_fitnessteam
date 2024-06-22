@@ -5,6 +5,7 @@ import ExerciseSession
 import SubExercise
 import android.content.Intent
 import android.graphics.drawable.shapes.Shape
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.BorderStroke
@@ -276,13 +277,21 @@ fun GoRecycler(
     }
     var newTotalCaloriesBurned = 0.0
 
-        for (subex in subExerciseIdList) {
-            newTotalCaloriesBurned += allExercises.getSubExerciseById(subex)!!.approximateCaloriesPerSecond*600
-
-
-
-        onTotalCaloriesChanged(newTotalCaloriesBurned)
+    for (subex in subExerciseIdList) {
+        val subExercise = allExercises.getSubExerciseById(subex)
+        if (subExercise != null) {
+            newTotalCaloriesBurned += subExercise.approximateCaloriesPerSecond * 600
+        } else {
+            newTotalCaloriesBurned+=27
+            Log.e("YourTag", "SubExercise with ID $subex not found in allExercises")
+        }
     }
+
+
+
+
+    onTotalCaloriesChanged(newTotalCaloriesBurned)
+
 
     LazyColumn(modifier = Modifier.padding(vertical = 4.dp)) {
         if (greetingMessage != null) {
