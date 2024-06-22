@@ -11,6 +11,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -217,65 +218,55 @@ class FirebaseHelper {
 //****************------------------------*-*--*-*-*-*-*-*-*-*-*------------------*********************************//
 
 
-    suspend fun initializeExercises(retryAttempts: Int = 3): List<Exercise> {
+    suspend fun initializeExercises(): List<Exercise> {
         return withContext(Dispatchers.IO) {
-            var fetchedExercises: List<Exercise>? = null
-            var attemptCount = 0
+            try {
+                // Fetch exercises
+                val exerciseQuerySnapshot = exerciseCollectionRef.get().await()
+                val exercises = mutableListOf<Exercise>()
 
-            while (attemptCount < retryAttempts) {
-                try {
-                    val exerciseQuerySnapshot = exerciseCollectionRef.get().await()
-                    val exercises = mutableListOf<Exercise>()
+                for (exerciseDocument in exerciseQuerySnapshot.documents) {
+                    val exerciseID = exerciseDocument.getLong("exerciseID")?.toInt() ?: 0
+                    val exerciseName = exerciseDocument.getString("exerciseName") ?: ""
+                    val exercise = Exercise(exerciseName, exerciseID)
 
-                    val exerciseFetchJobs = exerciseQuerySnapshot.documents.map { exerciseDocument ->
-                        async {
-                            val exerciseID = exerciseDocument.getLong("exerciseID")?.toInt() ?: 0
-                            val exerciseName = exerciseDocument.getString("exerciseName") ?: ""
-                            val exercise = Exercise(exerciseName, exerciseID)
+                    // Fetch sub-exercises for the current exercise
+                    val subExerciseQuerySnapshot = subExerciseCollectionRef
+                        .whereEqualTo("parentExerciseID", exercise.exerciseID)
+                        .get()
+                        .await()
 
-                            val subExerciseQuerySnapshot = subExerciseCollectionRef
-                                .whereEqualTo("parentExerciseID", exercise.exerciseID)
-                                .get()
-                                .await()
-
-                            val subExercises = subExerciseQuerySnapshot.documents.map { subDocument ->
-                                val subExerciseID = subDocument.getLong("subExerciseID")?.toInt() ?: 0
-                                val subExerciseName = subDocument.getString("subExerciseName") ?: ""
-                                val videoUrl = subDocument.getString("youtubeID") ?: ""
-                                val approximateCaloriesPerSecond =
-                                    subDocument.getDouble("subExerciseCaloriesBurnedPerSec") ?: 0.0
-                                val description = subDocument.getString("description") ?: ""
-                                SubExercise(
-                                    subExerciseName = subExerciseName,
-                                    description = description,
-                                    videoUrl = videoUrl,
-                                    groupName = exerciseName,
-                                    exerciseIDs = exerciseID,
-                                    subExerciseID = subExerciseID,
-                                    approximateCaloriesPerSecond = approximateCaloriesPerSecond
-                                )
-                            }
-
-                            exercise.addExercise(subExercises)
-                            exercise
-                        }
+                    val subExercises = mutableListOf<SubExercise>()
+                    for (subDocument in subExerciseQuerySnapshot.documents) {
+                        val subExerciseID = subDocument.getLong("subExerciseID")?.toInt() ?: 0
+                        val subExerciseName = subDocument.getString("subExerciseName") ?: ""
+                        val videoUrl = subDocument.getString("youtubeID") ?: ""
+                        val approximateCaloriesPerSecond =
+                            subDocument.getDouble("subExerciseCaloriesBurnedPerSec") ?: 0.0
+                        val description=subDocument.getString("description") ?: ""
+                        val subExercise = SubExercise(
+                            subExerciseName = subExerciseName,
+                            description = description,  // You can fetch description if added to Firestore
+                            videoUrl = videoUrl,
+                            groupName = exerciseName,
+                            exerciseIDs = exerciseID,
+                            subExerciseID = subExerciseID,
+                            approximateCaloriesPerSecond = approximateCaloriesPerSecond
+                        )
+                        subExercises.add(subExercise)
                     }
 
-                    exercises.addAll(exerciseFetchJobs.awaitAll())
-                    fetchedExercises = exercises
-                    break
-                } catch (e: Exception) {
-                    Log.e("FirebaseHelper", "Error fetching exercises attempt ${attemptCount + 1}", e)
-                    attemptCount++
-                    delay(1000)
+                    exercise.addExercise(subExercises)
+                    exercises.add(exercise)
                 }
-            }
 
-            fetchedExercises ?: emptyList()
+                exercises
+            } catch (e: Exception) {
+                Log.e("FirebaseHelper", "Error fetching exercises", e)
+                emptyList() // Return empty list on error
+            }
         }
     }
-
-
     fun updateWaterConsumption(username: String, waterDrank: Float, callback: (Boolean) -> Unit) {
         val currentTime = System.currentTimeMillis()
         val data = hashMapOf(

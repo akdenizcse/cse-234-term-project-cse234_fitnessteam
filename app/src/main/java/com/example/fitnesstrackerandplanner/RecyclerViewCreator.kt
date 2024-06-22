@@ -278,13 +278,7 @@ fun GoRecycler(
     var newTotalCaloriesBurned = 0.0
 
     for (subex in subExerciseIdList) {
-        val subExercise = allExercises.getSubExerciseById(subex)
-        if (subExercise != null) {
-            newTotalCaloriesBurned += subExercise.approximateCaloriesPerSecond * 600
-        } else {
-            newTotalCaloriesBurned+=27
-            Log.e("YourTag", "SubExercise with ID $subex not found in allExercises")
-        }
+        newTotalCaloriesBurned += allExercises.getSubExerciseById(subex)!!.approximateCaloriesPerSecond * 600
     }
 
 
@@ -325,7 +319,9 @@ fun GoRecycler(
             Text("Start an exercise!", fontSize = 32.sp, style=TextStyle(
                 brush=Brush.linearGradient(colors=listOf(Color.Cyan,Color.Magenta))
             ),maxLines=1, fontWeight = FontWeight.ExtraBold,
-                modifier=Modifier.fillMaxWidth().padding(vertical=6.dp, horizontal = 4.dp),
+                modifier= Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 6.dp, horizontal = 4.dp),
                 textAlign=TextAlign.Center )
         }
 
@@ -422,7 +418,9 @@ fun RecyclerView(
                         Text(
                             text = "$greetingMessage",
                             fontSize = 25.sp,
-                            modifier = Modifier.weight(3f).padding(top=6.dp),
+                            modifier = Modifier
+                                .weight(3f)
+                                .padding(top = 6.dp),
                             color = Color.Black,
                             fontWeight = FontWeight.ExtraBold,
                             style=TextStyle(brush=Brush.linearGradient(colors=listOf(Color.Cyan,Color.Magenta)))
@@ -501,7 +499,9 @@ fun ExerciseSessionItem(session: ExerciseSession) {
             // Calories burned
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp)
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.fire),
@@ -520,7 +520,9 @@ fun ExerciseSessionItem(session: ExerciseSession) {
             // Exercise Date
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp)
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.info),
@@ -537,7 +539,9 @@ fun ExerciseSessionItem(session: ExerciseSession) {
             // Exercise Duration
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp)
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.info),
@@ -554,7 +558,9 @@ fun ExerciseSessionItem(session: ExerciseSession) {
             // Fitty Points Gained
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp)
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.info),
