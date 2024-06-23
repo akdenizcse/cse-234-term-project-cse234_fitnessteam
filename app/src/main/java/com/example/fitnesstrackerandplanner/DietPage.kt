@@ -63,7 +63,9 @@ val sampleDiets = listOf(
         Food("Almonds", 164),
         Food("Walnuts", 185),
         Food("Brazil Nuts", 184),
-        Food("Macadamia Nuts", 204)
+        Food("Macadamia Nuts", 204),
+        Food("Olive Oil", 119),
+        Food("Heavy Cream", 52)
     )),
     Diet("Vegan", "A plant-based diet.", R.drawable.vegan, listOf(
         Food("Tofu", 76),
@@ -80,7 +82,9 @@ val sampleDiets = listOf(
         Food("Peanut Butter", 188),
         Food("Spinach", 23),
         Food("Kale", 33),
-        Food("Broccoli", 55)
+        Food("Broccoli", 55),
+        Food("Cashews", 157),
+        Food("Nutritional Yeast", 60)
     )),
     Diet("Paleo", "A very primal diet.", R.drawable.paleo, listOf(
         Food("Chicken Breast", 165),
@@ -97,7 +101,9 @@ val sampleDiets = listOf(
         Food("Zucchini", 33),
         Food("Carrots", 25),
         Food("Bell Peppers", 24),
-        Food("Brussels Sprouts", 38)
+        Food("Brussels Sprouts", 38),
+        Food("Kale", 33),
+        Food("Walnuts", 185)
     )),
     Diet("Mediterranean", "A diet based on the eating habits of Mediterranean people.", R.drawable.mediterranean, listOf(
         Food("Olive Oil", 119),
@@ -114,7 +120,9 @@ val sampleDiets = listOf(
         Food("Tuna", 132),
         Food("Whole Grain Bread", 69),
         Food("Oranges", 62),
-        Food("Grapes", 104)
+        Food("Grapes", 104),
+        Food("Eggplant", 25),
+        Food("Lemon", 17)
     )),
     Diet("Low-Carb", "A low-carb diet.", R.drawable.lowcarb, listOf(
         Food("Eggs", 78),
@@ -131,7 +139,9 @@ val sampleDiets = listOf(
         Food("Walnuts", 185),
         Food("Pecans", 201),
         Food("Salmon", 208),
-        Food("Tuna", 132)
+        Food("Tuna", 132),
+        Food("Bell Peppers", 24),
+        Food("Eggplant", 25)
     )),
     Diet("High-Protein", "A diet high in protein.", R.drawable.highprotein, listOf(
         Food("Chicken Breast", 165),
@@ -148,7 +158,9 @@ val sampleDiets = listOf(
         Food("Black Beans", 132),
         Food("Chickpeas", 164),
         Food("Quinoa", 120),
-        Food("Almonds", 164)
+        Food("Almonds", 164),
+        Food("Edamame", 188),
+        Food("Hemp Seeds", 166)
     )),
     Diet("Low-Fat", "A diet low in fat.", R.drawable.lowfat, listOf(
         Food("Chicken Breast", 165),
@@ -165,9 +177,12 @@ val sampleDiets = listOf(
         Food("Quinoa", 120),
         Food("Brown Rice", 218),
         Food("Oatmeal", 154),
-        Food("Whole Grain Bread", 69)
+        Food("Whole Grain Bread", 69),
+        Food("Sweet Potato", 103),
+        Food("Apple", 95)
     ))
 )
+
 
 @Composable
 fun DietItem(diet: Diet, caloriesTaken: MutableState<Int>, selectedFoods: MutableState<List<Food>>) {
