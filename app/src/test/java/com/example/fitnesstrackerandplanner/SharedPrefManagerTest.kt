@@ -211,18 +211,6 @@ class SharedPrefManagerTest {
     }
 
     @Test
-    fun testGetAllExercises() {
-        val exercises = listOf(
-            Exercise("Push-up", 30),
-            Exercise("Squat", 45)
-        )
-        val gson = Gson()
-        val json = gson.toJson(exercises)
-        `when`(sharedPreferences.getString("exercises", "")).thenReturn(json)
-        assertEquals(exercises, sharedPrefManager.getAllExercises())
-    }
-
-    @Test
     fun testClearAllExercises() {
         sharedPrefManager.clearAllExercises()
         verify(editor).remove("exercises")

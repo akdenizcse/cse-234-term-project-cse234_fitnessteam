@@ -93,6 +93,8 @@ dependencies {
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation ("com.squareup.okhttp3:okhttp:4.9.0")
     implementation ("com.squareup.okhttp3:logging-interceptor:4.9.0")
+    implementation("androidx.test.ext:junit-ktx:1.1.5")
+    implementation("androidx.compose.ui:ui-test-junit4-android:1.6.8")
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
 
 
@@ -100,7 +102,8 @@ dependencies {
         implementation("androidx.sqlite:sqlite:2.1.0") //
         implementation(platform("com.google.firebase:firebase-bom:33.1.0"))
         implementation ("com.github.ozcanalasalvar.picker:wheelview:2.0.5")
-
+        androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.7.0-beta03")
+        debugImplementation("androidx.compose.ui:ui-test-manifest:1.6.8")
         implementation("androidx.activity:activity-compose:1.9.0")
         implementation(platform("androidx.compose:compose-bom:2024.05.00"))
         implementation("androidx.compose.ui:ui")
@@ -110,8 +113,6 @@ dependencies {
         testImplementation ("org.robolectric:robolectric:4.9.2")
         testImplementation("org.mockito:mockito-core:4.0.0")
         testImplementation("org.mockito:mockito-inline:4.0.0")
-        testImplementation ("junit:junit:4.13.2")
-
         implementation("com.google.firebase:firebase-firestore")
         implementation("androidx.compose.ui:ui-tooling-preview")
         implementation("androidx.compose.material3:material3")
@@ -130,7 +131,3 @@ dependencies {
     }
 
 }
-tasks.withType<Test> {
-    useJUnitPlatform()
-}
-
