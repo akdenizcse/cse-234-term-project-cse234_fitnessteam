@@ -263,7 +263,7 @@ fun DietItem(diet: Diet, caloriesTaken: MutableState<Int>, selectedFoods: Mutabl
                                 text = "Add",
                                 color = Cerulean,
                                 innerHeight = 30.dp,
-                                innerWidth = 80.dp, // Increasing button width
+                                innerWidth = 80.dp,
                                 buttonWidth = 80.dp,
                                 buttonHeight = 30.dp
                             )

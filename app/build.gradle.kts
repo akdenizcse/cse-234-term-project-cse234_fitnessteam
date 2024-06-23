@@ -17,7 +17,6 @@ android {
             val p = Properties()
             p.load(project.rootProject.file("local.properties").reader())
             val yourKey: String = p.getProperty("API_KEY")
-            print(yourKey)
             buildConfigField("String", "API_KEY", "\"$yourKey\"")
         }
         getByName("debug"){
@@ -55,6 +54,7 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -93,6 +93,7 @@ dependencies {
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation ("com.squareup.okhttp3:okhttp:4.9.0")
     implementation ("com.squareup.okhttp3:logging-interceptor:4.9.0")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
 
 
     dependencies {
@@ -106,6 +107,11 @@ dependencies {
         implementation("com.google.android.exoplayer:exoplayer-ui:2.19.1")
         implementation("androidx.compose.ui:ui-graphics")
         implementation("com.google.firebase:firebase-auth")
+        testImplementation ("org.robolectric:robolectric:4.9.2")
+        testImplementation("org.mockito:mockito-core:4.0.0")
+        testImplementation("org.mockito:mockito-inline:4.0.0")
+        testImplementation ("junit:junit:4.13.2")
+
         implementation("com.google.firebase:firebase-firestore")
         implementation("androidx.compose.ui:ui-tooling-preview")
         implementation("androidx.compose.material3:material3")
@@ -123,5 +129,8 @@ dependencies {
         debugImplementation("androidx.compose.ui:ui-test-manifest")
     }
 
+}
+tasks.withType<Test> {
+    useJUnitPlatform()
 }
 
